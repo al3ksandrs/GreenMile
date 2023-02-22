@@ -1,4 +1,4 @@
-USE `VUL JE SCHEMA HIER IN`;
+USE `pad_gmi_3_dev`;
 
 CREATE TABLE IF NOT EXISTS `users`
 (
