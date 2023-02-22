@@ -1,4 +1,4 @@
-USE `zsoskola`;
+USE `pad_gmi_3_dev`;
 
 CREATE TABLE IF NOT EXISTS `users`
 (

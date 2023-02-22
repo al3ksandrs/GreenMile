@@ -1,11 +1,11 @@
 {
   "database": {
-    "host": "oege.ie.hva.nl",
-    "port": 3306,
+    "host": "db.hbo-ict.cloud",
+    "port": 3366,
     "timeout": 30000,
-    "username": "soskola",
-    "password": "WCOT8R$Avy/x0Y",
-    "database": "zsoskola",
+    "username": "pad_gmi_3",
+    "password": "iTUqbCeeaWvtS2jp",
+    "database": "pad_gmi_3_dev",
     "connectionLimit": 1
   }
 }
