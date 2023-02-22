@@ -1,11 +1,11 @@
 {
   "database": {
-    "host": "",
-    "port": 3366,
+    "host": "oege.ie.hva.nl",
+    "port": 3306,
     "timeout": 30000,
-    "username": "",
-    "password": "",
-    "database": "",
+    "username": "soskola",
+    "password": "WCOT8R$Avy/x0Y",
+    "database": "zsoskola",
     "connectionLimit": 1
   }
 }

@@ -1,4 +1,4 @@
-USE `VUL JE SCHEMA HIER IN`;
+USE `zsoskola`;
 
 CREATE TABLE IF NOT EXISTS `users`
 (
