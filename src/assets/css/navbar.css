@@ -1,0 +1,35 @@
+nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: -15px;
+}
+
+.tgm-text {
+    width: max-content;
+    padding-right: 15px;
+}
+
+.nav-items {
+    display: flex;
+    flex-direction: row;
+    width: 85%;
+}
+
+.left-items {
+    display: flex;
+}
+
+.right-items {
+    margin-left: 75%;
+    display: flex;
+}
+
+.nav-text {
+    margin: 5px;
+}
+
+.nav-text:hover {
+    color: green;
+    cursor: pointer;
+}
