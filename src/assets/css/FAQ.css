@@ -1,0 +1,155 @@
+/*Root is hetzelfde als de html tag*/
+:root {
+    --principal-font: 'Roboto', sans-serif;
+    --font-size: 12px;
+    --bg-gradient: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 57%));
+    --primary-dark-color: hsl(238, 29%, 16%);
+    --primary-soft-color: hsl(14, 88%, 65%);
+    --neutral-dark-color: hsl(237, 12%, 33%);
+    --neutral-soft-color: hsl(240, 6%, 50%);
+}
+
+
+html {
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+/* global */
+/*================================================*/
+
+
+body {
+    margin: 0;
+    font-family: var(--principal-font);
+    font-size: 12px;
+    color: var(--neutral-dark-color);
+    background: var(--bg-gradient);
+    background-size: cover;
+}
+
+.vraagBoxOmvang {
+    min-height: 100vh;
+    padding-bottom: 50px;
+    padding-top: 25px;
+}
+
+p {
+    margin: 0 0 12px;
+    line-height: 1.5;
+    font-size: 20px;
+}
+
+h2 {
+    margin: 12px 0;
+}
+
+
+
+
+/* generics */
+/*================================================*/
+
+.content-cc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* FAQ card */
+/*================================================*/
+
+.vgvKaart {
+    background-color: #fff;
+    border-radius: 20px;
+    max-width: 80%;
+    margin-top: 90px;
+    box-shadow: 0px 60px 50px -25px rgba(0, 0, 0, 0.35);
+}
+
+/* FAQ card: main */
+/*================================================*/
+
+.vgvContent {
+    padding: 9px 25px 3rem;
+}
+
+.vgvContent h1 {
+    font-size: 32px;
+    width: 100%;
+    text-align: center;
+    color: var(--primary-dark-color);
+}
+
+.vgvAccordion {
+    padding: 8px 0;
+    border-bottom: 1px solid hsl(240, 5%, 91%);
+}
+
+
+/* FAQ card: main title */
+/*================================================*/
+
+/* checkbox tgg-title*/
+input.vraagTitel {
+    appearance: unset;
+    all: unset;
+}
+
+.vgvVraag label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.vgvVraag h2 {
+    font-size: 28px /*var(--font-size)*/;
+    font-weight: 400;
+    color: var(--neutral-dark-color);
+}
+
+.vgvVraag span {
+    margin-left: auto;
+    transition: transform .4s ease-in-out;
+}
+
+
+/* FAQ card: main content */
+/*================================================*/
+
+.faq-accordion-content {
+    color: var(--neutral-soft-color);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .4s ease-in-out;
+}
+
+
+/* Effects */
+/*================================================*/
+
+/*veranderd de kleur naar groen wanneer over de vraag word gehoverd*/
+.vgvVraag:hover h2 {
+    color: rgb(0, 255, 0);
+}
+
+/*onclick maakt de vraag dikgedrukt. */
+.vgvAccordion .vraagTitel:checked + div > label > h2 {
+    font-weight: 700;
+}
+
+/*veranderd de arrow down to arrow up*/
+.vgvAccordion .vraagTitel:checked + div > label > span {
+    will-change: transform;
+    transform: rotate(180deg);
+}
+
+/*Zorgt ervoor dat het antwoord leesbaar is*/
+.vgvAccordion .vraagTitel:checked ~ .faq-accordion-content {
+    will-change: max-height;
+    max-height: 80px;
+}
+
