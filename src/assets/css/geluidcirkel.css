@@ -17,7 +17,12 @@
 .pTitle{
     font-size: 50px;
 }
-.cicrcleContainer {
+
+.topDashboard{
+    display: flex;
+    flex-direction: row;
+}
+.circleContainer {
     display: flex;
     flex-direction: row;
     margin: 16px;
@@ -98,6 +103,36 @@
     height: 100px;
     margin: 25px;
 }
+
+.informatieContainer{
+    display: flex;
+    flex-direction: row;
+}
+.bigBox{
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    padding: 16px;
+    border-radius: 25px;
+    border: 1px solid #efefef;
+    box-shadow: 8px 10px 1px 1px #ababab;
+    background-color:#ffffff;
+    width: 1500px;
+    height: 750px;
+
+}
+
+
+.mediumBox{
+    margin: 20px;
+    padding: 16px;
+    border-radius: 25px;
+    border: 1px solid #efefef;
+    box-shadow: 8px 10px 1px 1px #ababab;
+    background-color:#ffffff;
+    width: 500px;
+    height: 750px;
+}
 .greyParagraph{
     background-color: #ffffff;
     color: #737373;
@@ -109,7 +144,7 @@
     font-size: 40px;
 }
 
-/* To prevent svg border being cut off */
+/* To prevent svg border being cut off and keep picture visibile*/
 svg:not(:root) {
     overflow: visible;
     background-color: transparent;

@@ -1,50 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>
     </title>
     <link rel="stylesheet" href="assets/css/geluidcirkel.css">
-    <script  src="assets/js/geluidscirkel.js" defer></script>
+    <script src="assets/js/vertaling.js"></script>
+    <script src="assets/js/geluidscirkel.js" defer></script>
+    
 </head>
 <body>
-<p class="pTitle">Dashboard</p>
-<div class="cicrcleContainer">
-    <div class="circleBox">
-        <div class="background-circle"></div>
-        <div class="foreground-circle">
-            <!-- svg's width =
-                foreground-circle's width.
-              cx, cy, and r values should be half of the svg's width. -->
-            <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.1"
-                    width="144px"
-                    height="144px"
-            >
-                <circle
-                        cx="72"
-                        cy="72"
-                        r="72"
-                        stroke="#058C42"
-                        stroke-width="24"
-                        fill="transparent"
-                        stroke-linecap="round"
-                />
-            </svg>
+<p class="pTitle">Dashboard</p> 
+<button onclick="vertaalEngels()">test</button>
+<div class="topDashboard">
+    
+
+    <div class="circleContainer">
+        <div class="circleBox">
+            <div class="background-circle"></div>
+            <div class="foreground-circle">
+                <!-- svg's width =
+                    foreground-circle's width.
+                  cx, cy, and r values should be half of the svg's width. -->
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        version="1.1"
+                        width="144px"
+                        height="144px"
+                >
+                    <circle
+                            cx="72"
+                            cy="72"
+                            r="72"
+                            stroke="#058C42"
+                            stroke-width="24"
+                            fill="transparent"
+                            stroke-linecap="round"
+                    />
+                </svg>
+            </div>
+            <div class="pictureInsideCircle">
+                <img src="assets/persoonicon.png" alt="Overlast">
+            </div>
         </div>
-        <div class="pictureInsideCircle">
-            <img src="assets/persoonicon.png">
+        <div class="data">
+            <p id="test12" class="greyParagraph">Geluidsoverlast</p>
+            <p class="greenNumber" id="decibelData"> 30</p>
+            <p class="greyParagraph">Decibel</p>
         </div>
     </div>
-    <div class="data">
-        <p class="greyParagraph">Geluidsoverlast</p>
-        <p class="greenNumber" id="decibelData"> 30</p>
-        <p class="greyParagraph">Decibel</p>
-    </div>
+    <div class="circleContainer"></div>
+    <div class="circleContainer"></div>
+    <div class="circleContainer"></div>
+    <div class="circleContainer"></div>
+
 </div>
 
+<div class="informatieContainer">
+
+<div class="bigBox">
+    <p class="greenNumber"> Informatie</p>
+</div>
+<div class="mediumBox"><p class="greenNumber">Informatie</p></div>
+</div>
 </body>
 </html>

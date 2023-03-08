@@ -84,7 +84,7 @@ function animteCircle(value) {
 // Animate with some value when the page loads first time
 animteCircle(65);
 
-window.onload = function() {
+window.onload = function () {
 
     hierteam3ding.API.queryDatabase(
         "SELECT decibel FROM informatie",
@@ -95,4 +95,11 @@ window.onload = function() {
     }).catch(function (reason) {
         console.log(reason);
     });
+}
+
+function vertaalEngels() {
+    document.getElementById("test12").innerHTML = "Noise Disturbance";
+    if ("test12" == "Noise Disturbance") {
+        document.getElementById("test12").innerHTML = "Geluidsoverlast";
     }
+}
