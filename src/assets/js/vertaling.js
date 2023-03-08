@@ -1,6 +1,11 @@
 
-window.onload = function vertaalEngels() {
+function vertaalEngels() {
+    var text = document.getElementById("test12").innerText;
+
     document.getElementById("test12").innerHTML = "Noise Disturbance";
+    if (text == "Noise Disturbance") {
+        document.getElementById("test12").innerHTML = "Geluidsoverlast";
+    }
 }
 
 // function googleTranslateElementInit() {

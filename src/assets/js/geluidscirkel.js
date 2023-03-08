@@ -96,10 +96,3 @@ window.onload = function () {
         console.log(reason);
     });
 }
-
-function vertaalEngels() {
-    document.getElementById("test12").innerHTML = "Noise Disturbance";
-    if ("test12" == "Noise Disturbance") {
-        document.getElementById("test12").innerHTML = "Geluidsoverlast";
-    }
-}
