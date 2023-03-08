@@ -4,7 +4,7 @@
     --font-size: 12px;
     --bg-gradient: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 57%));
     --primary-dark-color: hsl(238, 29%, 16%);
-    --primary-soft-color: hsl(14, 88%, 65%);
+    --primary-soft-color: hsl(147, 93%, 28%);
     --neutral-dark-color: hsl(237, 12%, 33%);
     --neutral-soft-color: hsl(240, 6%, 50%);
 }
@@ -133,12 +133,13 @@ input.vraagTitel {
 
 /*veranderd de kleur naar groen wanneer over de vraag word gehoverd*/
 .vgvVraag:hover h2 {
-    color: rgb(0, 255, 0);
+    color: rgb(5, 140, 66);
 }
 
 /*onclick maakt de vraag dikgedrukt. */
 .vgvAccordion .vraagTitel:checked + div > label > h2 {
     font-weight: 700;
+    color: rgb(5,140,66);
 }
 
 /*veranderd de arrow down to arrow up*/
