@@ -1,3 +1,8 @@
+
+window.onload = function vertaalEngels() {
+    document.getElementById("test12").innerHTML = "Noise Disturbance";
+}
+
 // function googleTranslateElementInit() {
 //   new google.translate.TranslateElement({pageLanguage: 'nl', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
 // }
