@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <script src="../assets/js/admin.js"></script>
+</head>
+<body>
+<!--NAVBAR-->
+<nav>
+    <h2 class="tgm-text">The Green Mile</h2>
+
+    <div class="nav-items">
+        <div class="left-items">
+            <p class="nav-text">De ambitie</p>
+            <p class="nav-text">Media</p>
+            <p class="nav-text">Over</p>
+        </div>
+        <div class="right-items">
+            <p class="nav-text">FAQ</p>
+            <p class="nav-text">Dashboard</p>
+            <p class="nav-text">Log in</p>
+        </div>
+    </div>
+</nav>
+
+<!--BODY-->
+<div id="inputDiv">
+    <p class="head">Groen toevoegen</p>
+
+    <form id="addGreenInputForm">
+        <label>Groen type:</label>
+        <select name="addGreenType">
+            <option value="null"></option>
+            <option value="Groenstrook">Groenstrook</option>
+            <option value="Boomtuin">Boomtuin</option>
+            <option value="Geveltuin">Geveltuin</option>
+        </select>
+
+        <label>Gebied:</label>
+        <select name="addGreenLocation">
+            <option value="null"></option>
+            <option value="Stadhouderskade-1">Stadhouderskade 1-40</option>
+            <option value="Stadhouderskade-2">Stadhouderskade 40-80</option>
+            <option value="Stadhouderskade-3">Stadhouderskade 80-120</option>
+            <option value="Stadhouderskade-4">Stadhouderskade 120-160</option>
+        </select>
+
+        <label for="coordinateX">Coordinaat X:</label>
+        <input type="text" id="coordinateX" name="CoordinaatX" placeholder="">
+
+        <label for="coordinateY">Coordinaat Y:</label>
+        <input type="text" id="coordinateY" name="CoordinaatY" placeholder="">
+
+        <input type="submit" class="submitButton" id="submitGreenInputForm" value="Voeg toe">
+    </form>
+
+    <p class="head">Groen type toevoegen</p>
+    <form id="addGreenTypeForm">
+        <label for="greenTypeName">Groen type naam:</label>
+        <input type="text" id="greenTypeName" name="greenTypeName" placeholder="">
+
+        <input type="submit" class="submitButton" id="submitAddGreenTypeForm" value="Voeg toe">
+    </form>
+
+    <p class="head">Gebied toevoegen</p>
+    <form id="addGreenLocationForm">
+        <label for="greenLocationName">Gebied naam:</label>
+        <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
+
+        <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
+    </form>
+</div>
+</body>
+</html>
