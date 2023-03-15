@@ -2,7 +2,6 @@ let maxValue = 100;
 
 let svgCircle = document.querySelectorAll(".foreground-circle svg circle");
 
-let numberInsideCircle = document.getElementById("number-inside-circle");
 
 // Get the stroke-dasharray value from CSS
 let svgStrokeDashArray = parseInt(
@@ -12,7 +11,7 @@ let svgStrokeDashArray = parseInt(
         .replace("px", "")
 );
 
-// To animte the circle from the previous value
+// To animate the circle from the previous value
 let previousStrokeDashOffset = svgStrokeDashArray;
 
 // To animate the number from the previous value
@@ -22,8 +21,8 @@ let animationDuration = 1000;
 
 // Call this method and pass any value to start the animation
 // The 'value' should be in between 0 to maxValue
-function animteCircle(value) {
-    var offsetValue = Math.floor(
+function animateCircle(value) {
+    let offsetValue = Math.floor(
         ((maxValue - value) * svgStrokeDashArray) / maxValue
     );
 
@@ -51,7 +50,7 @@ function animteCircle(value) {
     // If the current value and previous values are same,
     // no need to do anything. Check the condition.
     if (value != previousValue) {
-        var speed;
+        let speed;
         if (value > previousValue) {
             speed = animationDuration / (value - previousValue);
         } else {
@@ -82,7 +81,7 @@ function animteCircle(value) {
     }
 }
 // Animate with some value when the page loads first time
-animteCircle(65);
+animateCircle(65);
 
 window.onload = function () {
 
