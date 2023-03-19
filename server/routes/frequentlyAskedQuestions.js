@@ -3,11 +3,16 @@
  * @author Sakhi Anwari
  */
 
-class VragenRouter{
+class FrequentlyAskedQuestions {
     #app;
 
     constructor(app) {
         this.#app = app;
 
     }
+    #createVragen() {
+        this.#app.get("/")
+    }
 }
+
+module.exports = FrequentlyAskedQuestions;
