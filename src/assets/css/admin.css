@@ -1,0 +1,39 @@
+.head{
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+}
+
+#inputDiv{
+    text-align: center;
+}
+
+#addGreenInputForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#addGreenTypeForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#addGreenLocationForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input{
+    width: 19.5em;
+}
+
+.submitButton{
+    margin-top: 5px;
+    width: 7em;
+}
+
+select{
+    width: 20em;
+}

@@ -21,8 +21,9 @@
 .topDashboard{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
-.circleContainer {
+.circleContainer1,.circleContainer2,.circleContainer3,.circleContainer4 {
     display: flex;
     flex-direction: row;
     margin: 16px;
@@ -107,6 +108,7 @@
 .informatieContainer{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 .bigBox{
     display: flex;
