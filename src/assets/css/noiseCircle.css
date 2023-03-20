@@ -4,16 +4,6 @@
     font-weight: 600;
     src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://fonts.gstatic.com/s/opensans/v13/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff) format('woff');
 }
-
-* {
-    font-family: 'Open Sans', serif;
-    font-style: normal;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    background-color: #e7e7e7;
-}
-
 .pTitle{
     font-size: 50px;
 }
