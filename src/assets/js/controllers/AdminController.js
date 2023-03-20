@@ -1,5 +1,5 @@
 import {Controller} from "./controller.js";
-import {AdminRepository} from "../repositories/adminRepository";
+import {AdminRepository} from "../repositories/adminRepository.js";
 import {App} from "../app.js";
 
 export class adminController extends Controller {
@@ -8,8 +8,8 @@ export class adminController extends Controller {
 
     constructor() {
         super();
-        this.#setupView();
         this.#adminRepository = new AdminRepository();
+        this.#setupView();
     }
 
     async #setupView() {
@@ -25,6 +25,7 @@ export class adminController extends Controller {
 
         console.log(type)
 
-        this.#createAdminView.addGreenType(type);
+        this.#adminRepository.addGreenType(type);
+     //   this.#createAdminView.addGreenType(type);
     }
 }

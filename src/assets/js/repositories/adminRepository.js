@@ -1,17 +1,17 @@
 import { NetworkManager } from "../framework/utils/networkManager.js";
 
-export class adminRepository {
+export class AdminRepository {
     #networkmanager;
-    #adminRoute;
+    #adminRoutes;
 
     constructor() {
         this.#networkmanager = new NetworkManager();
-        this.#adminRoute = "/admin";
+        this.#adminRoutes = "/admin";
     }
 
     async addGreenType(type){
-        return await this.#networkmanager.doRequest(this.#adminRoute, "POST", {
-            "type": type})
+        return await this.#networkmanager.doRequest(this.#adminRoutes, "POST", {
+            "type": type});
     }
 
 }
