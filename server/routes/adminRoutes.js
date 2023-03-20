@@ -13,13 +13,20 @@ class adminRoutes {
     constructor(app) {
         this.#app = app;
 
-        this.#admin();
+        this.#addGreenType();
     }
 
-    #admin() {
+    #addGreenType() {
+
+        this.#app.get("/admin", async(req, res) => {
+
+            res.status(this.#errorCodes.HTTP_OK_CODE).json("");
+        });
+
+
         this.#app.post("/admin", async(req, res) => {
 
-            const type = req.body.addGreenType;
+            const type = req.body.type;
 
             try {
                 let data = await this.#databaseHelper.handleQuery( {
