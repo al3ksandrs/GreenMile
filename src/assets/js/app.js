@@ -16,6 +16,7 @@ import { faqController } from "./controllers/FaqController.js";
 import { adminController} from "./controllers/AdminController.js";
 import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
+import {AccountsController} from "./controllers/AccountsController.js";
 
 export class App {
     //we only need one instance of the sessionManager, thus static use here
@@ -32,6 +33,7 @@ export class App {
     static CONTROLLER_ADMIN = "admin"
     static CONTROLLER_AMBITION = "ambition"
     static CONTROLLER_DASHBOARD = "dashboard"
+    static CONTROLLER_ACCOUNTS = "accounts";
 
     constructor() {
         //Always load the navigation
@@ -96,6 +98,10 @@ export class App {
 
             case App.CONTROLLER_DASHBOARD:
                 new DashboardController();
+                break;
+
+            case App.CONTROLLER_ACCOUNTS:
+                new AccountsController();
                 break;
 
             default:
