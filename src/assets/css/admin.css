@@ -37,3 +37,8 @@ input{
 select{
     width: 20em;
 }
+
+#counter {
+    font-size: 10rem;
+    background-color: green;
+}
