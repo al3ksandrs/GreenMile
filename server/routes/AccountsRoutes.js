@@ -9,8 +9,13 @@ class AccountsRoutes {
         this.#app = app;
 
         this.#loadAllAccounts();
+        this.#removeAccount();
     }
 
+    /**
+     * Endpoint to retrieve all the users from the database,
+     * when it gets all the accounts, it returns all of it in JSON-Format
+     */
     #loadAllAccounts() {
         this.#app.get("/accountsOverview", async (req, res) =>{
             try {
@@ -19,6 +24,20 @@ class AccountsRoutes {
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(allAccounts);
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    #removeAccount() {
+        this.#app.get("/delete/:id", async (req,res) => {
+            try {
+                let results = await this.#databaseHelper.handleQuery({
+                    query: "DELETE FROM Gebruiker WHERE id= ?",
+                    values: [req.params.id]
+                });
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
