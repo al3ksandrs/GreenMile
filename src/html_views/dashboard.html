@@ -1,51 +1,119 @@
-<div class="topDashboard">
-    <div class="circleContainer1">
-        <div class="circleBox">
-            <div class="background-circle"></div>
-            <div class="foreground-circle">
-                <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="144px" height="144px">
-                    <circle cx="72" cy="72" r="72" stroke="#058C42" stroke-width="24" fill="transparent" stroke-linecap="round"/>
-                </svg>
+<div class="container">
+    <div class="h1 col-11 border-bottom">Dashboard</div>
+    <div class="p my-3">
+        Op het dashboard kunt u informatie vinden over statistieken van de Stadhouderskade,
+        deze data is verzameld door aardrijdskunde studenten
+    </div>
+    <div class="topDashboard">
+        <div class="circleContainer shadow">
+            <div class="circleBox">
+                <div class="background-circle"></div>
+                <div class="foreground-circle">
+                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
+                                stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="pictureInsideCircle">
+                    <img src="assets/pictures/dashboard/Geveltuinen.png" width="36" height="36" alt="AQI FOTO">
+                </div>
             </div>
-            <div class="pictureInsideCircle">
-                <img src="assets/pictures/personicon.png" alt="Overlast">
+            <div class="data">
+                <p>Geveltuinen</p>
+                <p class="greenNumber">120</p>
+                <p class="greyParagraph">/130</p>
             </div>
         </div>
-        <div class="data">
-            <p id="test12" class="greyParagraph">Geluidsoverlast</p>
-            <p class="greenNumber" id="decibelData"> 30</p>
-            <p class="greyParagraph">Decibel</p>
+        <div class="circleContainer shadow">
+            <div class="circleBox">
+                <div class="background-circle"></div>
+                <div class="foreground-circle">
+                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="pictureInsideCircle">
+                    <img src="assets/pictures/dashboard/Boomtuinen.png" width="36" height="36" alt="AQI FOTO">
+                </div>
+            </div>
+            <div class="data">
+                <p>Boomtuinen</p>
+                <p class="greenNumber">156 </p>
+                <p class="greyParagraph">/320</p>
+            </div>
+        </div>
+        <div class="circleContainer shadow">
+            <div class="circleBox">
+                <div class="background-circle"></div>
+                <div class="foreground-circle">
+                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
+                                stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="pictureInsideCircle">
+                    <img src="assets/pictures/dashboard/GroeneM2.png" width="36" height="36" alt="AQI FOTO">
+                </div>
+            </div>
+            <div class="data">
+                <p>Groene Mˆ2</p>
+                <p class="greenNumber">7</p>
+                <p class="greyParagraph">kHa</p>
+            </div>
+        </div>
+        <div class="circleContainer shadow">
+            <div class="circleBox">
+                <div class="background-circle"></div>
+                <div class="foreground-circle">
+                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
+                                stroke-linecap="round" stroke-dasharray=""/>
+                    </svg>
+
+                </div>
+                <div class="pictureInsideCircle">
+                    <img src="assets/pictures/dashboard/LKI.png" width="36" height="36" alt="AQI FOTO">
+                </div>
+            </div>
+            <div class="data">
+                <p>LKI</p>
+                <p class="greenNumber" id="LKIvalue">LKI Value.</p>
+                <p class="greyParagraph">/10</p>
+            </div>
+        </div>
+        <div class="circleContainer shadow">
+            <div class="circleBox">
+                <div class="background-circle"></div>
+                <div class="foreground-circle">
+                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
+                                stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="pictureInsideCircle">
+                    <img src="assets/pictures/dashboard/Decibel.png" width="36" height="36" alt="Overlast">
+                </div>
+            </div>
+            <div class="data">
+                <p>Geluidsoverlast</p>
+                <p class="greenNumber" id="decibelData"> 30</p>
+                <p class="greyParagraph">Decibel</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="informatieContainer">
+        <div class="bigBox shadow">
+            <p class="greenNumber"> Informatie</p>
+        </div>
+        <div class="mediumBox shadow">
+            <p class="greenNumber">Informatie</p>
         </div>
     </div>
-    <div class="circleContainer2">
-        <div class="circleBox">
-            <div class="background-circle"></div>
-            <div class="foreground-circle">
-                <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="144px" height="144px">
-                    <circle cx="72" cy="72" r="72" stroke="#058C42" stroke-width="24" fill="transparent" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="pictureInsideCircle">
-                <img src="assets/pictures/AQIdata.png" alt="AQI FOTO">
-            </div>
-        </div>
-        <div class="data">
-            <p class="greyParagraph">LKI</p>
-            <p class="greenNumber" id="LKIvalue">LKI Value. </p>
-            <p class="greyParagraph">/10</p>
-        </div>
-    </div>
-    <div class="circleContainer3"></div>
-    <div class="circleContainer4"></div>
-
-</div>
-
-<div class="informatieContainer">
-
-<div class="bigBox">
-    <p class="greenNumber"> Informatie</p>
-</div>
-<div class="mediumBox"><p class="greenNumber">Informatie</p></div>
 </div>

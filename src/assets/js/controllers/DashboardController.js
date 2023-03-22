@@ -4,8 +4,13 @@ import {AdminRepository} from "../repositories/AdminRepository.js";
 export class DashboardController extends Controller {
     #createDashboardView;
     #adminRepository;
-    DECIBEL_CIRCLE = 0;
-    LKI_CIRCLE = 1;
+
+    #GEVELTUINEN_CIRCLE = 0;
+    #BOOMTUINEN_CIRCLE = 1
+    #GROENEM2_CIRCLE = 2;
+    #LKI_CIRCLE = 3;
+    #DECIBEL_CIRCLE = 4;
+
 
     constructor() {
         super();
@@ -19,7 +24,11 @@ export class DashboardController extends Controller {
 
         this.#loadLKIvalues();
 
-        this.#animateCircle(50,this.DECIBEL_CIRCLE) // rework this one into routes
+        // These are just dummy values, get this data through routes later.
+        this.#animateCircle(92,this.#GEVELTUINEN_CIRCLE)
+        this.#animateCircle(48,this.#BOOMTUINEN_CIRCLE)
+        this.#animateCircle(68,this.#GROENEM2_CIRCLE)
+        this.#animateCircle(50,this.#DECIBEL_CIRCLE) // rework this one into routes
 
     }
 
@@ -30,7 +39,7 @@ export class DashboardController extends Controller {
             const LKIvalue = await this.#adminRepository.getLKIvalues();
             valueBox.innerHTML = LKIvalue.LKI;
             let circleValue = 10*LKIvalue.LKI;
-            this.#animateCircle(circleValue, this.LKI_CIRCLE)
+            this.#animateCircle(circleValue, this.#LKI_CIRCLE)
         } catch (e) {
             console.log(e)
         }
@@ -47,7 +56,9 @@ export class DashboardController extends Controller {
         )) / 100);
 
         // This is to animate the circle
-        document.querySelectorAll(".foreground-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".foreground-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 750,});
+        document.querySelectorAll(".foreground-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".foreground-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
+
+        console.log(offsetValue + " " + circleSelector)
 
         // Without this, circle gets filled 100% after the animation
         document.querySelectorAll(".foreground-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;

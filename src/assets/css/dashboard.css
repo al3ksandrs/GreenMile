@@ -1,17 +1,142 @@
-body {
-    text-align: center;
-    padding: 50px 0;
-  }
-  /* Box class voor de stukken waar de cirkels in moeten. */
-  .box {
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://fonts.gstatic.com/s/opensans/v13/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff) format('woff');
+}
+.topDashboard{
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.circleContainer {
+    display: flex;
+    flex-direction: row;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 13px;
+    border: 1px solid #efefef;
+    /*box-shadow: 4px 4px 1px 1px #ababab;*/
+    background-color:#ffffff;
+    width: 220px;
+    height: 100px;
+}
+
+.circleBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background-color: #ffffff;
+}
+
+.background-circle {
+    /* width = container's size (200px) - ( 2 * svg's stroke-width (24px) ) .
+          Increase a little bit */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 1px 1px 0 12px #058C42;
+    opacity: 50%;
+    position: absolute;
+    /* To center it inside the container.
+          margin = ( container's size - the width and height's size ) / 2
+          */
+    margin: 10px;
+    background-color: transparent;
+    z-index: 2;
+
+}
+
+.foreground-circle {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    background-color: transparent;
+    /* To start the svg circle from the top */
+    transform: rotate(-90deg);
+    /* To center it inside the container */
+    position: absolute;
+    margin: 5px;
+}
+
+.foreground-circle svg circle {
+    /* stroke-dasharray = 2 * (22/7) * 36 */
+    stroke-dasharray: 226;
+}
+.pictureInsideCircle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #ffffff;
+    z-index: 1;
+
+}
+.data{
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #aaa;
-    margin: 20px 0;
-    padding: 10px;
-    width: 100%;
-    min-height: 200px;
-    border: 2px #ccc solid;
-    color: #fff;
-  }
+    background-color: #ffffff;
+    width: 100px;
+    height: 50px;
+    margin-top: 25px;
+    line-height: 0.5;
+    margin-left: 0.9rem;
+}
+
+.informatieContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.bigBox{
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    padding: 8px;
+    border-radius: 13px;
+    border: 1px solid #efefef;
+    /*box-shadow: 4px 10px 1px 1px #ababab;*/
+    background-color:#ffffff;
+    width: 50rem;
+    height: 35rem;
+}
+
+.mediumBox{
+    margin: 10px;
+    padding: 8px;
+    border-radius: 13px;
+    border: 1px solid #efefef;
+    /*box-shadow: 4px 5px 1px 1px #ababab;*/
+    background-color:#ffffff;
+    width: 21.4rem;
+    height: 35rem;
+}
+
+.greyParagraph{
+    background-color: #ffffff;
+    color: #737373;
+}
+
+.greenNumber{
+    color:#058C42;
+    background-color: #ffffff;
+    font-size: 20px;
+}
+
+svg:not(:root) {
+    overflow: visible;
+    background-color: transparent;
+}
+
+.rounded-circle {
+    color: white;
+    height: 30px;
+    width: 30px;
+}
