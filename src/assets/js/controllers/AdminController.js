@@ -12,5 +12,3 @@ export class adminController extends Controller {
         this.#createAdminView = await super.loadHtmlIntoContent("html_views/admin.html")
     }
 }
-
-const count = document.getElementById()

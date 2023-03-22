@@ -52,16 +52,16 @@ export class DashboardController extends Controller {
      * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
      */
     #animateCircle(value,circleSelector) {
-        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".foreground-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")
+        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")
         )) / 100);
 
         // This is to animate the circle
-        document.querySelectorAll(".foreground-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".foreground-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
+        document.querySelectorAll(".progress-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
 
         console.log(offsetValue + " " + circleSelector)
 
         // Without this, circle gets filled 100% after the animation
-        document.querySelectorAll(".foreground-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
+        document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
     }
 
 }

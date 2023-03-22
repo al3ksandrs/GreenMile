@@ -9,7 +9,7 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
-.circleContainer {
+.progress-bar-container {
     display: flex;
     flex-direction: row;
     margin: 8px;
@@ -22,7 +22,7 @@
     height: 100px;
 }
 
-.circleBox {
+.circle-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -31,7 +31,7 @@
     background-color: #ffffff;
 }
 
-.background-circle {
+.progress-circle-background {
     /* width = container's size (200px) - ( 2 * svg's stroke-width (24px) ) .
           Increase a little bit */
     width: 60px;
@@ -49,7 +49,7 @@
 
 }
 
-.foreground-circle {
+.progress-circle {
     width: 72px;
     height: 72px;
     display: flex;
@@ -64,11 +64,11 @@
     margin: 5px;
 }
 
-.foreground-circle svg circle {
+.progress-circle svg circle {
     /* stroke-dasharray = 2 * (22/7) * 36 */
     stroke-dasharray: 226;
 }
-.pictureInsideCircle {
+.picture-in-circle {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -77,7 +77,7 @@
     z-index: 1;
 
 }
-.data{
+.data-container{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -90,12 +90,12 @@
     margin-left: 0.9rem;
 }
 
-.informatieContainer{
+.information-container{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
-.bigBox{
+.graph-box{
     display: flex;
     flex-direction: row;
     margin: 10px;
@@ -108,7 +108,7 @@
     height: 35rem;
 }
 
-.mediumBox{
+.information-box{
     margin: 10px;
     padding: 8px;
     border-radius: 13px;
@@ -119,12 +119,12 @@
     height: 35rem;
 }
 
-.greyParagraph{
+.grey-text{
     background-color: #ffffff;
     color: #737373;
 }
 
-.greenNumber{
+.green-text{
     color:#058C42;
     background-color: #ffffff;
     font-size: 20px;
@@ -133,10 +133,4 @@
 svg:not(:root) {
     overflow: visible;
     background-color: transparent;
-}
-
-.rounded-circle {
-    color: white;
-    height: 30px;
-    width: 30px;
 }
