@@ -4,116 +4,131 @@
         Op het dashboard kunt u informatie vinden over statistieken van de Stadhouderskade,
         deze data is verzameld door aardrijdskunde studenten
     </div>
-    <div class="topDashboard">
-        <div class="progress-bar-container shadow">
+    <div class="circle-diagrams">
+        <div class="progress-bar-container" id="gevelData">
+            <!-- Contains both of the circles -->
             <div class="circle-container">
-                <div class="progress-circle-background"></div>
+                <div class="progress-circle-background"></div> <!--Circle behind (ligt-green) -->
                 <div class="progress-circle">
-                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <!--Progress circle-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
-                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
-                                stroke-linecap="round"/>
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="13" fill="transparent" stroke-linecap="round"/>
                     </svg>
                 </div>
+                <!-- Picture in the middle of the circle-->
                 <div class="picture-in-circle">
                     <img src="assets/pictures/dashboard/Geveltuinen.png" width="36" height="36" alt="AQI FOTO">
                 </div>
             </div>
+            <!-- Data next to the diagram-->
             <div class="data-container">
                 <p>Geveltuinen</p>
-                <p class="green-text">120</p>
+                <p class="green-text">69</p>
                 <p class="grey-text">/130</p>
             </div>
         </div>
-        <div class="progress-bar-container shadow">
+        <div class="progress-bar-container" id="boomData">
+            <!-- Contains both of the circles -->
             <div class="circle-container">
-                <div class="progress-circle-background"></div>
+                <div class="progress-circle-background"></div> <!--Circle behind (ligt-green) -->
                 <div class="progress-circle">
-                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <!--Progress circle-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
-                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent" stroke-linecap="round"/>
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="13" fill="transparent" stroke-linecap="round"/>
                     </svg>
                 </div>
+                <!-- Picture in the middle of the circle-->
                 <div class="picture-in-circle">
                     <img src="assets/pictures/dashboard/Boomtuinen.png" width="36" height="36" alt="AQI FOTO">
                 </div>
             </div>
+            <!-- Data next to the diagram-->
             <div class="data-container">
                 <p>Boomtuinen</p>
                 <p class="green-text">156 </p>
                 <p class="grey-text">/320</p>
             </div>
         </div>
-        <div class="progress-bar-container shadow">
+        <div class="progress-bar-container " id="groenData">
+            <!-- Contains both of the circles -->
             <div class="circle-container">
-                <div class="progress-circle-background"></div>
+                <div class="progress-circle-background"></div> <!--Circle behind (ligt-green) -->
                 <div class="progress-circle">
-                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <!--Progress circle-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
-                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
-                                stroke-linecap="round"/>
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="13" fill="transparent" stroke-linecap="round"/>
                     </svg>
                 </div>
+                <!-- Picture in the middle of the circle-->
                 <div class="picture-in-circle">
                     <img src="assets/pictures/dashboard/GroeneM2.png" width="36" height="36" alt="AQI FOTO">
                 </div>
             </div>
+            <!-- Data next to the diagram-->
             <div class="data-container">
-                <p>Groene Mˆ2</p>
+                <p>Groene  M²</p>
                 <p class="green-text">7</p>
                 <p class="grey-text">kHa</p>
             </div>
         </div>
-        <div class="progress-bar-container shadow">
+        <div class="progress-bar-container " id="lkiData">
+            <!-- Contains both of the circles -->
             <div class="circle-container">
-                <div class="progress-circle-background"></div>
+                <div class="progress-circle-background"></div> <!--Circle behind (light-green) -->
                 <div class="progress-circle">
-                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <!--Progress circle-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
-                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
-                                stroke-linecap="round" stroke-dasharray=""/>
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="13" fill="transparent" stroke-linecap="round"/>
                     </svg>
-
                 </div>
+                <!-- Picture in the middle of the circle-->
                 <div class="picture-in-circle">
                     <img src="assets/pictures/dashboard/LKI.png" width="36" height="36" alt="AQI FOTO">
                 </div>
             </div>
+            <!-- Data next to the diagram-->
             <div class="data-container">
                 <p>LKI</p>
                 <p class="green-text" id="LKIvalue">LKI Value.</p>
                 <p class="grey-text">/10</p>
             </div>
         </div>
-        <div class="progress-bar-container shadow">
+        <div class="progress-bar-container " id="decibalData">
+            <!-- Contains both of the circles -->
             <div class="circle-container">
-                <div class="progress-circle-background"></div>
+                <div class="progress-circle-background"></div> <!--Circle behind (ligt-green) -->
                 <div class="progress-circle">
-                    <!-- svg's width = foreground-circle's width. cx, cy, and r values should be half of the svg's width. -->
+                    <!--Progress circle-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="72px" height="72px">
-                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="12" fill="transparent"
-                                stroke-linecap="round"/>
+                        <circle cx="36" cy="36" r="36" stroke="#058C42" stroke-width="13" fill="transparent" stroke-linecap="round"/>
                     </svg>
                 </div>
+                <!-- Picture in the middle of the circle-->
                 <div class="picture-in-circle">
                     <img src="assets/pictures/dashboard/Decibel.png" width="36" height="36" alt="Overlast">
                 </div>
             </div>
+            <!-- Data next to the diagram-->
             <div class="data-container">
                 <p>Geluidsoverlast</p>
-                <p class="green-text" id="decibelData"> 30</p>
+                <p class="green-text"> 30</p>
                 <p class="grey-text">Decibel</p>
             </div>
         </div>
-
     </div>
 
     <div class="information-container">
-        <div class="graph-box shadow">
-            <p class="green-text"> Informatie</p>
+        <div class="graph-box shadow-lg">
+            <p class="green-text fw-bold">Grafiek&nbsp;</p>
+            <p class="graph-type-text"></p>
         </div>
-        <div class="information-box shadow">
-            <p class="green-text">Informatie</p>
+        <div class="information-box shadow-lg flex-column">
+            <div class="information-box-title">
+                <p class="green-text fw-bold">Informatie&nbsp;</p>
+                <p class="info-type-text graph-type-text"></p>
+            </div>
+            <div class="information-box-content flex-column">
+            </div>
         </div>
     </div>
 </div>

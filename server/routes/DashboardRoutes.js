@@ -27,7 +27,6 @@ class DashboardRoutes {
                         return response.json();
                     }).then(function (data){
                         LKIdata = data.data[0].value;
-                        console.log(data)
                     })
 
                 res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({LKI: LKIdata});
