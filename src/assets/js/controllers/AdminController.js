@@ -16,6 +16,8 @@ export class adminController extends Controller {
         this.#createAdminView = await super.loadHtmlIntoContent("html_views/admin.html")
 
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
+
+        this.#handleAreaRefresh(event);
     }
 
     #handleAddGreenType(event) {
@@ -23,9 +25,17 @@ export class adminController extends Controller {
 
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
 
-        console.log(type)
+        console.log(type);
 
         this.#adminRepository.addGreenType(type);
-     //   this.#createAdminView.addGreenType(type);
+    }
+
+    #handleAreaRefresh(event){
+        event.preventDefault();
+
+        const areaList = this.#createAdminView.querySelector("#greenAreaList");
+        const areaID = this.#adminRepository.getArea();
+
+        console.log(areaID)
     }
 }

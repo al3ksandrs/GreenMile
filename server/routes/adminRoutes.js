@@ -14,6 +14,7 @@ class adminRoutes {
         this.#app = app;
 
         this.#addGreenType();
+        this.#refreshAreaList();
     }
 
     #addGreenType() {
@@ -40,6 +41,22 @@ class adminRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
             }
 
+        });
+    }
+
+    #refreshAreaList(){
+        this.#app.get("/admin", async(req, res) => {
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT Gebiedsnummer, opmerking FROM gebied",
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
         });
     }
 
