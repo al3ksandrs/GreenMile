@@ -29,10 +29,6 @@
     width: 80px;
     height: 80px;
 }
-.circle-container-child{
-    display: flex;
-
-}
 
 .progress-circle-background {
     border-radius: 50%;
