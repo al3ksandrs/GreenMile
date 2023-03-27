@@ -15,16 +15,35 @@ class adminRoutes {
 
         this.#addGreenType();
         this.#refreshAreaList();
+        this.#refreshTypeList();
+        this.#addGreen();
     }
 
-    #addGreenType() {
+    #addGreen() {
+        this.#app.post("/adminAddGreen", async(req, res) => {
 
-        this.#app.get("/admin", async(req, res) => {
+            const coordinaatX = req.body.coordinaatX;
+            const coordinaatY = req.body.coordinaatY;
+            const gebied_id = req.body.gebied_id;
+            const type_id = req.body.type_id;
 
-            res.status(this.#errorCodes.HTTP_OK_CODE).json("");
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "INSERT INTO groen(coordinaatX, coordinaatY, gebied_id, type_id) VALUES (?,?,?,?)",
+                    values: [coordinaatX, coordinaatY, gebied_id, type_id]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
         });
+    }
 
 
+    #addGreenType() {
         this.#app.post("/admin", async(req, res) => {
 
             const type = req.body.type;
@@ -45,14 +64,30 @@ class adminRoutes {
     }
 
     #refreshAreaList(){
-        this.#app.get("/admin", async(req, res) => {
+        this.#app.get("/areaList", async(req, res) => {
 
             try {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "SELECT Gebiedsnummer, opmerking FROM gebied",
                 });
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+        });
+    }
+
+    #refreshTypeList(){
+        this.#app.get("/typeList", async(req, res) => {
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT id, naam FROM type",
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
 
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
