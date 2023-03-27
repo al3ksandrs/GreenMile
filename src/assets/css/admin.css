@@ -3,6 +3,10 @@
     font-weight: 600;
 }
 
+#headAdders {
+    margin-top: 25px;
+}
+
 #inputDiv{
     text-align: center;
 }
@@ -24,6 +28,23 @@
     flex-direction: column;
     align-items: center;
 }
+#addGreenGarden {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: -1rem 10px 10px;
+}
+#addGreenM2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: -1rem 10px 10px;
+}
+
+.inputField {
+    width: auto;
+    text-align: center;
+}
 
 input{
     width: 19.5em;
@@ -36,6 +57,7 @@ input{
 
 select{
     width: 20em;
+    text-align: center;
 }
 
 #counter {
