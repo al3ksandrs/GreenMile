@@ -17,6 +17,7 @@ import { adminController} from "./controllers/AdminController.js";
 import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
 import {AccountsController} from "./controllers/AccountsController.js";
+import {footerController} from "./controllers/footerController.js";
 
 export class App {
     //we only need one instance of the sessionManager, thus static use here
@@ -34,6 +35,7 @@ export class App {
     static CONTROLLER_AMBITION = "ambition"
     static CONTROLLER_DASHBOARD = "dashboard"
     static CONTROLLER_ACCOUNTS = "accounts";
+    static CONTROLLER_FOOTER = "footer"
 
     constructor() {
         //Always load the navigation
@@ -41,6 +43,7 @@ export class App {
 
         //Attempt to load the controller from the URL, if it fails, fall back to the welcome controller.
         App.loadControllerFromUrl(App.CONTROLLER_WELCOME);
+        App.loadController(App.CONTROLLER_FOOTER)
     }
 
     /**
@@ -61,6 +64,10 @@ export class App {
         switch(name) {
             case App.CONTROLLER_NAVBAR:
                 new NavbarController();
+                return true;
+
+            case App.CONTROLLER_FOOTER:
+                new footerController();
                 return true;
 
             case App.CONTROLLER_LOGOUT:

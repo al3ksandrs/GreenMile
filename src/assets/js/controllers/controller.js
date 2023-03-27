@@ -8,10 +8,13 @@ export class Controller {
     #contentViewHtml
     #navigationViewHtml
 
+    #footerViewHtml;
+
     constructor() {
         //within the templateContent the HTML will be loaded
         this.#contentViewHtml = document.querySelector(".content");
         this.#navigationViewHtml = document.querySelector(".navigation");
+        this.#footerViewHtml = document.querySelector(".footer");
     }
 
     /**
@@ -20,8 +23,12 @@ export class Controller {
      * @returns {Promise<*>}
      */
     async loadHtmlIntoNavigation(htmlFile) {
-        return await this.#fetchHtmlView(htmlFile, true)
+        return await this.#fetchHtmlView(htmlFile, "nav")
 
+    }
+    async loadHtmlIntoFooter(htmlFile) {
+        let footer = await this.#fetchHtmlView(htmlFile, "footer")
+        return footer;
     }
 
     /**
@@ -30,7 +37,7 @@ export class Controller {
      * @returns {Promise<*>}
      */
     async loadHtmlIntoContent(htmlFile) {
-        return await this.#fetchHtmlView(htmlFile, false)
+        return await this.#fetchHtmlView(htmlFile, "content")
     }
 
     /**
@@ -52,8 +59,22 @@ export class Controller {
      * @returns {Promise<void>}
      * @private
      */
-    async #fetchHtmlView(htmlFile, loadIntoNavigation = false, customElement ) {
-        let loadInto = loadIntoNavigation ? this.#navigationViewHtml : this.#contentViewHtml
+    async #fetchHtmlView(htmlFile, loadIntoNavigation = "content", customElement ) {
+        let loadInto
+        switch (loadIntoNavigation) {
+            case "nav":
+                loadInto = this.#navigationViewHtml;
+                break;
+
+            case "content":
+                loadInto = this.#contentViewHtml;
+                break;
+
+            case "footer":
+                loadInto = this.#footerViewHtml
+                break;
+
+        }
 
         //if a HTML DOM element to load the content into is passed, load it into there and give that back
         if(customElement instanceof Element) {

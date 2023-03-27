@@ -1,11 +1,11 @@
 import {NetworkManager} from "../framework/utils/networkManager.js";
 
-export class nieuwsbriefRepository {
+export class footerRepository {
     #networkManager;
     #signUpRoutes;
 
     constructor() {
-        this.#signUpRoutes = "/mailingList/signup";
+        this.#signUpRoutes = "/mailingList/signup/";
 
         this.#networkManager = new NetworkManager();
     }
