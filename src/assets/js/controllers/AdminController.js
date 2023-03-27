@@ -15,13 +15,29 @@ export class adminController extends Controller {
     async #setupView() {
         this.#createAdminView = await super.loadHtmlIntoContent("html_views/admin.html")
 
+        this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
 
-        this.#handleAreaRefresh(event);
+        this.#handleAreaRefresh();
+        this.#handleTypeRefresh();
     }
 
-    #handleAddGreenType(event) {
+    #handleAddGreen() {
         event.preventDefault();
+        const coordinaatX = this.#createAdminView.querySelector("#coordinateX").value;
+        const coordinaatY = this.#createAdminView.querySelector("#coordinateY").value;
+        const gebied = this.#createAdminView.querySelector("#greenAreaList");
+        const selectedGebied = gebied.selectedIndex;
+        const type_id = this.#createAdminView.querySelector("#typeList");
+        const selectedType = type_id.selectedIndex;
+
+        console.log(coordinaatX + "\n" + coordinaatY + "\n" + selectedGebied + "\n" + selectedType);
+        console.log(selectedGebied)
+
+        this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType);
+    }
+
+    #handleAddGreenType() {
 
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
 
@@ -30,12 +46,22 @@ export class adminController extends Controller {
         this.#adminRepository.addGreenType(type);
     }
 
-    #handleAreaRefresh(event){
-        event.preventDefault();
+    async #handleAreaRefresh(){
 
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
-        const areaID = this.#adminRepository.getArea();
+        const areaID = await this.#adminRepository.getArea();
 
-        console.log(areaID)
+        for(let i = 0; areaID.data.length > i; i++){
+            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
+        }
+    }
+
+    async #handleTypeRefresh(){
+        const typeList = this.#createAdminView.querySelector("#typeList");
+        const typeID = await this.#adminRepository.getType();
+
+        for(let i = 0; typeID.data.length > i; i++){
+            typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
+        }
     }
 }
