@@ -1,11 +1,13 @@
 class DashboardRoutes {
     #app
     #httpErrorCodes = require("../framework/utils/httpErrorCodes")
+    #databaseHelper = require("../framework/utils/databaseHelper")
 
     constructor(app) {
         this.#app = app;
 
         this.#getLKI();
+        this.#getGroen();
     }
 
     /**
@@ -35,6 +37,22 @@ class DashboardRoutes {
 
             } catch(e) {
 
+            }
+        })
+    }
+
+    async #getGroen() {
+        this.#app.get("/groen", async(req,res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery({
+                    query: "SELECT SUM(m2) FROM gebied",
+                });
+
+                res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({data:data});
+
+            } catch (e) {
+
+                res.status(this.#httpErrorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
     }

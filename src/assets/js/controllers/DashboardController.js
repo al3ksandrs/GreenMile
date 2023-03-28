@@ -28,6 +28,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
 
         this.#loadLKIvalues();
+        this.#loadGroenvalues();
         this.#gevelData();
 
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
@@ -56,6 +57,18 @@ export class DashboardController extends Controller {
             valueBox.innerHTML = LKIvalue.LKI;
             let circleValue = 10*LKIvalue.LKI;
             this.#animateCircle(circleValue, this.#LKI)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async #loadGroenvalues() {
+        const valueBox = this.#dashboardView.querySelector("#groenValue");
+        try {
+            valueBox.innerHTML = "";
+            const groenValue = await this.#dashboardRepository.getGroenvalues();
+            valueBox.innerHTML = groenValue;
+            console.log (s);
         } catch (e) {
             console.log(e)
         }
