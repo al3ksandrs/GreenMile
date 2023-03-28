@@ -17,9 +17,18 @@ export class adminController extends Controller {
 
         this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
+        this.#createAdminView.querySelector("#submitRemoveGreenTypeForm").addEventListener("click", (event) => this.#removeGreenType(event));
 
         this.#handleAreaRefresh();
         this.#handleTypeRefresh();
+    }
+
+    #removeGreenType(){
+        event.preventDefault();
+        const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
+        const selectedRemoveType = removeTypeList.selectedIndex;
+
+        this.#adminRepository.removeGreenType(selectedRemoveType);
     }
 
     #handleAddGreen() {
@@ -30,9 +39,6 @@ export class adminController extends Controller {
         const selectedGebied = gebied.selectedIndex;
         const type_id = this.#createAdminView.querySelector("#typeList");
         const selectedType = type_id.selectedIndex;
-
-        console.log(coordinaatX + "\n" + coordinaatY + "\n" + selectedGebied + "\n" + selectedType);
-        console.log(selectedGebied)
 
         this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType);
     }
@@ -58,10 +64,12 @@ export class adminController extends Controller {
 
     async #handleTypeRefresh(){
         const typeList = this.#createAdminView.querySelector("#typeList");
+        const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const typeID = await this.#adminRepository.getType();
 
         for(let i = 0; typeID.data.length > i; i++){
             typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
+            removeTypeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
         }
     }
 }

@@ -5,7 +5,7 @@
             <h class="head bighead">Gegevens Toevoegen</h>
 
             <p class="head">Groen toevoegen</p>
-            <form id="addGreenInputForm">
+            <form class="dropdownForm" id="addGreenInputForm">
                 <label>Groen type:</label>
                 <select name="addGreenType" id="typeList">
                     <option value="null"></option>
@@ -26,7 +26,7 @@
             </form>
 
             <p class="head">Groen type toevoegen</p>
-            <form id="addGreenTypeForm">
+            <form class="dropdownForm" id="addGreenTypeForm">
                 <label for="greenTypeName">Groen type naam:</label>
                 <input type="text" id="greenTypeName" name="greenTypeName" placeholder="">
 
@@ -34,7 +34,7 @@
             </form>
 
             <p class="head">Gebied toevoegen</p>
-            <form id="addGreenLocationForm">
+            <form class="dropdownForm" id="addGreenLocationForm">
                 <label for="greenLocationName">Gebied naam:</label>
                 <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
 
@@ -89,6 +89,23 @@
         <div id="removeForms">
             <h class="head bighead">Gegevens Verwijderen</h>
 
+            <p class="head">Groen type verwijderen</p>
+            <form class="dropdownForm" id="removeGreenTypeForm">
+                <label for="greenTypeName">Groen type naam:</label>
+                <select name="removeGreenType" id="removeTypeList">
+                    <option value="null"></option>
+                </select>
+
+                <input type="submit" class="submitButton" id="submitRemoveGreenTypeForm" value="Verwijder">
+            </form>
+
+<!--            <p class="head">Gebied verwijderen</p>
+            <form id="removeGreenLocationForm">
+                <label for="greenLocationName">Gebied naam:</label>
+                <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
+
+                <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
+            </form>-->
         </div>
     </div>
 </div>

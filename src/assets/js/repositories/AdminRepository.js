@@ -6,6 +6,7 @@ export class AdminRepository {
     #areaListRoute;
     #typeListRoute;
     #addGreenRoute;
+    #removeGreenTypeRoute;
 
     constructor() {
         this.#networkmanager = new NetworkManager();
@@ -13,6 +14,13 @@ export class AdminRepository {
         this.#areaListRoute = "/areaList"
         this.#typeListRoute = "/typeList"
         this.#addGreenRoute = "/adminAddGreen"
+        this.#removeGreenTypeRoute = "/removeGreenTypeRoute"
+    }
+
+    async removeGreenType(type){
+        return await this.#networkmanager.doRequest(this.#removeGreenTypeRoute, "DELETE", {
+            "type": type
+        });
     }
 
     async addGreen(coordinaatX, coordinaatY, gebied_id, type_id) {
