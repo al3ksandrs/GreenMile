@@ -124,7 +124,7 @@ export class DashboardController extends Controller {
         <div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`;
     }
     #tempData() {
-        this.#dashboardView.querySelector("#weerData").classList.add("shadow")
+        this.#dashboardView.querySelector("#tempData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Temperatuur";
         this.#infoTextBox.innerText = "/ Temperatuur"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Temperatuur uitleg</div>
