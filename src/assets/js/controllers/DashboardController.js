@@ -91,7 +91,11 @@ export class DashboardController extends Controller {
             valueBox.innerHTML = tempValue.weer;
             let circleValue = 3*tempValue.weer;
             this.#animateCircle(circleValue, this.#TEMPERATUUR)
-        }catch (e) {
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     async #loadGroenvalues() {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
         try {

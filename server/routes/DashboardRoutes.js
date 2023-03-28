@@ -1,9 +1,7 @@
 class DashboardRoutes {
     #app
-    #httpErrorCodes = require("../framework/utils/httpErrorCodes")
     #errorCodes = require("../framework/utils/httpErrorCodes");
     #databaseHelper = require("../framework/utils/databaseHelper");
-    #databaseHelper = require("../framework/utils/databaseHelper")
 
     constructor(app) {
         this.#app = app;
@@ -37,7 +35,7 @@ class DashboardRoutes {
                         LKIdata = data.data[0].value;
                     })
 
-                res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({LKI: LKIdata});
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({LKI: LKIdata});
 
             } catch(e) {
 
@@ -80,24 +78,25 @@ class DashboardRoutes {
 
                     })
 
-                res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({weer: tempData});
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({weer: tempData});
 
             } catch (e) {
 
             }
         });
+    }
     async #getGroen() {
         this.#app.get("/groen", async(req,res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT SUM(m2) FROM gebied",
+                    query: "SELECT SUM(m2) FROM gebied"
                 });
 
-                res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({data:data});
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
 
             } catch (e) {
 
-                res.status(this.#httpErrorCodes.BAD_REQUEST_CODE).json({reason: e})
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
     }

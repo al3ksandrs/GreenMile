@@ -5,15 +5,15 @@ export class DashboardRepository {
 
     #lkiRoute;
     #treeAmountRoute;
-    #tempRoute
+    #tempRoute;
+    #groenRoute;
 
     constructor() {
         this.#lkiRoute = "/lki";
         this.#treeAmountRoute = "/treeAmountRoute";
-        this.#tempRoute = "/temp"
+        this.#tempRoute = "/temp";
         this.#groenRoute = "/groen";
-    #groenRoute
-        
+
         this.#networkManager = new NetworkManager();
     }
 
@@ -28,6 +28,8 @@ export class DashboardRepository {
 
     getTempValues(){
         return this.#networkManager.doRequest(this.#tempRoute, "GET");
+    }
+
     getGroenvalues() {
         return this.#networkManager.doRequest(this.#groenRoute, "GET");
     }
