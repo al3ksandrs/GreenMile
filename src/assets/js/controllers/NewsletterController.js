@@ -15,7 +15,6 @@ export class NewsletterController extends Controller {
     async #setupView() {
         this.#newsletterView = await super.loadHtmlIntoContent("html_views/newsletter.html")
 
-
         this.#newsletterView.querySelector("#newsletter-submit").addEventListener("click", () => {
             this.#submitNewsLetter()
         })
@@ -34,6 +33,14 @@ export class NewsletterController extends Controller {
             errorBox.classList.add("visually-hidden")
             succesBox.classList.remove("visually-hidden")
             this.#newsletterRepository.submitNewsLetter(title.value,contents.value)
+            await this.#sendNewsLetter(title.value, contents.value)
+        }
+    }
+
+    async #sendNewsLetter(title, content) {
+        const emails = await this.#newsletterRepository.getEmails();
+        for (let i = 0; i < emails.length; i++) {
+            this.#newsletterRepository.sendNewsletter(emails[i].email,title,content)
         }
     }
 }

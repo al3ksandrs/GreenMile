@@ -8,7 +8,7 @@ export class DashboardController extends Controller {
     #BOOMTUINEN = 1
     #GROENEM2 = 2;
     #LKI = 3;
-    #DECIBEL = 4;
+    #TEMPERATUUR = 4;
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
@@ -30,6 +30,8 @@ export class DashboardController extends Controller {
         this.#loadLKIvalues();
         this.#loadGroenvalues();
         this.#gevelData();
+        this.#loadTreeAmount();
+        this.#loadTempValues();
 
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
@@ -39,14 +41,13 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#groenData()})
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
-        this.#dashboardView.querySelector("#decibalData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#decibelData()})
+        this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
 
         // These are just dummy values, get this data through routes later.
         this.#animateCircle(57,this.#GEVELTUINEN)
         this.#animateCircle(48,this.#BOOMTUINEN)
         this.#animateCircle(68,this.#GROENEM2)
-        this.#animateCircle(50,this.#DECIBEL)
     }
 
     async #loadLKIvalues() {
@@ -62,6 +63,35 @@ export class DashboardController extends Controller {
         }
     }
 
+    // get amount of trees for the dashboard (@author Aleksandrs Soskolainens)
+    async #loadTreeAmount(){
+
+        const treeAmountView = this.#dashboardView.querySelector("#treeAmount");
+        let treeAmount = 0;
+        const getTreeAmount = await this.#dashboardRepository.getTreeAmount();
+
+        //for each tree in database add one to the variable
+        for(let i = 0; getTreeAmount.data.length > i; i++){
+            treeAmount += 1;
+        }
+
+        //update circle diagram with new amount of trees
+        this.#animateCircle(treeAmount, this.#BOOMTUINEN)
+
+        //add amount of trees to HTML view
+        treeAmountView.innerHTML = treeAmount;
+    }
+
+
+    async #loadTempValues(){
+        const valueBox = this.#dashboardView.querySelector("#tempValue");
+        try {
+            valueBox.innerHTML = "";
+            const tempValue = await this.#dashboardRepository.getTempValues();
+            valueBox.innerHTML = tempValue.weer;
+            let circleValue = 3*tempValue.weer;
+            this.#animateCircle(circleValue, this.#TEMPERATUUR)
+        }catch (e) {
     async #loadGroenvalues() {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
         try {
@@ -102,12 +132,12 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">LKI uitleg</div>
         <div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`;
     }
-    #decibelData() {
-        this.#dashboardView.querySelector("#decibalData").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Decibel";
-        this.#infoTextBox.innerText = "/ Decibel"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Decibel uitleg</div>
-        <div class="p">De Stadhouderskade in Amsterdam heeft een hoog geluidsniveau dat bewoners en bezoekers negatief kan beïnvloeden. Om de leefbaarheid te verbeteren, worden maatregelen genomen om het geluidsniveau te verminderen en daarmee het welzijn van de inwoners te verhogen en de kade aantrekkelijker te maken.</div>`;
+    #tempData() {
+        this.#dashboardView.querySelector("#tempData").classList.add("shadow")
+        this.#graphTextBox.innerText = "/ Temperatuur";
+        this.#infoTextBox.innerText = "/ Temperatuur"
+        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Temperatuur uitleg</div>
+        <div class="p">Hier is de actuele temperatuur van de Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor weer het is.</div>`;
     }
 
     /**
