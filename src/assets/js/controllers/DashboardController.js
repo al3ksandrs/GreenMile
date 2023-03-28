@@ -3,7 +3,7 @@ import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
 export class DashboardController extends Controller {
     #dashboardView;
-    #adminRepository;
+    #dashboardRepository;
     #GEVELTUINEN = 0;
     #BOOMTUINEN = 1
     #GROENEM2 = 2;
@@ -21,7 +21,7 @@ export class DashboardController extends Controller {
 
     async #setupView() {
         this.#dashboardView = await super.loadHtmlIntoContent("html_views/dashboard.html")
-        this.#adminRepository = new DashboardRepository();
+        this.#dashboardRepository = new DashboardRepository();
 
         this.#graphTextBox = this.#dashboardView.querySelector(".graph-type-text");
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
@@ -52,7 +52,7 @@ export class DashboardController extends Controller {
         const valueBox = this.#dashboardView.querySelector("#LKIvalue");
         try {
             valueBox.innerHTML = "";
-            const LKIvalue = await this.#adminRepository.getLKIvalues();
+            const LKIvalue = await this.#dashboardRepository.getLKIvalues();
             valueBox.innerHTML = LKIvalue.LKI;
             let circleValue = 10*LKIvalue.LKI;
             this.#animateCircle(circleValue, this.#LKI)

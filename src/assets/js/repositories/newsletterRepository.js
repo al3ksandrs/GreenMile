@@ -3,6 +3,7 @@ import {NetworkManager} from "../framework/utils/networkManager.js";
 export class newsletterRepository {
     #networkManager;
     #submitNewsletterRoute;
+    #getUsersRoute
 
     constructor() {
         this.#submitNewsletterRoute = "/mailinglist/submit/title/"
