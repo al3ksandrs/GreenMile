@@ -1,5 +1,5 @@
 import {Controller} from "./controller.js";
-import {AdminRepository} from "../repositories/AdminRepository.js";
+import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
 export class DashboardController extends Controller {
     #dashboardView;
@@ -21,7 +21,7 @@ export class DashboardController extends Controller {
 
     async #setupView() {
         this.#dashboardView = await super.loadHtmlIntoContent("html_views/dashboard.html")
-        this.#adminRepository = new AdminRepository();
+        this.#adminRepository = new DashboardRepository();
 
         this.#graphTextBox = this.#dashboardView.querySelector(".graph-type-text");
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
@@ -61,23 +61,6 @@ export class DashboardController extends Controller {
         }
     }
 
-
-    /**
-     * Method is used to select how far the diagram should be.
-     * @param value - value of the diagram (0%-100%)
-     * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
-     */
-    #animateCircle(value,circleSelector) {
-        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")
-        )) / 100);
-
-        // This is to animate the circle
-        document.querySelectorAll(".progress-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
-
-        // Without this, circle gets filled 100% after the animation
-        document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
-    }
-
     #gevelData() {
         this.#dashboardView.querySelector("#gevelData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Geveltuinen";
@@ -112,5 +95,21 @@ export class DashboardController extends Controller {
         this.#infoTextBox.innerText = "/ Decibel"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Decibel uitleg</div>
         <div class="p">De Stadhouderskade in Amsterdam heeft een hoog geluidsniveau dat bewoners en bezoekers negatief kan beïnvloeden. Om de leefbaarheid te verbeteren, worden maatregelen genomen om het geluidsniveau te verminderen en daarmee het welzijn van de inwoners te verhogen en de kade aantrekkelijker te maken.</div>`;
+    }
+
+    /**
+     * Method is used to select how far the diagram should be.
+     * @param value - value of the diagram (0%-100%)
+     * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
+     */
+    #animateCircle(value,circleSelector) {
+        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")
+        )) / 100);
+
+        // This is to animate the circle
+        document.querySelectorAll(".progress-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
+
+        // Without this, circle gets filled 100% after the animation
+        document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
     }
 }

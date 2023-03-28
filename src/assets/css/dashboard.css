@@ -4,6 +4,11 @@
     font-weight: 600;
     src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://fonts.gstatic.com/s/opensans/v13/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff) format('woff');
 }
+
+.container{
+    min-height: 100%;
+}
+
 .circle-diagrams{
     display: flex;
     flex-direction: row;
@@ -13,12 +18,11 @@
 .progress-bar-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     margin: 8px;
     padding: 8px;
     border-radius: 13px;
     border: 1px solid #efefef;
-    width: 220px;
-    height: 100px;
     cursor: pointer;
 }
 
@@ -36,7 +40,6 @@
     opacity: 60%;
     position: absolute;
     background-color: transparent;
-    z-index: 2;
     /* To center it inside the container. margin = ( container's size - the width and height's size ) / 2 */
     margin: 10px;
      /*width = container's size (200px)-(2*svg stroke-width(24px)). Increase a little bit */
@@ -50,7 +53,6 @@
     align-items: center;
     width: 72px;
     height: 72px;
-    z-index: 2;
     background-color: transparent;
     /* To start the svg circle from the top */
     transform: rotate(-90deg);
@@ -69,7 +71,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 1;
 }
 
 .data-container{
@@ -83,6 +84,13 @@
     line-height: 0.5;
     margin-left: 0.9rem;
 }
+
+
+.data-container-values{
+    display: flex;
+    flex-direction: column;
+}
+
 
 .information-container{
     display: flex;
@@ -141,4 +149,27 @@
 svg:not(:root) {
     overflow: visible;
     background-color: transparent;
+}
+
+@media (max-width: 990px) {
+    .circle-diagrams{
+        flex-wrap: nowrap;
+        justify-content: center;
+        overflow-x: scroll;
+    }
+    .progress-bar-container{
+        flex-direction: column;
+        align-items: center;
+    }
+    .data-container-values{
+        flex-direction: row;
+        gap: 4px;
+    }
+
+    .information-container{
+        justify-content: center;
+    }
+    .information-box{
+        width: 100%;
+    }
 }

@@ -18,6 +18,7 @@ import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
 import {AccountsController} from "./controllers/AccountsController.js";
 import {footerController} from "./controllers/footerController.js";
+import {NewsletterController} from "./controllers/NewsletterController.js";
 
 export class App {
     //we only need one instance of the sessionManager, thus static use here
@@ -34,7 +35,8 @@ export class App {
     static CONTROLLER_ADMIN = "admin"
     static CONTROLLER_AMBITION = "ambition"
     static CONTROLLER_DASHBOARD = "dashboard"
-    static CONTROLLER_ACCOUNTS = "accounts";
+    static CONTROLLER_ACCOUNTS = "accounts"
+    static CONTROLLER_NEWSLETTER = "newsletter";
     static CONTROLLER_FOOTER = "footer"
 
     constructor() {
@@ -109,6 +111,10 @@ export class App {
 
             case App.CONTROLLER_ACCOUNTS:
                 new AccountsController();
+                break;
+
+            case App.CONTROLLER_NEWSLETTER:
+                new NewsletterController();
                 break;
 
             default:
