@@ -69,10 +69,15 @@ export class DashboardController extends Controller {
         let treeAmount = 0;
         const getTreeAmount = await this.#dashboardRepository.getTreeAmount();
 
+        //for each tree in database add one to the variable
         for(let i = 0; getTreeAmount.data.length > i; i++){
             treeAmount += 1;
         }
 
+        //update circle diagram with new amount of trees
+        this.#animateCircle(treeAmount, this.#BOOMTUINEN)
+
+        //add amount of trees to HTML view
         treeAmountView.innerHTML = treeAmount;
     }
 
