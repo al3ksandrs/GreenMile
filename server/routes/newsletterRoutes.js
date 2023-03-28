@@ -1,5 +1,3 @@
-const {DATE, DATETIME} = require("mysql/lib/protocol/constants/types");
-
 class newsletterRoutes {
     #app
     #databaseHelper = require("../framework/utils/databaseHelper")
@@ -8,11 +6,13 @@ class newsletterRoutes {
     constructor(app) {
         this.#app = app;
 
-        this.#singUp();
+        this.#signUp();
         this.#submitNewsletter()
+        this.#sendNewsletter()
+        this.#getAllUsers()
     }
 
-    #singUp() {
+    #signUp() {
         this.#app.get("/mailingList/signup/:email", async (req,res) => {
             try {
                 const results = await this.#databaseHelper.handleQuery({
@@ -45,8 +45,47 @@ class newsletterRoutes {
     }
 
     #sendNewsletter() {
-        this.#app.post("https://api.hbo-ict.cloud/mail", async (req,res) => {
+        this.#app.post("/mailingList/send/email/:email/title/:title/content/:content", async (req,res) => {
+            let data123;
+            await fetch("https://api.hbo-ict.cloud/mail", {
+                method: "post",
+                headers: {
+                    "Authorization": "Bearer pad_gmi_3.RMU3S1ZmAT8IZ7Bk",
+                    "Content-Type":  "application/json"
+                },
+                body: JSON.stringify(
+                    {
+                        "from": {
+                            "name": "Group",
+                            "address": "The Green Mile"
+                        },
+                        "to": [
+                            {
+                                "name": "test",
+                                "address": req.params.email
+                            }
+                        ],
+                        "subject": req.params.title,
+                        "html": req.params.content
+                    }
+                )
+            }).then(function (response) {
+                return response.json();
+            }).then (function(data) {
+                data123 = data;
+            })
 
+            res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data123})
+        })
+    }
+
+    #getAllUsers() {
+        this.#app.get("/mailingList/emails", async (req,res) => {
+            const users = await this.#databaseHelper.handleQuery( {
+                query: "SELECT email FROM mailing_list"
+            })
+
+            res.status(this.#errorCodes.HTTP_OK_CODE).json(users)
         })
     }
 }

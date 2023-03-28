@@ -9,7 +9,7 @@ class DashboardRoutes {
     }
 
     /**
-     * Gets the current LKI value of the "Stadhouderskade"
+     * Gets the current LKI value of the "Stadhouderskade" from the luchtmeetnet API
      * @returns {Promise<void>} - responds the values in JSON-Format
      */
     async #getLKI() {
@@ -22,7 +22,9 @@ class DashboardRoutes {
 
                 let LKIdata;
 
-                await fetch("https://api.luchtmeetnet.nl/open_api/lki?station_number=NL49017&start=" + new Date(Date.now() - 72000001).toISOString() + "&end=" + new Date(Date.now()).toISOString(), requestOptions)
+                await fetch("https://api.luchtmeetnet.nl/open_api/lki?station_number=NL49017&" +
+                    "start=" + new Date(Date.now() - 7200001).toISOString() +
+                    "&end=" + new Date(Date.now()).toISOString(), requestOptions)
                     .then(function (response) {
                         return response.json();
                     }).then(function (data){
