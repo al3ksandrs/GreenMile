@@ -29,6 +29,7 @@ export class DashboardController extends Controller {
 
         this.#loadLKIvalues();
         this.#gevelData();
+        this.#loadTreeAmount();
 
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
@@ -59,6 +60,20 @@ export class DashboardController extends Controller {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    // get amount of trees for the dashboard (@author Aleksandrs Soskolainens)
+    async #loadTreeAmount(){
+
+        const treeAmountView = this.#dashboardView.querySelector("#treeAmount");
+        let treeAmount = 0;
+        const getTreeAmount = await this.#dashboardRepository.getTreeAmount();
+
+        for(let i = 0; getTreeAmount.data.length > i; i++){
+            treeAmount += 1;
+        }
+
+        treeAmountView.innerHTML = treeAmount;
     }
 
     #gevelData() {
