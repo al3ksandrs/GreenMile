@@ -9,6 +9,7 @@ class DashboardRoutes {
 
         this.#getLKI();
         this.#getTreeAmount();
+        this.#getTemp();
     }
 
     /**
@@ -55,6 +56,32 @@ class DashboardRoutes {
 
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+        });
+    }
+
+    async #getTemp() {
+        this.#app.get("/temp", async (req, res) => {
+            try {
+                let requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow'
+                };
+
+                let tempData;
+
+                await fetch("https://weerlive.nl/api/json-data-10min.php?key=2012b5b9d6&locatie=52.3581,4.8907&callback=?", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        tempData = data.liveweer[0].temp;
+
+                    })
+
+                res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({weer: tempData});
+
+            } catch (e) {
+
             }
         });
     }
