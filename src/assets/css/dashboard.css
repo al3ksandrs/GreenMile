@@ -4,11 +4,15 @@
     font-weight: 600;
     src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://fonts.gstatic.com/s/opensans/v13/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff) format('woff');
 }
+
+.container{
+    min-height: 100%;
+}
+
 .circle-diagrams{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-
 }
 
 .progress-bar-container {
