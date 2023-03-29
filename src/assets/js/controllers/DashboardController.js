@@ -169,10 +169,10 @@ export class DashboardController extends Controller {
     }
     #tempData() {
         this.#dashboardView.querySelector("#tempData").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Temperatuur";
-        this.#infoTextBox.innerText = "/ Temperatuur"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Temperatuur uitleg</div>
-        <div class="p">Hier is de actuele temperatuur van de Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor weer het is.</div>`;
+        this.#graphTextBox.innerText = "/ Fijnstof";
+        this.#infoTextBox.innerText = "/ Fijnstof"
+        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
+        <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
     }
 
     /**
