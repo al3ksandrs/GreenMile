@@ -110,8 +110,8 @@ export class DashboardController extends Controller {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
         try {
             valueBox.innerHTML = "";
-            const groenValue = groen.data[0].GroenM2
             const groen = await this.#dashboardRepository.getGroenvalues();
+            const groenValue = groen.data[0].GroenM2
             valueBox.innerHTML = groenValue;
         } catch (e) {
             console.log(e)
