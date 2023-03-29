@@ -53,10 +53,6 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
-
-        // These are just dummy values, get this data through routes later.
-        this.#animateCircle(48,this.#BOOMTUINEN)
-        this.#animateCircle(68,this.#GROENEM2)
     }
 
     // gets the LKi values through the repository. Display this data on the dashboard
@@ -68,6 +64,7 @@ export class DashboardController extends Controller {
             // * 10 because the progress bar goes from 0 - 100% and nog 0-10
             let circleValue = 10 * LKIvalue.LKI;
             this.#animateCircle(circleValue, this.#LKI)
+            this.#animateValue(valueBox,0,LKIvalue.LKI,500)
         } catch (e) {
             console.log(e)
         }
@@ -87,7 +84,7 @@ export class DashboardController extends Controller {
 
         //update circle diagram with new amount of trees
         this.#animateCircle(treeAmount, this.#BOOMTUINEN)
-
+        this.#animateValue(treeAmountView,0,treeAmount,500)
         //add amount of trees to HTML view
         treeAmountView.innerHTML = treeAmount;
     }
@@ -101,6 +98,7 @@ export class DashboardController extends Controller {
             valueBox.innerHTML = fineDustData.fineDust;
             let circleValue = 3*fineDustData.fineDust;
             this.#animateCircle(circleValue, this.#FINE_DUST)
+            this.#animateValue(valueBox, 0, fineDustData.fineDust,500)
         } catch (e) {
             console.log(e)
         }
@@ -114,6 +112,8 @@ export class DashboardController extends Controller {
             const groen = await this.#dashboardRepository.getGroenvalues();
             const groenValue = groen.data[0].GroenM2
             valueBox.innerHTML = groenValue;
+            this.#animateCircle(groenValue, this.#GROENEM2)
+            this.#animateValue(valueBox,0,groenValue,500)
         } catch (e) {
             console.log(e)
         }
@@ -134,6 +134,7 @@ export class DashboardController extends Controller {
 
         //update circle diagram with new amount of trees
         this.#animateCircle(circleValue, this.#GEVELTUINEN)
+        this.#animateValue(valueBox,0,gevelValue,500)
 
         //add amount of trees to HTML view
         valueBox.innerHTML = gevelValue;
@@ -173,6 +174,19 @@ export class DashboardController extends Controller {
         this.#infoTextBox.innerText = "/ Fijnstof"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
         <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
+    }
+
+    #animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
     }
 
     /**
