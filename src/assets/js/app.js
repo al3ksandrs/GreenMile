@@ -19,6 +19,7 @@ import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
 import {AccountsController} from "./controllers/AccountsController.js";
 import {footerController} from "./controllers/footerController.js";
+import {SubmitNewslettersController} from "./controllers/submitNewslettersController.js";
 import {NewsletterController} from "./controllers/NewsletterController.js";
 
 export class App {
@@ -38,8 +39,9 @@ export class App {
     static CONTROLLER_AMBITION = "ambition"
     static CONTROLLER_DASHBOARD = "dashboard"
     static CONTROLLER_ACCOUNTS = "accounts"
-    static CONTROLLER_NEWSLETTER = "newsletter";
+    static CONTROLLER_SUBMITNEWSLETTER = "submitNewsletter";
     static CONTROLLER_FOOTER = "footer"
+    static CONTROLLER_NEWSLETTER = "newsletter"
 
     constructor() {
         //Always load the navigation
@@ -117,6 +119,10 @@ export class App {
 
             case App.CONTROLLER_ACCOUNTS:
                 new AccountsController();
+                break;
+
+            case App.CONTROLLER_SUBMITNEWSLETTER:
+                new SubmitNewslettersController();
                 break;
 
             case App.CONTROLLER_NEWSLETTER:

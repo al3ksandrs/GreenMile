@@ -1,86 +1,91 @@
 <div id="inputDiv">
-    <p class="head">Groen toevoegen</p>
 
-    <form id="addGreenInputForm">
-        <label>Groen type:</label>
-        <select name="addGreenType" id="typeList">
-            <option value="null"></option>
-        </select>
+    <div id="formContainer">
+        <div id="addForms">
+            <h class="head bighead">Gegevens Toevoegen</h>
 
-        <label>Gebied:</label>
-        <select name="addGreenLocation" id="greenAreaList">
-            <option value="null"></option>
-        </select>
+            <p class="head">Groen toevoegen</p>
+            <form class="dropdownForm" id="addGreenInputForm">
+                <label>Groen type:</label>
+                <select name="addGreenType" id="typeList">
+                    <option value="null"></option>
+                </select>
 
-        <label for="coordinateX">Coordinaat X:</label>
-        <input type="text" id="coordinateX" name="CoordinaatX" placeholder="">
+                <label>Gebied:</label>
+                <select name="addGreenLocation" id="greenAreaList">
+                    <option value="null"></option>
+                </select>
 
-        <label for="coordinateY">Coordinaat Y:</label>
-        <input type="text" id="coordinateY" name="CoordinaatY" placeholder="">
+                <label for="coordinateX">Coordinaat X:</label>
+                <input type="text" id="coordinateX" name="CoordinaatX" placeholder="">
 
-        <input type="submit" class="submitButton" id="submitGreenInputForm" value="Voeg toe">
-    </form>
+                <label for="coordinateY">Coordinaat Y:</label>
+                <input type="text" id="coordinateY" name="CoordinaatY" placeholder="">
 
-    <p class="head">Groen type toevoegen</p>
-    <form id="addGreenTypeForm">
-        <label for="greenTypeName">Groen type naam:</label>
-        <input type="text" id="greenTypeName" name="greenTypeName" placeholder="">
+                <input type="submit" class="submitButton" id="submitGreenInputForm" value="Voeg toe">
+            </form>
 
-        <input type="submit" class="submitButton" id="submitAddGreenTypeForm" value="Voeg toe">
-    </form>
+            <!--            Add greentype with this button-->
+            <p class="head">Groen type toevoegen</p>
+            <form class="dropdownForm" id="addGreenTypeForm">
+                <label for="greenTypeName">Groen type naam:</label>
+                <input type="text" id="greenTypeName" name="greenTypeName" placeholder="">
+                <input type="submit" class="submitButton" id="submitAddGreenTypeForm" value="Voeg toe">
+            </form>
 
-    <p class="head">Gebied toevoegen</p>
-    <form id="addGreenLocationForm">
-        <label for="greenLocationName">Gebied naam:</label>
-        <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
+            <!--                Adding green gardens-->
+            <p class="head headAdders">Boomtuinen toevoegen</p>
+            <form class="dropdownForm" id="addGreenGarden">
+                <div class="counter">
+                    <div class="inputFields">
+                        <input type="number" class="inputField" id="greenGarden" name="greenGarden" placeholder="0">
+                    </div>
+                    <div class="clickButtons">
+                        <button class="lower">-</button>
+                        <input type="submit" class="submitButton" id="addGreenGardenButton" value="Voeg toe">
+                        <button class="increase">+</button>
+                    </div>
+                </div>
+            </form>
 
-        <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
-    </form>
-    <!--    This is the counter div for adding greenery type. This works by having a increase en decrease and reset field.-->
-    <p class="head" id="headAdders" >Boomtuinen toevoegen</p>
-    <form id="addGreenGarden">
-        <label>Gebied:</label>
-        <select name="addGreenLocation">
-            <option value="null"></option>
-            <option value="Stadhouderskade-1">Stadhouderskade 1-40</option>
-            <option value="Stadhouderskade-2">Stadhouderskade 40-80</option>
-            <option value="Stadhouderskade-3">Stadhouderskade 80-120</option>
-            <option value="Stadhouderskade-4">Stadhouderskade 120-160</option>
-        </select>
-    </form>
-    <div class="counter">
-        <div class="inputFields">
-            <input class="inputField" placeholder="0">
-        </div>
-        <div>
-            <button class="lower">-</button>
-            <input type="submit" class="submitButton" id="addGreenType" value="Voeg toe">
-            <button class="increase">+</button>
-        </div>
-    </div>
+            <!--            Adding greenM2-->
+            <p class="head headAdders">Groenstrook toevoegen</p>
+            <form class="dropdownForm" id="addGreenM2">
+                <div class="counter">
+                    <div class="inputFields">
+                        <input type="number" class="inputField" id="greenM2" name="greenM2" placeholder="0">
+                    </div>
+                    <div class="clickButtons">
+                        <button class="lower">-</button>
+                        <input type="submit" class="submitButton" id="addGreenM2Button" value="Voeg toe">
+                        <button class="increase">+</button>
+                    </div>
+                </div>
+            </form>
 
-<!--    Voor de groenstroken-->
-    <p class="head" id="headAdders">Boomtuinen toevoegen</p>
-    <form id="addGreenM2">
-        <label>Gebied:</label>
-        <select name="addGreenLocation">
-            <option value="null"></option>
-            <option value="Stadhouderskade-1">Stadhouderskade 1-40</option>
-            <option value="Stadhouderskade-2">Stadhouderskade 40-80</option>
-            <option value="Stadhouderskade-3">Stadhouderskade 80-120</option>
-            <option value="Stadhouderskade-4">Stadhouderskade 120-160</option>
-        </select>
-    </form>
-    <div class="counter">
-        <div class="inputFields">
-            <input class="inputField" placeholder="0">
-        </div>
-        <div>
-            <button class="lower">-</button>
-            <input type="submit" class="submitButton" id="addGreenType" value="Voeg toe">
-            <button class="increase">+</button>
+
+            <div id="removeForms">
+                <h class="head bighead">Gegevens Verwijderen</h>
+
+                <p class="head">Groen type verwijderen</p>
+                <form class="dropdownForm" id="removeGreenTypeForm">
+                    <label for="greenTypeName">Groen type naam:</label>
+                    <select name="removeGreenType" id="removeTypeList">
+                        <option value="null"></option>
+                    </select>
+
+                    <input type="submit" class="submitButton" id="submitRemoveGreenTypeForm" value="Verwijder">
+                </form>
+
+
+                <p class="head">Gebied verwijderen</p>
+                <form id="removeGreenLocationForm">
+                    <label for="greenLocationName">Gebied naam:</label>
+                    <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
+
+                    <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
-

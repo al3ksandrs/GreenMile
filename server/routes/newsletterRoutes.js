@@ -10,6 +10,7 @@ class newsletterRoutes {
         this.#submitNewsletter()
         this.#sendNewsletter()
         this.#getAllUsers()
+        this.#getAllNewsletters()
     }
 
     #signUp() {
@@ -86,6 +87,16 @@ class newsletterRoutes {
             })
 
             res.status(this.#errorCodes.HTTP_OK_CODE).json(users)
+        })
+    }
+
+    #getAllNewsletters() {
+        this.#app.get("/mailingList/getAll", async (req,res) => {
+            const newsletters = await this.#databaseHelper.handleQuery({
+                query: "SELECT title, content, date FROM newsletter"
+            })
+
+            res.status(this.#errorCodes.HTTP_OK_CODE).json(newsletters)
         })
     }
 }

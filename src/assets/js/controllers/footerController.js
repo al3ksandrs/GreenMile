@@ -20,7 +20,7 @@ export class footerController extends Controller {
             if(this.#validateEmail(emailField.value)) {
                 this.#signup(emailField.value)
                 emailField.value = "";
-                errorText.classList.add("visually-hidden")
+                // errorText.classList.add("visually-hidden")
             } else {
                 errorText.classList.remove("visually-hidden")
             }

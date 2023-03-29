@@ -12,11 +12,72 @@ class adminRoutes {
 
     constructor(app) {
         this.#app = app;
-
         this.#addGreenType();
         this.#refreshAreaList();
         this.#refreshTypeList();
         this.#addGreen();
+        this.#removeGreenType();
+        this.#addGreenGarden();
+    }
+
+    #addGreenGarden() {
+        this.#app.post("/adminAddGreen", async(req, res) => {
+
+            const boomtuin = req.body.boomtuin;
+
+            try {
+                let data = await this.#databaseHelper.handleQuery({
+                    query: "INSERT INTO boomtuin(hoeveelheidBoomtuinen)values (?)",
+                    values: [boomtuin]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
+        });
+    }
+
+    #addGreenType() {
+        this.#app.post("/admin", async(req, res) => {
+
+            const type = req.body.type;
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "INSERT INTO type(naam) VALUES (?)",
+                    values: [type]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
+        });
+    }
+
+    #removeGreenType(){
+        this.#app.post("/removeGreenTypeRoute", async(req, res) => {
+
+            const greenType = req.body.type;
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "DELETE FROM type WHERE id = ?",
+                    values: [greenType]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
+        });
     }
 
     #addGreen() {
@@ -43,25 +104,7 @@ class adminRoutes {
     }
 
 
-    #addGreenType() {
-        this.#app.post("/admin", async(req, res) => {
 
-            const type = req.body.type;
-
-            try {
-                let data = await this.#databaseHelper.handleQuery( {
-                    query: "INSERT INTO type(naam) VALUES (?)",
-                    values: [type]
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
-
-            } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
-            }
-
-        });
-    }
 
     #refreshAreaList(){
         this.#app.get("/areaList", async(req, res) => {

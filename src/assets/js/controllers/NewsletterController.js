@@ -1,40 +1,38 @@
 import {Controller} from "./controller.js";
 import {newsletterRepository} from "../repositories/newsletterRepository.js";
 
-export class NewsletterController extends Controller {
+export class NewsletterController extends Controller{
     #newsletterView;
-    #newsletterRepository;
+    #newsletterRepository
+
     constructor() {
         super();
 
-        this.#setupView();
-
         this.#newsletterRepository = new newsletterRepository();
+
+        this.#setupView()
+
     }
 
     async #setupView() {
-        this.#newsletterView = await super.loadHtmlIntoContent("html_views/newsletter.html")
-
-
-        this.#newsletterView.querySelector("#newsletter-submit").addEventListener("click", () => {
-            this.#submitNewsLetter()
-        })
+        this.#newsletterView = await super.loadHtmlIntoContent("html_views/newsletters.html")
+        this.#displayNewsletters()
     }
 
-    async #submitNewsLetter() {
-        let title = this.#newsletterView.querySelector("#newsletter-title")
-        let contents = this.#newsletterView.querySelector("#newsletter-content");
-        let errorBox = this.#newsletterView.querySelector("#newsletter-error");
-        let succesBox = this.#newsletterView.querySelector("#newsletter-succes");
-
-        if(title.value.length < 10 || contents.value.length < 50) {
-            errorBox.innerText = "Let op! \nDe titel van de nieuwsbrief is te kort! (Min 10 karakters)\nOf de inhoud is te kort (min 50 karakters)"
-            errorBox.classList.remove("visually-hidden");
-        } else {
-            errorBox.classList.add("visually-hidden")
-            succesBox.classList.remove("visually-hidden")
-            this.#newsletterRepository.submitNewsLetter(title.value,contents.value)
+    async #displayNewsletters() {
+        let newslettersContainer = this.#newsletterView.querySelector(".newsletters-letters-container")
+        const newsletters = await this.#newsletterRepository.getNewsletters();
+        for (let i = 0; i < newsletters.length; i++) {
+            newslettersContainer.innerHTML += `
+            <div class="card col-3 my-2 shadow mx-1" style="border-radius: 13px; height: fit-content">
+            <div class="card-body">
+                <h5 class="card-title">`+ newsletters[i].title +`</h5>
+                <h6 class="card-subtitle mb-2 text-muted border-bottom">Invoerdatum:`+newsletters[i].date.substring(0,10)+`</h6>
+                <p class="card-text">
+                    `+newsletters[i].content.substring(0,950)+`
+                </p>
+            </div>
+        </div>`
         }
     }
 }
-
