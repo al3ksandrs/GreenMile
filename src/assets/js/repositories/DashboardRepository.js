@@ -12,7 +12,7 @@ export class DashboardRepository {
     constructor() {
         this.#lkiRoute = "/lki";
         this.#treeAmountRoute = "/treeAmountRoute";
-        this.#tempRoute = "/temp";
+        this.#tempRoute = "/fineDust";
         this.#groenRoute = "/groen";
         this.#gevelRoute = "/gevel";
 
@@ -28,7 +28,7 @@ export class DashboardRepository {
         return this.#networkManager.doRequest(this.#treeAmountRoute, "GET");
     }
 
-    getTempValues(){
+    getFineDustValue(){
         return this.#networkManager.doRequest(this.#tempRoute, "GET");
     }
 

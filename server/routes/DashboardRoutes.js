@@ -62,25 +62,27 @@ class DashboardRoutes {
     }
 
     async #getTemp() {
-        this.#app.get("/temp", async (req, res) => {
+        this.#app.get("/fineDust", async (req, res) => {
             try {
                 let requestOptions = {
                     method: 'GET',
                     redirect: 'follow',
                 };
 
-                let tempData = null;
+                let fineDustData;
                 const fetch = require("node-fetch");
 
-                await fetch("https://weerlive.nl/api/json-data-10min.php?key=2012b5b9d6&locatie=52.3581,4.8907&format=json", requestOptions)
+                await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
+                    "start=" + new Date(Date.now() - 7200000).toISOString() +
+                    "&end=" + new Date(Date.now()).toISOString() +
+                    "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", requestOptions)
                     .then(function (response) {
                         return response.json();
                     }).then(function (data) {
-                        tempData = data.liveweer[0].temp;
-
+                        fineDustData = data.data[0].value
                     })
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json({weer: tempData});
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({fineDust: fineDustData});
 
             } catch (e) {
                 console.log(e)

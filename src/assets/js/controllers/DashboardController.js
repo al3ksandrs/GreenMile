@@ -15,7 +15,7 @@ export class DashboardController extends Controller {
     #BOOMTUINEN = 1;
     #GROENEM2 = 2;
     #LKI = 3;
-    #TEMPERATUUR = 4;
+    #FINE_DUST = 4;
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
@@ -37,7 +37,7 @@ export class DashboardController extends Controller {
         this.#loadLKIvalues();
         this.#loadGroenvalues();
         this.#loadTreeAmount();
-        this.#loadTempValues();
+        this.#loadFineDustValue();
         this.#loadGevelValues();
 
         this.#gevelData();
@@ -93,21 +93,22 @@ export class DashboardController extends Controller {
     }
 
 
-    async #loadTempValues(){
+    async #loadFineDustValue(){
         const valueBox = this.#dashboardView.querySelector("#tempValue");
         try {
             valueBox.innerHTML = "";
-            const tempValue = await this.#dashboardRepository.getTempValues();
-            valueBox.innerHTML = tempValue.weer;
-            let circleValue = 3*tempValue.weer;
-            this.#animateCircle(circleValue, this.#TEMPERATUUR)
+            const fineDustData = await this.#dashboardRepository.getFineDustValue();
+            valueBox.innerHTML = fineDustData.fineDust;
+            let circleValue = 3*fineDustData.fineDust;
+            this.#animateCircle(circleValue, this.#FINE_DUST)
         } catch (e) {
             console.log(e)
         }
     }
 
+
     async #loadGroenvalues() {
-        const valueBox = this.#dashboardView.querySelector("#groenValue");
+        const valueBox = this.#dashboardView.querySelector("#groen  Value");
         try {
             valueBox.innerHTML = "";
             const groen = await this.#dashboardRepository.getGroenvalues();
