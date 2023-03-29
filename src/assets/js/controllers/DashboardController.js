@@ -108,7 +108,7 @@ export class DashboardController extends Controller {
 
 
     async #loadGroenvalues() {
-        const valueBox = this.#dashboardView.querySelector("#groen  Value");
+        const valueBox = this.#dashboardView.querySelector("#groenValue");
         try {
             valueBox.innerHTML = "";
             const groen = await this.#dashboardRepository.getGroenvalues();
@@ -118,6 +118,7 @@ export class DashboardController extends Controller {
             console.log(e)
         }
     }
+
     async #loadGevelValues(){
 
         const valueBox = this.#dashboardView.querySelector("#gevelValue");
@@ -129,8 +130,10 @@ export class DashboardController extends Controller {
             gevelValue += 1;
         }
 
+        let circleValue = (gevelValue / 130 )* 100;
+
         //update circle diagram with new amount of trees
-        this.#animateCircle(gevelValue, this.#GEVELTUINEN)
+        this.#animateCircle(circleValue, this.#GEVELTUINEN)
 
         //add amount of trees to HTML view
         valueBox.innerHTML = gevelValue;
