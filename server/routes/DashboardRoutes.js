@@ -10,6 +10,7 @@ class DashboardRoutes {
         this.#getTreeAmount();
         this.#getTemp();
         this.#getGroen();
+        this.#getGevel();
     }
 
     /**
@@ -61,27 +62,30 @@ class DashboardRoutes {
     }
 
     async #getTemp() {
-        this.#app.get("/temp", async (req, res) => {
+        this.#app.get("/fineDust", async (req, res) => {
             try {
                 let requestOptions = {
                     method: 'GET',
-                    redirect: 'follow'
+                    redirect: 'follow',
                 };
 
-                let tempData;
+                let fineDustData;
+                const fetch = require("node-fetch");
 
-                await fetch("https://weerlive.nl/api/json-data-10min.php?key=2012b5b9d6&locatie=52.3581,4.8907&callback=?", requestOptions)
+                await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
+                    "start=" + new Date(Date.now() - 7200000).toISOString() +
+                    "&end=" + new Date(Date.now()).toISOString() +
+                    "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", requestOptions)
                     .then(function (response) {
                         return response.json();
                     }).then(function (data) {
-                        tempData = data.liveweer[0].temp;
-
+                        fineDustData = data.data[0].value
                     })
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json({weer: tempData});
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({fineDust: fineDustData});
 
             } catch (e) {
-
+                console.log(e)
             }
         });
     }
@@ -89,7 +93,7 @@ class DashboardRoutes {
         this.#app.get("/groen", async(req,res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT SUM(m2) FROM gebied"
+                    query: "SELECT SUM(groeneM2) AS GroenM2 FROM gebied"
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
@@ -99,6 +103,22 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
+    }
+
+    async #getGevel(){
+        this.#app.get("/gevel", async(req, res) => {
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT * FROM groen WHERE type_id = 2;",
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+        });
     }
 }
 

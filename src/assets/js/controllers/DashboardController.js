@@ -1,3 +1,10 @@
+/**
+ * Controller class for the dashboard.
+ * gets the data through the repository and api's and displays them on de dashboard page.
+ * @authors
+ *  -@beerstj
+ */
+
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
@@ -5,10 +12,10 @@ export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
     #GEVELTUINEN = 0;
-    #BOOMTUINEN = 1
+    #BOOMTUINEN = 1;
     #GROENEM2 = 2;
     #LKI = 3;
-    #TEMPERATUUR = 4;
+    #FINE_DUST = 4;
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
@@ -29,10 +36,13 @@ export class DashboardController extends Controller {
 
         this.#loadLKIvalues();
         this.#loadGroenvalues();
-        this.#gevelData();
         this.#loadTreeAmount();
-        this.#loadTempValues();
+        this.#loadFineDustValue();
+        this.#loadGevelValues();
 
+        this.#gevelData();
+
+        // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
@@ -45,18 +55,18 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
 
         // These are just dummy values, get this data through routes later.
-        this.#animateCircle(57,this.#GEVELTUINEN)
         this.#animateCircle(48,this.#BOOMTUINEN)
         this.#animateCircle(68,this.#GROENEM2)
     }
 
+    // gets the LKi values through the repository. Display this data on the dashboard
     async #loadLKIvalues() {
         const valueBox = this.#dashboardView.querySelector("#LKIvalue");
         try {
-            valueBox.innerHTML = "";
             const LKIvalue = await this.#dashboardRepository.getLKIvalues();
             valueBox.innerHTML = LKIvalue.LKI;
-            let circleValue = 10*LKIvalue.LKI;
+            // * 10 because the progress bar goes from 0 - 100% and nog 0-10
+            let circleValue = 10 * LKIvalue.LKI;
             this.#animateCircle(circleValue, this.#LKI)
         } catch (e) {
             console.log(e)
@@ -83,29 +93,47 @@ export class DashboardController extends Controller {
     }
 
 
-    async #loadTempValues(){
+    async #loadFineDustValue(){
         const valueBox = this.#dashboardView.querySelector("#tempValue");
         try {
             valueBox.innerHTML = "";
-            const tempValue = await this.#dashboardRepository.getTempValues();
-            valueBox.innerHTML = tempValue.weer;
-            let circleValue = 3*tempValue.weer;
-            this.#animateCircle(circleValue, this.#TEMPERATUUR)
+            const fineDustData = await this.#dashboardRepository.getFineDustValue();
+            valueBox.innerHTML = fineDustData.fineDust;
+            let circleValue = 3*fineDustData.fineDust;
+            this.#animateCircle(circleValue, this.#FINE_DUST)
         } catch (e) {
             console.log(e)
         }
     }
 
+
     async #loadGroenvalues() {
-        const valueBox = this.#dashboardView.querySelector("#groenValue");
+        const valueBox = this.#dashboardView.querySelector("#groen  Value");
         try {
             valueBox.innerHTML = "";
-            const groenValue = await this.#dashboardRepository.getGroenvalues();
+            const groen = await this.#dashboardRepository.getGroenvalues();
+            const groenValue = groen.data[0].GroenM2
             valueBox.innerHTML = groenValue;
-            console.log (s);
         } catch (e) {
             console.log(e)
         }
+    }
+    async #loadGevelValues(){
+
+        const valueBox = this.#dashboardView.querySelector("#gevelValue");
+        let gevelValue = 0;
+        const getGevelValues = await this.#dashboardRepository.getGevelValues();
+
+        //for each tree in database add one to the variable
+        for(let i = 0; getGevelValues.data.length > i; i++){
+            gevelValue += 1;
+        }
+
+        //update circle diagram with new amount of trees
+        this.#animateCircle(gevelValue, this.#GEVELTUINEN)
+
+        //add amount of trees to HTML view
+        valueBox.innerHTML = gevelValue;
     }
 
     #gevelData() {

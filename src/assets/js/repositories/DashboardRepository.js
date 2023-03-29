@@ -7,12 +7,14 @@ export class DashboardRepository {
     #treeAmountRoute;
     #tempRoute;
     #groenRoute;
+    #gevelRoute;
 
     constructor() {
         this.#lkiRoute = "/lki";
         this.#treeAmountRoute = "/treeAmountRoute";
-        this.#tempRoute = "/temp";
+        this.#tempRoute = "/fineDust";
         this.#groenRoute = "/groen";
+        this.#gevelRoute = "/gevel";
 
         this.#networkManager = new NetworkManager();
     }
@@ -26,11 +28,15 @@ export class DashboardRepository {
         return this.#networkManager.doRequest(this.#treeAmountRoute, "GET");
     }
 
-    getTempValues(){
+    getFineDustValue(){
         return this.#networkManager.doRequest(this.#tempRoute, "GET");
     }
 
     getGroenvalues() {
         return this.#networkManager.doRequest(this.#groenRoute, "GET");
+    }
+
+    getGevelValues(){
+        return this.#networkManager.doRequest(this.#gevelRoute, "GET");
     }
 }
