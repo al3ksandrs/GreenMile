@@ -20,29 +20,28 @@ class adminRoutes {
         this.#addGreenGarden();
     }
 
-    #addGreenGarden() {
-        this.#app.post("/adminAddGreen", async(req, res) => {
-
-            const boomtuin = req.body.boomtuin;
-
-            try {
-                let data = await this.#databaseHelper.handleQuery({
-                    query: "INSERT INTO boomtuin(hoeveelheidBoomtuinen)values (?)",
-                    values: [boomtuin]
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
-
-            } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
-            }
-
-        });
-    }
+    // #addGreenGarden() {
+    //     this.#app.post("/adminAddGreen", async(req, res) => {
+    //
+    //         const boomtuin = req.body.boomtuin;
+    //
+    //         try {
+    //             let data = await this.#databaseHelper.handleQuery({
+    //                 query: "INSERT INTO boomtuin(hoeveelheidBoomtuinen)values (?)",
+    //                 values: [boomtuin]
+    //             });
+    //
+    //             res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+    //
+    //         } catch (e) {
+    //             res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+    //         }
+    //
+    //     });
+    // }
 
     #addGreenType() {
         this.#app.post("/admin", async(req, res) => {
-
             const type = req.body.type;
 
             try {

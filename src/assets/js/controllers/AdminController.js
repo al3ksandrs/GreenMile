@@ -18,7 +18,7 @@ export class adminController extends Controller {
         this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
         this.#createAdminView.querySelector("#submitRemoveGreenTypeForm").addEventListener("click", (event) => this.#removeGreenType(event));
-        this.#createAdminView.querySelector("#addGreenGardenButton").addEventListener("click", (event) => this.#handleAddGreenGardenButton(event));
+        // this.#createAdminView.querySelector("#addGreenGardenButton").addEventListener("click", (event) => this.#handleAddGreenGardenButton(event));
 
         this.#handleAreaRefresh();
         this.#handleTypeRefresh();
@@ -54,14 +54,14 @@ export class adminController extends Controller {
         this.#adminRepository.addGreenType(type);
     }
 
-    #handleAddGreenGardenButton() {
-
-        const greenGarden = this.#createAdminView.querySelector("#greenGarden").value;
-
-        console.log(greenGarden);
-
-        this.#adminRepository.addGreenGarden(greenGarden);
-    }
+    // #handleAddGreenGardenButton() {
+    //
+    //     const greenGarden = this.#createAdminView.querySelector("#greenGarden").value;
+    //
+    //     console.log(greenGarden);
+    //
+    //     this.#adminRepository.addGreenGarden(greenGarden);
+    // }
 
     async #handleAreaRefresh() {
 

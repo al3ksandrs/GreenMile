@@ -34,58 +34,60 @@
             </form>
 
             <!--                Adding green gardens-->
-            <p class="head headAdders">Boomtuinen toevoegen</p>
-            <form class="dropdownForm" id="addGreenGarden">
-                <div class="counter">
-                    <div class="inputFields">
-                        <input type="number" class="inputField" id="greenGarden" name="greenGarden" placeholder="0">
-                    </div>
-                    <div class="clickButtons">
-                        <button class="lower">-</button>
-                        <input type="submit" class="submitButton" id="addGreenGardenButton" value="Voeg toe">
-                        <button class="increase">+</button>
-                    </div>
-                </div>
+<!--            <p class="head headAdders">Boomtuinen toevoegen</p>-->
+<!--            <form class="dropdownForm" id="addGreenGarden">-->
+<!--                <div class="counter">-->
+<!--                    <div class="inputFields">-->
+<!--                        <input type="number" class="inputField" id="greenGarden" name="greenGarden" placeholder="0">-->
+<!--                    </div>-->
+<!--                    <div class="clickButtons">-->
+<!--                        <button class="lower">-</button>-->
+<!--                        <input type="submit" class="submitButton" id="addGreenGardenButton" value="Voeg toe">-->
+<!--                        <button class="increase">+</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+
+<!--            &lt;!&ndash;            Adding greenM2&ndash;&gt;-->
+<!--            <p class="head headAdders">Groenstrook toevoegen</p>-->
+<!--            <form class="dropdownForm" id="addGreenM2">-->
+<!--                <div class="counter">-->
+<!--                    <div class="inputFields">-->
+<!--                        <input type="number" class="inputField" id="greenM2" name="greenM2" placeholder="0">-->
+<!--                    </div>-->
+<!--                    <div class="clickButtons">-->
+<!--                        <button class="lower">-</button>-->
+<!--                        <input type="submit" class="submitButton" id="addGreenM2Button" value="Voeg toe">-->
+<!--                        <button class="increase">+</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+
+
+<!--        Here come the fields to delete incorrect input-->
+
+        <div id="removeForms">
+            <p class="head bighead">Gegevens Verwijderen</p>
+
+            <p class="head">Groen type verwijderen</p>
+            <form class="dropdownForm" id="removeGreenTypeForm">
+                <label for="greenTypeName">Groen type naam:</label>
+                <select name="removeGreenType" id="removeTypeList">
+                    <option value="null"></option>
+                </select>
+
+                <input type="submit" class="submitButton" id="submitRemoveGreenTypeForm" value="Verwijder">
             </form>
 
-            <!--            Adding greenM2-->
-            <p class="head headAdders">Groenstrook toevoegen</p>
-            <form class="dropdownForm" id="addGreenM2">
-                <div class="counter">
-                    <div class="inputFields">
-                        <input type="number" class="inputField" id="greenM2" name="greenM2" placeholder="0">
-                    </div>
-                    <div class="clickButtons">
-                        <button class="lower">-</button>
-                        <input type="submit" class="submitButton" id="addGreenM2Button" value="Voeg toe">
-                        <button class="increase">+</button>
-                    </div>
-                </div>
+
+            <p class="head">Gebied verwijderen</p>
+            <form class="dropdownForm" id="removeGreenLocationForm">
+                <label for="greenLocationName">Gebied naam:</label>
+                <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
+
+                <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
             </form>
-
-
-            <div id="removeForms">
-                <h class="head bighead">Gegevens Verwijderen</h>
-
-                <p class="head">Groen type verwijderen</p>
-                <form class="dropdownForm" id="removeGreenTypeForm">
-                    <label for="greenTypeName">Groen type naam:</label>
-                    <select name="removeGreenType" id="removeTypeList">
-                        <option value="null"></option>
-                    </select>
-
-                    <input type="submit" class="submitButton" id="submitRemoveGreenTypeForm" value="Verwijder">
-                </form>
-
-
-                <p class="head">Gebied verwijderen</p>
-                <form id="removeGreenLocationForm">
-                    <label for="greenLocationName">Gebied naam:</label>
-                    <input type="text" id="greenLocationName" name="greenLocationName" placeholder="">
-
-                    <input type="submit" class="submitButton" id="submitEditGreenTypeForm" value="Voeg too">
-                </form>
-            </div>
         </div>
     </div>
 </div>
