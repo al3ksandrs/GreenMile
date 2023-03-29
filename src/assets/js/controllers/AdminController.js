@@ -23,6 +23,7 @@ export class adminController extends Controller {
 
         this.#handleAreaRefresh();
         this.#handleTypeRefresh();
+
     }
 
     #removeGreenType(){
