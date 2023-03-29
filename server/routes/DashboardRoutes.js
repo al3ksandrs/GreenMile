@@ -10,6 +10,7 @@ class DashboardRoutes {
         this.#getTreeAmount();
         this.#getTemp();
         this.#getGroen();
+        this.#getGevel();
     }
 
     /**
@@ -99,6 +100,22 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
+    }
+
+    async #getGevel(){
+        this.#app.get("/gevel", async(req, res) => {
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT * FROM groen WHERE type_id = 2;",
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+        });
     }
 }
 

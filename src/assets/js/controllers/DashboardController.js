@@ -5,7 +5,7 @@ export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
     #GEVELTUINEN = 0;
-    #BOOMTUINEN = 1
+    #BOOMTUINEN = 1;
     #GROENEM2 = 2;
     #LKI = 3;
     #TEMPERATUUR = 4;
@@ -32,6 +32,7 @@ export class DashboardController extends Controller {
         this.#gevelData();
         this.#loadTreeAmount();
         this.#loadTempValues();
+        this.#loadGevelValues();
 
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
@@ -45,7 +46,6 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
 
         // These are just dummy values, get this data through routes later.
-        this.#animateCircle(57,this.#GEVELTUINEN)
         this.#animateCircle(48,this.#BOOMTUINEN)
         this.#animateCircle(68,this.#GROENEM2)
     }
@@ -102,10 +102,27 @@ export class DashboardController extends Controller {
             valueBox.innerHTML = "";
             const groenValue = await this.#dashboardRepository.getGroenvalues();
             valueBox.innerHTML = groenValue;
-            console.log (s);
+            console.log(s);
         } catch (e) {
             console.log(e)
         }
+    }
+    async #loadGevelValues(){
+
+        const valueBox = this.#dashboardView.querySelector("#gevelValue");
+        let gevelValue = 0;
+        const getGevelValues = await this.#dashboardRepository.getGevelValues();
+
+        //for each tree in database add one to the variable
+        for(let i = 0; getGevelValues.data.length > i; i++){
+            gevelValue += 1;
+        }
+
+        //update circle diagram with new amount of trees
+        this.#animateCircle(gevelValue, this.#GEVELTUINEN)
+
+        //add amount of trees to HTML view
+        valueBox.innerHTML = gevelValue;
     }
 
     #gevelData() {
