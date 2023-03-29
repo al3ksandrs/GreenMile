@@ -66,12 +66,13 @@ class DashboardRoutes {
             try {
                 let requestOptions = {
                     method: 'GET',
-                    redirect: 'follow'
+                    redirect: 'follow',
                 };
 
-                let tempData;
+                let tempData = null;
+                const fetch = require("node-fetch");
 
-                await fetch("https://weerlive.nl/api/json-data-10min.php?key=2012b5b9d6&locatie=52.3581,4.8907&callback=?", requestOptions)
+                await fetch("https://weerlive.nl/api/json-data-10min.php?key=2012b5b9d6&locatie=52.3581,4.8907&format=json", requestOptions)
                     .then(function (response) {
                         return response.json();
                     }).then(function (data) {
@@ -82,7 +83,7 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({weer: tempData});
 
             } catch (e) {
-
+                console.log(e)
             }
         });
     }
