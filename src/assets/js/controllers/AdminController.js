@@ -18,21 +18,28 @@ export class adminController extends Controller {
         this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
         this.#createAdminView.querySelector("#submitRemoveGreenTypeForm").addEventListener("click", (event) => this.#removeGreenType(event));
+        this.#createAdminView.querySelector("#submitremoveGreenAreaForm").addEventListener("click", (event) => this.#removeGreenArea(event));
+
 
         this.#handleAreaRefresh();
         this.#handleTypeRefresh();
     }
 
     #removeGreenType(){
-        event.preventDefault();
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const selectedRemoveType = removeTypeList.selectedIndex;
 
         this.#adminRepository.removeGreenType(selectedRemoveType);
     }
 
+    #removeGreenArea(){
+        const removeGreenList = this.#createAdminView.querySelector("#removeGreenAreaList");
+        const selectedRemoveArea = removeGreenList.selectedIndex;
+
+        this.#adminRepository.removeGreenArea(selectedRemoveArea);
+    }
+
     #handleAddGreen() {
-        event.preventDefault();
         const coordinaatX = this.#createAdminView.querySelector("#coordinateX").value;
         const coordinaatY = this.#createAdminView.querySelector("#coordinateY").value;
         const gebied = this.#createAdminView.querySelector("#greenAreaList");
@@ -55,10 +62,12 @@ export class adminController extends Controller {
     async #handleAreaRefresh(){
 
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
+        const removeAreaList = this.#createAdminView.querySelector("#removeGreenAreaList");
         const areaID = await this.#adminRepository.getArea();
 
         for(let i = 0; areaID.data.length > i; i++){
             areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
+            removeAreaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
         }
     }
 

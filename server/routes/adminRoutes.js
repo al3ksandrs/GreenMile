@@ -18,6 +18,7 @@ class adminRoutes {
         this.#refreshTypeList();
         this.#addGreen();
         this.#removeGreenType();
+        this.#removeGreenArea();
     }
 
     #removeGreenType(){
@@ -29,6 +30,26 @@ class adminRoutes {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "DELETE FROM type WHERE id = ?",
                     values: [greenType]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
+        });
+    }
+
+    #removeGreenArea(){
+        this.#app.post("/removeGreenAreaRoute", async(req, res) => {
+
+            const area = req.body.area;
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "DELETE FROM gebied WHERE Gebiedsnummer = ?",
+                    values: [area]
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
