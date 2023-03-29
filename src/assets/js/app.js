@@ -13,6 +13,7 @@ import { NavbarController }  from "./controllers/navbarController.js"
 import { UploadController }  from "./controllers/uploadController.js"
 import { WelcomeController }  from "./controllers/welcomeController.js"
 import { faqController } from "./controllers/FaqController.js";
+import { registerController } from "./controllers/FaqController.js";
 import { adminController} from "./controllers/AdminController.js";
 import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
@@ -33,6 +34,7 @@ export class App {
     static CONTROLLER_WELCOME = "welcome";
     static CONTROLLER_UPLOAD = "upload";
     static CONTROLLER_FAQ = "faq";
+    static CONTROLLER_REGISTER = "register";
     static CONTROLLER_ADMIN = "admin"
     static CONTROLLER_AMBITION = "ambition"
     static CONTROLLER_DASHBOARD = "dashboard"
@@ -101,6 +103,10 @@ export class App {
 
             case App.CONTROLLER_FAQ:
                 new faqController();
+                break;
+
+            case App.CONTROLLER_REGISTER:
+                new registerController();
                 break;
 
             case App.CONTROLLER_AMBITION:
