@@ -26,6 +26,7 @@ class DashboardRoutes {
                 };
 
                 let LKIdata;
+                const fetch = require("node-fetch");
 
                 await fetch("https://api.luchtmeetnet.nl/open_api/lki?station_number=NL49017&" +
                     "start=" + new Date(Date.now() - 7200001).toISOString() +
