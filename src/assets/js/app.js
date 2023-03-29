@@ -13,7 +13,7 @@ import { NavbarController }  from "./controllers/navbarController.js"
 import { UploadController }  from "./controllers/uploadController.js"
 import { WelcomeController }  from "./controllers/welcomeController.js"
 import { faqController } from "./controllers/FaqController.js";
-import { registerController } from "./controllers/FaqController.js";
+import { registerController } from "./controllers/registerController.js";
 import { adminController} from "./controllers/AdminController.js";
 import { AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
