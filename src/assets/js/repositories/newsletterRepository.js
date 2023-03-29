@@ -5,11 +5,13 @@ export class newsletterRepository {
     #submitNewsletterRoute;
     #getUsersRoute
     #sendNewsletterRoute
+    #getNewsletters
 
     constructor() {
         this.#submitNewsletterRoute = "/mailinglist/submit/title/"
         this.#getUsersRoute = "/mailingList/emails/"
         this.#sendNewsletterRoute = "/mailingList/send/email/"
+        this.#getNewsletters = "/mailingList/getAll"
 
         this.#networkManager = new NetworkManager();
     }
@@ -24,5 +26,9 @@ export class newsletterRepository {
 
     sendNewsletter(email, title, content) {
         return this.#networkManager.doRequest(this.#sendNewsletterRoute + email + "/title/" + title + "/content/" + content, "POST")
+    }
+
+    getNewsletters() {
+        return this.#networkManager.doRequest(this.#getNewsletters, "GET")
     }
 }

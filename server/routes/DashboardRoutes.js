@@ -90,7 +90,7 @@ class DashboardRoutes {
         this.#app.get("/groen", async(req,res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT SUM(m2) FROM gebied"
+                    query: "SELECT SUM(m2) AS GroenM2 FROM gebied"
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});

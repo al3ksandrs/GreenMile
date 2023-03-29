@@ -1,3 +1,10 @@
+/**
+ * Controller class for the dashboard.
+ * gets the data through the repository and api's and displays them on de dashboard page.
+ * @authors
+ *  -@beerstj
+ */
+
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
@@ -29,11 +36,13 @@ export class DashboardController extends Controller {
 
         this.#loadLKIvalues();
         this.#loadGroenvalues();
-        this.#gevelData();
         this.#loadTreeAmount();
         this.#loadTempValues();
         this.#loadGevelValues();
 
+        this.#gevelData();
+
+        // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
@@ -50,13 +59,14 @@ export class DashboardController extends Controller {
         this.#animateCircle(68,this.#GROENEM2)
     }
 
+    // gets the LKi values through the repository. Display this data on the dashboard
     async #loadLKIvalues() {
         const valueBox = this.#dashboardView.querySelector("#LKIvalue");
         try {
-            valueBox.innerHTML = "";
             const LKIvalue = await this.#dashboardRepository.getLKIvalues();
             valueBox.innerHTML = LKIvalue.LKI;
-            let circleValue = 10*LKIvalue.LKI;
+            // * 10 because the progress bar goes from 0 - 100% and nog 0-10
+            let circleValue = 10 * LKIvalue.LKI;
             this.#animateCircle(circleValue, this.#LKI)
         } catch (e) {
             console.log(e)
@@ -100,9 +110,9 @@ export class DashboardController extends Controller {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
         try {
             valueBox.innerHTML = "";
-            const groenValue = await this.#dashboardRepository.getGroenvalues();
+            const groenValue = groen.data[0].GroenM2
+            const groen = await this.#dashboardRepository.getGroenvalues();
             valueBox.innerHTML = groenValue;
-            console.log(s);
         } catch (e) {
             console.log(e)
         }
