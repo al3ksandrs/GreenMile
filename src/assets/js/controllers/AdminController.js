@@ -18,6 +18,7 @@ export class adminController extends Controller {
         this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
         this.#createAdminView.querySelector("#submitRemoveGreenTypeForm").addEventListener("click", (event) => this.#removeGreenType(event));
+        this.#createAdminView.querySelector("#addGreenGardenButton").addEventListener("click", (event) => this.#handleAddGreenGardenButton(event));
 
         this.#handleAreaRefresh();
         this.#handleTypeRefresh();
@@ -43,6 +44,7 @@ export class adminController extends Controller {
         this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType);
     }
 
+
     #handleAddGreenType() {
 
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
@@ -52,24 +54,35 @@ export class adminController extends Controller {
         this.#adminRepository.addGreenType(type);
     }
 
-    async #handleAreaRefresh(){
+    #handleAddGreenGardenButton() {
+
+        const greenGarden = this.#createAdminView.querySelector("#greenGarden").value;
+
+        console.log(greenGarden);
+
+        this.#adminRepository.addGreenGarden(greenGarden);
+    }
+
+    async #handleAreaRefresh() {
 
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
         const areaID = await this.#adminRepository.getArea();
 
-        for(let i = 0; areaID.data.length > i; i++){
-            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
+        for (let i = 0; areaID.data.length > i; i++) {
+            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="` + areaID.data[i].Gebiedsnummer + `">` + areaID.data[i].opmerking + `</option>`
         }
     }
 
-    async #handleTypeRefresh(){
+    async #handleTypeRefresh() {
         const typeList = this.#createAdminView.querySelector("#typeList");
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const typeID = await this.#adminRepository.getType();
 
-        for(let i = 0; typeID.data.length > i; i++){
-            typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
+        for (let i = 0; typeID.data.length > i; i++) {
+            typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="` + typeID.data[i].id + `">` + typeID.data[i].naam + `</option>`
             removeTypeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
         }
     }
+
+
 }
