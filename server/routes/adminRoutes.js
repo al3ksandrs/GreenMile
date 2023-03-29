@@ -17,7 +17,7 @@ class adminRoutes {
         this.#refreshTypeList();
         this.#addGreen();
         this.#removeGreenType();
-        this.#addGreenGarden();
+        // this.#addGreenGarden();
     }
 
     // #addGreenGarden() {
