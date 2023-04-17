@@ -8,6 +8,7 @@
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
+
 export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
@@ -53,6 +54,28 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
+
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
     }
 
     // gets the LKi values through the repository. Display this data on the dashboard

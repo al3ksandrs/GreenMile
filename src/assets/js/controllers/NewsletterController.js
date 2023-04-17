@@ -32,7 +32,7 @@ export class NewsletterController extends Controller{
                     `+newsletters[i].content.substring(0,950)+`
                 </p>
             </div>
-        </div>`
+        </div>` // do this with template tag
         }
     }
 }
