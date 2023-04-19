@@ -5,9 +5,11 @@
  *  -@beerstj
  */
 
+
+//['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
-
 
 export class DashboardController extends Controller {
     #dashboardView;
@@ -55,27 +57,7 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
 
-        const ctx = document.getElementById('myChart');
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
+        this.#boomtuinGrafiekData();
     }
 
     // gets the LKi values through the repository. Display this data on the dashboard
@@ -197,6 +179,48 @@ export class DashboardController extends Controller {
         this.#infoTextBox.innerText = "/ Fijnstof"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
         <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
+    }
+
+    async #boomtuinGrafiekData() {
+        // month.data[0].TreeAmount
+
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+        let month;
+        let amounts = []
+        let total = 0;
+
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
+            total += month.data[0].TreeAmount;
+            amounts.push(month.data[0].TreeAmount)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.getMontsArray(4),
+                datasets: [{
+                    label: 'Boomtuinen in deze maand',
+                    data: amounts,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+    }
+
+    getMontsArray(amount) {
+        const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
+        let values = [];
+
+        for (let i = 0; i < amount; i++) {
+            values.push(months[i])
+        }
+
+        return values;
     }
 
     #animateValue(obj, start, end, duration) {

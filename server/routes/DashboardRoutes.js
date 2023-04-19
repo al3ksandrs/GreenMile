@@ -11,6 +11,7 @@ class DashboardRoutes {
         this.#getTemp();
         this.#getGroen();
         this.#getGevel();
+        this.#getSelectMonthTree()
     }
 
     /**
@@ -120,6 +121,21 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
             }
         });
+    }
+
+    async #getSelectMonthTree() {
+        this.#app.get("/gevel/maand/:id", async (req,res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT COUNT(datum) AS TreeAmount FROM Groen WHERE MONTH(datum) = ?",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})
+            }
+        })
     }
 }
 
