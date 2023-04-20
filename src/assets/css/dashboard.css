@@ -5,6 +5,12 @@
     src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://fonts.gstatic.com/s/opensans/v13/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff) format('woff');
 }
 
+#map{
+    height: 50em;
+    margin-top: 5em;
+    border-radius: 10px;
+}
+
 .container{
     min-height: 100%;
 }
