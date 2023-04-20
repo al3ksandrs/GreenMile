@@ -1,3 +1,5 @@
+const {response} = require("express");
+
 class DashboardRoutes {
     #app
     #errorCodes = require("../framework/utils/httpErrorCodes");
@@ -11,6 +13,8 @@ class DashboardRoutes {
         this.#getTemp();
         this.#getGroen();
         this.#getGevel();
+        this.#getSelectMonthTree()
+        this.#getLastYearPM25Values();
     }
 
     /**
@@ -90,6 +94,31 @@ class DashboardRoutes {
             }
         });
     }
+
+    async #getLastYearPM25Values() {
+        this.#app.get("/PM25Today", async (req,res) => {
+            let reqOptions= {
+                method: "GET",
+                redirect: "follow",
+            };
+
+            let values = [];
+
+            await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
+                "start=" + new Date(Date.now() - 106400000).toISOString() +
+                "&end=" + new Date(Date.now()).toISOString() +
+                "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc&", reqOptions)
+                .then (function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    values = data
+                })
+
+            res.status(this.#errorCodes.HTTP_OK_CODE).json(values)
+
+        })
+    }
+
     async #getGroen() {
         this.#app.get("/groen", async(req,res) => {
             try {
@@ -120,6 +149,23 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
             }
         });
+    }
+
+
+
+    async #getSelectMonthTree() {
+        this.#app.get("/gevel/maand/:id", async (req,res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT COUNT(datum) AS TreeAmount FROM Groen WHERE MONTH(datum) = ?",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})
+            }
+        })
     }
 }
 

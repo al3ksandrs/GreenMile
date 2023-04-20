@@ -5,9 +5,11 @@
  *  -@beerstj
  */
 
+
+//['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
-
 
 export class DashboardController extends Controller {
     #dashboardView;
@@ -47,34 +49,19 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#boomData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#boomData();
+            this.#boomtuinGrafiekData();
+        })
         this.#dashboardView.querySelector("#groenData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#groenData()})
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
-
-        const ctx = document.getElementById('myChart');
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#tempData()
+            this.#PM25TodayGraph()
+        })
 
 
         var map = L.map('map').setView([52.360938, 4.890879], 16);
@@ -183,7 +170,6 @@ export class DashboardController extends Controller {
         treeAmountView.innerHTML = treeAmount;
     }
 
-
     async #loadFineDustValue(){
         const valueBox = this.#dashboardView.querySelector("#tempValue");
         try {
@@ -197,7 +183,6 @@ export class DashboardController extends Controller {
             console.log(e)
         }
     }
-
 
     async #loadGroenvalues() {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
@@ -268,6 +253,97 @@ export class DashboardController extends Controller {
         this.#infoTextBox.innerText = "/ Fijnstof"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
         <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
+    }
+
+    async #boomtuinGrafiekData() {
+        // month.data[0].TreeAmount
+
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+        let month;
+        let amounts = []
+        let total = 0;
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
+            total += month.data[0].TreeAmount;
+            amounts.push(month.data[0].TreeAmount)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.#getMontsArray(4),
+                datasets: [{
+                    label: 'Boomtuinen in deze maand',
+                    data: amounts,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+    }
+
+    async #PM25TodayGraph() {
+        let values = await this.#dashboardRepository.getPM25Today();
+        let array = []
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+
+        targetBox.innerHTML = ""
+
+        console.log(values)
+        for (let i = 0; i <24; i++) {
+            array.push(values.data[i].value)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.#getPast24Hours(),
+                datasets: [{
+                    label: 'Fijnstof waarde aan het begin van elk uur',
+                    data: array,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+
+        console.log(array)
+    }
+
+    #getPast24Hours() {
+        let curHour = (new Date(Date.now()).toISOString().substring(11,13));
+
+        let hoursArray = [];
+
+        console.log(curHour)
+
+        for (let i = 0; i < 24; i++) {
+
+            curHour = curHour - 1;
+
+            if(curHour === 0) {
+                curHour = 24;
+            }
+            let inArray = curHour + ":00"
+            hoursArray.push(inArray)
+        }
+        return hoursArray;
+    }
+
+    #getMontsArray(amount) {
+        const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
+        let values = [];
+
+        for (let i = 0; i < amount; i++) {
+            values.push(months[i])
+        }
+
+        return values;
     }
 
     #animateValue(obj, start, end, duration) {
