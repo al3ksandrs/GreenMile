@@ -5,7 +5,8 @@ export class DashboardRepository {
 
     #lkiRoute;
     #treeAmountRoute;
-    #tempRoute;
+    #PM25ROute;
+    #PM25TodayRoute;
     #groenRoute;
     #gevelRoute;
     #gevelMonthRoute
@@ -13,7 +14,8 @@ export class DashboardRepository {
     constructor() {
         this.#lkiRoute = "/lki";
         this.#treeAmountRoute = "/treeAmountRoute";
-        this.#tempRoute = "/fineDust";
+        this.#PM25ROute = "/fineDust";
+        this.#PM25TodayRoute = "/PM25Today";
         this.#groenRoute = "/groen";
         this.#gevelRoute = "/gevel";
         this.#gevelMonthRoute = "/gevel/maand/"
@@ -31,7 +33,7 @@ export class DashboardRepository {
     }
 
     getFineDustValue(){
-        return this.#networkManager.doRequest(this.#tempRoute, "GET");
+        return this.#networkManager.doRequest(this.#PM25ROute, "GET");
     }
 
     getGroenvalues() {
@@ -44,5 +46,9 @@ export class DashboardRepository {
 
     getSelectedMonthTreeValues(monthId) {
         return this.#networkManager.doRequest(this.#gevelMonthRoute + monthId, "GET")
+    }
+
+    getPM25Today() {
+        return this.#networkManager.doRequest(this.#PM25TodayRoute, "GET")
     }
 }

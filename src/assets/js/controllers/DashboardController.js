@@ -49,15 +49,20 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#boomData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#boomData();
+            this.#boomtuinGrafiekData();
+        })
         this.#dashboardView.querySelector("#groenData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#groenData()})
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#tempData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#tempData()
+            this.#PM25TodayGraph()
+        })
 
-        this.#boomtuinGrafiekData();
     }
 
     // gets the LKi values through the repository. Display this data on the dashboard
@@ -94,7 +99,6 @@ export class DashboardController extends Controller {
         treeAmountView.innerHTML = treeAmount;
     }
 
-
     async #loadFineDustValue(){
         const valueBox = this.#dashboardView.querySelector("#tempValue");
         try {
@@ -108,7 +112,6 @@ export class DashboardController extends Controller {
             console.log(e)
         }
     }
-
 
     async #loadGroenvalues() {
         const valueBox = this.#dashboardView.querySelector("#groenValue");
@@ -189,7 +192,6 @@ export class DashboardController extends Controller {
         let amounts = []
         let total = 0;
 
-
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
             month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
             total += month.data[0].TreeAmount;
@@ -199,7 +201,7 @@ export class DashboardController extends Controller {
         new Chart(targetBox, {
             type: 'line',
             data: {
-                labels: this.getMontsArray(4),
+                labels: this.#getMontsArray(4),
                 datasets: [{
                     label: 'Boomtuinen in deze maand',
                     data: amounts,
@@ -212,7 +214,57 @@ export class DashboardController extends Controller {
         });
     }
 
-    getMontsArray(amount) {
+    async #PM25TodayGraph() {
+        let values = await this.#dashboardRepository.getPM25Today();
+        let array = []
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+
+        targetBox.innerHTML = ""
+
+        console.log(values)
+        for (let i = 0; i <24; i++) {
+            array.push(values.data[i].value)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.#getPast24Hours(),
+                datasets: [{
+                    label: 'Fijnstof waarde aan het begin van elk uur',
+                    data: array,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+
+        console.log(array)
+    }
+
+    #getPast24Hours() {
+        let curHour = (new Date(Date.now()).toISOString().substring(11,13));
+
+        let hoursArray = [];
+
+        console.log(curHour)
+
+        for (let i = 0; i < 24; i++) {
+
+            curHour = curHour - 1;
+
+            if(curHour === 0) {
+                curHour = 24;
+            }
+            let inArray = curHour + ":00"
+            hoursArray.push(inArray)
+        }
+        return hoursArray;
+    }
+
+    #getMontsArray(amount) {
         const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
         let values = [];
 

@@ -100,7 +100,7 @@
 
 .graph-box{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin: 10px;
     padding: 15px;
     border-radius: 13px;
@@ -108,6 +108,11 @@
     /*box-shadow: 4px 10px 1px 1px #ababab;*/
     width: 50rem;
     height: 35rem;
+}
+
+.graph-box-title {
+    display: flex;
+    flex-direction: row;
 }
 
 .information-box{
@@ -120,7 +125,6 @@
     /*box-shadow: 4px 5px 1px 1px #ababab;*/
     width: 21.4rem;
     height: 35rem;
-
 }
 
 .grey-text{
@@ -150,6 +154,7 @@ svg:not(:root) {
     overflow: visible;
     background-color: transparent;
 }
+
 
 @media (max-width: 990px) {
     .circle-diagrams{
