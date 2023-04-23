@@ -1,3 +1,9 @@
+/**
+ * Class to load all user and admin accounts on the accounts page.
+ * @authors
+ *  -beerstj.
+ */
+
 import {Controller} from "./controller.js";
 import {AccountsRepository} from "../repositories/AccountsRepository.js";
 

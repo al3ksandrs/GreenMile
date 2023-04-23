@@ -1,3 +1,7 @@
+/**
+ * Controller to load all of the newsletters in the database to the page on the website.
+ * @author beerstj
+ */
 import {Controller} from "./controller.js";
 import {newsletterRepository} from "../repositories/newsletterRepository.js";
 
@@ -9,7 +13,6 @@ export class NewsletterController extends Controller{
         super();
 
         this.#newsletterRepository = new newsletterRepository();
-
         this.#setupView()
 
     }
@@ -19,6 +22,10 @@ export class NewsletterController extends Controller{
         this.#displayNewsletters()
     }
 
+    /**
+     * Gets all of the newsletters from database and displays them on the page.
+     * @returns {Promise<void>}
+     */
     async #displayNewsletters() {
         let newslettersContainer = this.#newsletterView.querySelector(".newsletters-letters-container")
         const newsletters = await this.#newsletterRepository.getNewsletters();

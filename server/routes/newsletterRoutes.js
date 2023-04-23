@@ -13,6 +13,9 @@ class newsletterRoutes {
         this.#getAllNewsletters()
     }
 
+    /**
+     * Adds users email to the mailing list table in database
+     */
     #signUp() {
         this.#app.get("/mailingList/signup/:email", async (req,res) => {
             try {
@@ -28,6 +31,9 @@ class newsletterRoutes {
         })
     }
 
+    /**
+     * saves the newsletter to the database.
+     */
     #submitNewsletter() {
         this.#app.get("/mailinglist/submit/title/:title/content/:content", async (req,res) => {
             try {
@@ -45,9 +51,12 @@ class newsletterRoutes {
         })
     }
 
+    /**
+     * sends newsletter with content and title to email given in the request
+     */
     #sendNewsletter() {
         this.#app.post("/mailingList/send/email/:email/title/:title/content/:content", async (req,res) => {
-            let data123;
+            let data2;
             await fetch("https://api.hbo-ict.cloud/mail", {
                 method: "post",
                 headers: {
@@ -73,13 +82,16 @@ class newsletterRoutes {
             }).then(function (response) {
                 return response.json();
             }).then (function(data) {
-                data123 = data;
+                data2 = data;
             })
 
-            res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data123})
+            res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data2})
         })
     }
 
+    /**
+     * Gets every email in the mailing list
+     */
     #getAllUsers() {
         this.#app.get("/mailingList/emails", async (req,res) => {
             const users = await this.#databaseHelper.handleQuery( {
@@ -90,6 +102,9 @@ class newsletterRoutes {
         })
     }
 
+    /**
+     * Gets all of the newsletters from the database.
+     */
     #getAllNewsletters() {
         this.#app.get("/mailingList/getAll", async (req,res) => {
             const newsletters = await this.#databaseHelper.handleQuery({

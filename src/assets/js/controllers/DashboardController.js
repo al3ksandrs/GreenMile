@@ -256,7 +256,7 @@ export class DashboardController extends Controller {
     }
 
     async #boomtuinGrafiekData() {
-        // month.data[0].TreeAmount
+        this.#clearCanvas();
 
         const targetBox = this.#dashboardView.querySelector("#myChart")
         let month;
@@ -272,7 +272,7 @@ export class DashboardController extends Controller {
         new Chart(targetBox, {
             type: 'line',
             data: {
-                labels: this.#getMontsArray(4),
+                labels: this.#getMonthsArray(4),
                 datasets: [{
                     label: 'Boomtuinen in deze maand',
                     data: amounts,
@@ -286,13 +286,11 @@ export class DashboardController extends Controller {
     }
 
     async #PM25TodayGraph() {
+        this.#clearCanvas();
         let values = await this.#dashboardRepository.getPM25Today();
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        targetBox.innerHTML = ""
-
-        console.log(values)
         for (let i = 0; i <24; i++) {
             array.push(values.data[i].value)
         }
@@ -311,31 +309,36 @@ export class DashboardController extends Controller {
                 borderColor: '#058C42'
             }
         });
-
-        console.log(array)
     }
 
     #getPast24Hours() {
-        let curHour = (new Date(Date.now()).toISOString().substring(11,13));
-
+        let curHour = new Date(Date.now()).toISOString().substring(11,13);
         let hoursArray = [];
+        const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
+        let today = new Date(Date.now());
 
-        console.log(curHour)
+        curHour++;
+        curHour++;
+        curHour++;
 
         for (let i = 0; i < 24; i++) {
-
             curHour = curHour - 1;
 
             if(curHour === 0) {
                 curHour = 24;
             }
-            let inArray = curHour + ":00"
+            let inArray = curHour + ":00 "
             hoursArray.push(inArray)
         }
         return hoursArray;
     }
 
-    #getMontsArray(amount) {
+    /**
+     * Gets the amount of selected
+     * @param amount
+     * @returns {*[]}
+     */
+    #getMonthsArray(amount) {
         const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
         let values = [];
 
@@ -345,6 +348,16 @@ export class DashboardController extends Controller {
 
         return values;
     }
+
+    /**
+     * Clears the canvas thats filled with the chart.
+     * used do to the charts
+     */
+    #clearCanvas() {
+        this.#dashboardView.querySelector("#chartbox").innerHTML = ""
+        this.#dashboardView.querySelector("#chartbox").innerHTML = "<canvas id=\"myChart\"></canvas>"
+    }
+
 
     #animateValue(obj, start, end, duration) {
         let startTimestamp = null;

@@ -14,7 +14,7 @@ class DashboardRoutes {
         this.#getGroen();
         this.#getGevel();
         this.#getSelectMonthTree()
-        this.#getLastYearPM25Values();
+        this.#ValuesPM25Today();
     }
 
     /**
@@ -95,7 +95,12 @@ class DashboardRoutes {
         });
     }
 
-    async #getLastYearPM25Values() {
+
+    /**
+     * Function gets all of the PM25 values from the luchtmeetnet API.
+     * @returns {Promise<void>}
+     */
+    async #ValuesPM25Today() {
         this.#app.get("/PM25Today", async (req,res) => {
             let reqOptions= {
                 method: "GET",
@@ -151,8 +156,10 @@ class DashboardRoutes {
         });
     }
 
-
-
+    /**
+     * Selects the amount of trees planted in specified month. Used to create charts on dashboard
+     * @returns {Promise<void>}
+     */
     async #getSelectMonthTree() {
         this.#app.get("/gevel/maand/:id", async (req,res) => {
             try {
