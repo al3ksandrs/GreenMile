@@ -13,7 +13,8 @@ class DashboardRoutes {
         this.#getTemp();
         this.#getGroen();
         this.#getGevel();
-        this.#getSelectMonthTree()
+        this.#getSelectMonthTree();
+        this.#getSelectGevelMaand();
         this.#ValuesPM25Today();
     }
 
@@ -165,6 +166,20 @@ class DashboardRoutes {
             try {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "SELECT COUNT(datum) AS TreeAmount FROM Groen WHERE MONTH(datum) = ? AND type_id = 1",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})
+            }
+        })
+    }
+    async #getSelectGevelMaand() {
+        this.#app.get("/gevel/maand/:id", async (req,res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT COUNT(datum) AS GevelAmount FROM Groen WHERE MONTH(datum) = ? AND type_id = 2",
                     values: [req.params.id]
                 })
 

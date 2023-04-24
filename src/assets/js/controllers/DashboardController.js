@@ -44,10 +44,14 @@ export class DashboardController extends Controller {
         this.#loadGevelValues();
 
         this.#gevelData();
-
+        this.#gevelTuinGrafiek()
+        
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#gevelData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#gevelData()
+            this.#gevelTuinGrafiek()
+        })
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#boomData();
@@ -267,6 +271,36 @@ export class DashboardController extends Controller {
             month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
             total += month.data[0].TreeAmount;
             amounts.push(month.data[0].TreeAmount)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.#getMonthsArray(4),
+                datasets: [{
+                    label: 'Boomtuinen in deze maand',
+                    data: amounts,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+    }
+
+    async #gevelTuinGrafiek() {
+        this.#clearCanvas();
+
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+        let month;
+        let amounts = []
+        let total = 0;
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthGevelValues(i)
+            total += month.data[0].GevelAmount;
+            amounts.push(month.data[0].GevelAmount)
         }
 
         new Chart(targetBox, {
