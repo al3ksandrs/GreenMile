@@ -18,7 +18,7 @@ export class DashboardRepository {
         this.#PM25TodayRoute = "/PM25Today";
         this.#groenRoute = "/groen";
         this.#gevelRoute = "/gevel";
-        this.#gevelMonthRoute = "/gevel/maand/"
+        this.#gevelMonthRoute = "/treeAmount/maand/"
 
         this.#networkManager = new NetworkManager();
     }

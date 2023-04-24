@@ -161,10 +161,10 @@ class DashboardRoutes {
      * @returns {Promise<void>}
      */
     async #getSelectMonthTree() {
-        this.#app.get("/gevel/maand/:id", async (req,res) => {
+        this.#app.get("/treeAmount/maand/:id", async (req,res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery( {
-                    query: "SELECT COUNT(datum) AS TreeAmount FROM Groen WHERE MONTH(datum) = ?",
+                    query: "SELECT COUNT(datum) AS TreeAmount FROM Groen WHERE MONTH(datum) = ? AND type_id = 1",
                     values: [req.params.id]
                 })
 
