@@ -4,49 +4,33 @@ export class DashboardRepository {
     #networkManager;
 
     #lkiRoute;
-    #treeAmountRoute;
     #PM25ROute;
     #PM25TodayRoute;
-    #groenRoute;
-    #gevelRoute;
     #treeAmountMonthRoute;
     #gevelAmountMonthRoute;
     #groenAmountMonthRoute;
-
+    #dashboardDatabaseRoute;
+    #dashboardAPIRoute;
 
     constructor() {
         this.#lkiRoute = "/lki";
-        this.#treeAmountRoute = "/treeAmountRoute";
         this.#PM25ROute = "/fineDust";
         this.#PM25TodayRoute = "/PM25Today";
-        this.#groenRoute = "/groen";
-        this.#gevelRoute = "/gevel";
         this.#treeAmountMonthRoute = "/treeAmount/maand/"
         this.#gevelAmountMonthRoute = "/gevel/maand/"
         this.#groenAmountMonthRoute = "/groen/maand/"
+        this.#dashboardDatabaseRoute = "/dashboard/database"
+        this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
 
         this.#networkManager = new NetworkManager();
     }
 
-    getLKIvalues() {
-        return this.#networkManager.doRequest(this.#lkiRoute, "GET");
+    getDashboardValues() {
+        return this.#networkManager.doRequest(this.#dashboardDatabaseRoute, "GET")
     }
 
-    // get amount of trees for the dashboard (@author Aleksandrs Soskolainens)
-    getTreeAmount(){
-        return this.#networkManager.doRequest(this.#treeAmountRoute, "GET");
-    }
-
-    getFineDustValue(){
-        return this.#networkManager.doRequest(this.#PM25ROute, "GET");
-    }
-
-    getGroenvalues() {
-        return this.#networkManager.doRequest(this.#groenRoute, "GET");
-    }
-
-    getGevelValues(){
-        return this.#networkManager.doRequest(this.#gevelRoute, "GET");
+    getDashboardAPIValues() {
+        return this.#networkManager.doRequest(this.#dashboardAPIRoute, "GET")
     }
 
     getSelectedMonthTreeValues(monthId) {

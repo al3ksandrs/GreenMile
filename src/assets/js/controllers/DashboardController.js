@@ -14,9 +14,9 @@ import {DashboardRepository} from "../repositories/DashboardRepository.js";
 export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
-    #GEVELTUINEN = 0;
-    #BOOMTUINEN = 1;
-    #GROENEM2 = 2;
+    #FACADEGARDENINDEX = 0;
+    #TREEGARDENINDEX = 1;
+    #GREENERYINDEX = 2;
     #LKI = 3;
     #FINE_DUST = 4;
     #graphTextBox;
@@ -28,7 +28,6 @@ export class DashboardController extends Controller {
         this.#setupView();
     }
 
-
     async #setupView() {
         this.#dashboardView = await super.loadHtmlIntoContent("html_views/dashboard.html")
         this.#dashboardRepository = new DashboardRepository();
@@ -37,15 +36,11 @@ export class DashboardController extends Controller {
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
 
-        this.#loadLKIvalues();
-        this.#loadGroenvalues();
-        this.#loadTreeAmount();
-        this.#loadFineDustValue();
-        this.#loadGevelValues();
-
+        this.#loadDashboardValues()
         this.#gevelData();
+        this.#map();
+
         this.#gevelTuinGrafiek()
-        
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
@@ -63,167 +58,26 @@ export class DashboardController extends Controller {
             this.#groenGraphData();
         })
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#lkiData()
+        })
+
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#tempData()
             this.#PM25TodayGraph()
         })
-
-
-        var map = L.map('map').setView([52.360938, 4.890879], 16);
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-
-        var popup = L.popup();
-
-        function onMapClick(e) {
-            popup
-                .setLatLng(e.latlng)
-                .setContent("You clicked the map at " + e.latlng.toString())
-                .openOn(map);
-        }
-
-        map.on('click', onMapClick);
-
-        var polygon = L.polygon([
-            [52.364006, 4.8788],
-            [52.363449, 4.879546],
-            [52.362847, 4.880356],
-            [52.362162, 4.881096],
-            [52.361918, 4.881624],
-            [52.361731, 4.882268],
-            [52.361697, 4.883526],
-            [52.361587, 4.884014],
-            [52.360208, 4.886874],
-            [52.360092, 4.886997],
-            [52.359841, 4.887458],
-            [52.359623, 4.887737],
-            [52.358976, 4.888421],
-            [52.358766, 4.88873],
-            [52.358562, 4.889102],
-            [52.358409, 4.889448],
-            [52.358195, 4.890277],
-            [52.358154, 4.890765],
-            [52.358046, 4.891423],
-            [52.357644, 4.898061],
-            [52.357654, 4.898375],
-            [52.35872, 4.903519],
-            [52.358768, 4.904013],
-            [52.358702, 4.904042],
-            [52.358663, 4.903541],
-            [52.3576, 4.898402],
-            [52.357592, 4.89815],
-            [52.357877, 4.892841],
-            [52.357987, 4.891393],
-            [52.358005, 4.89083],
-            [52.358134, 4.890256],
-            [52.35835, 4.889416],
-            [52.358771, 4.88859],
-            [52.359078, 4.888215],
-            [52.359774, 4.887442],
-            [52.360064, 4.886906],
-            [52.360111, 4.886731],
-            [52.360666, 4.885669],
-            [52.36149, 4.883961],
-            [52.361607, 4.883518],
-            [52.361638, 4.882172],
-            [52.361733, 4.881673],
-            [52.362011, 4.881061],
-            [52.362352, 4.880616],
-            [52.362848, 4.880002],
-            [52.363574, 4.878918],
-            [52.363769, 4.87869],
-            [52.363972, 4.878612]
-        ], {
-            color: 'green'
-        }).addTo(map);
     }
 
-    // gets the LKi values through the repository. Display this data on the dashboard
-    async #loadLKIvalues() {
-        const valueBox = this.#dashboardView.querySelector("#LKIvalue");
-        try {
-            const LKIvalue = await this.#dashboardRepository.getLKIvalues();
-            valueBox.innerHTML = LKIvalue.LKI;
-            // * 10 because the progress bar goes from 0 - 100% and nog 0-10
-            let circleValue = 10 * LKIvalue.LKI;
-            this.#animateCircle(circleValue, this.#LKI)
-            this.#animateValue(valueBox,0,LKIvalue.LKI,500)
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    async #loadDashboardValues() {
+        const databaseValues = await this.#dashboardRepository.getDashboardValues();
+        const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
 
-    // get amount of trees for the dashboard (@author Aleksandrs Soskolainens)
-    async #loadTreeAmount(){
-
-        const treeAmountView = this.#dashboardView.querySelector("#treeAmount");
-        let treeAmount = 0;
-        const getTreeAmount = await this.#dashboardRepository.getTreeAmount();
-
-        //for each tree in database add one to the variable
-        for(let i = 0; getTreeAmount.data.length > i; i++){
-            treeAmount += 1;
-        }
-
-        //update circle diagram with new amount of trees
-        this.#animateCircle(treeAmount, this.#BOOMTUINEN)
-        this.#animateValue(treeAmountView,0,treeAmount,500)
-        //add amount of trees to HTML view
-        treeAmountView.innerHTML = treeAmount;
-    }
-
-    async #loadFineDustValue(){
-        const valueBox = this.#dashboardView.querySelector("#tempValue");
-        try {
-            valueBox.innerHTML = "";
-            const fineDustData = await this.#dashboardRepository.getFineDustValue();
-            valueBox.innerHTML = fineDustData.fineDust;
-            let circleValue = 3*fineDustData.fineDust;
-            this.#animateCircle(circleValue, this.#FINE_DUST)
-            this.#animateValue(valueBox, 0, fineDustData.fineDust,500)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    async #loadGroenvalues() {
-        const valueBox = this.#dashboardView.querySelector("#groenValue");
-        try {
-            valueBox.innerHTML = "";
-            const groen = await this.#dashboardRepository.getGroenvalues();
-            const groenValue = groen.data[0].GroenM2
-            valueBox.innerHTML = groenValue;
-            this.#animateCircle(groenValue, this.#GROENEM2)
-            this.#animateValue(valueBox,0,groenValue,500)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    async #loadGevelValues(){
-
-        const valueBox = this.#dashboardView.querySelector("#gevelValue");
-        let gevelValue = 0;
-        const getGevelValues = await this.#dashboardRepository.getGevelValues();
-
-        //for each tree in database add one to the variable
-        for(let i = 0; getGevelValues.data.length > i; i++){
-            gevelValue += 1;
-        }
-
-        let circleValue = (gevelValue / 130 )* 100;
-
-        //update circle diagram with new amount of trees
-        this.#animateCircle(circleValue, this.#GEVELTUINEN)
-        this.#animateValue(valueBox,0,gevelValue,500)
-
-        //add amount of trees to HTML view
-        valueBox.innerHTML = gevelValue;
+        this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
+        this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
+        this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
+        this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
+        this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
     }
 
     #gevelData() {
@@ -301,10 +155,9 @@ export class DashboardController extends Controller {
         let total = 0;
 
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
-            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
-            console.log(month)
-            total += month.data[0].TreeAmount;
-            amounts.push(month.data[0].TreeAmount)
+            month = await this.#dashboardRepository.getSelectedMonthGroenValues(i)
+            total += month.data[0].GroeneM2;
+            amounts.push(month.data[0].GroeneM2)
         }
 
         new Chart(targetBox, {
@@ -379,11 +232,15 @@ export class DashboardController extends Controller {
         });
     }
 
+    /**
+     * Gets the past 24 hours in a array (For example, if its 16:00, you will get:
+     * ['15:00 ', '14:00 ', '13:00 ', '12:00 ', '11:00 ', '10:00 ', '9:00 ', '8:00 ', '7:00 ', '6:00 ', '5:00 ', '4:00 ', '3:00 ', '2:00 ', '1:00 ', '24:00 ', '23:00 ', '22:00 ', '21:00 ', '20:00 ', '19:00 ', '18:00 ', '17:00 ', '16:00 ']
+     * Used for the labels in today charts.
+     * @returns array of past 24 hours.
+     */
     #getPast24Hours() {
         let curHour = new Date(Date.now()).toISOString().substring(11,13);
         let hoursArray = [];
-        const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
-        let today = new Date(Date.now());
 
         curHour++;
         curHour++;
@@ -419,20 +276,37 @@ export class DashboardController extends Controller {
 
     /**
      * Clears the canvas thats filled with the chart.
-     * used do to the charts
+     * used for the charts
      */
     #clearCanvas() {
         this.#dashboardView.querySelector("#chartbox").innerHTML = ""
         this.#dashboardView.querySelector("#chartbox").innerHTML = "<canvas id=\"myChart\"></canvas>"
     }
 
+    /**
+     * Animates both the circle and the number value in one function.
+     * @param target - the html element you want to animate
+     * @param value - the value to what number the animation should go.
+     */
+    #animateCircleAndValues(target, value) {
+        this.#animateValues(target,value)
+        this.#animateCircle(value, target)
+    }
 
-    #animateValue(obj, start, end, duration) {
+    /**
+     * Animates the values, that counts up.
+     * @param value_selector - which html element you want to animate
+     * @param end - value at which you want the animation to stop.
+     */
+    #animateValues(value_selector, end) {
         let startTimestamp = null;
+        let start = 0;
+        let duration = 500;
+        const valueTargetList= this.#dashboardView.getElementsByClassName("green-value");
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start);
+            valueTargetList[value_selector].innerHTML = Math.floor(progress * (end - start) + start);
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
@@ -446,13 +320,44 @@ export class DashboardController extends Controller {
      * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
      */
     #animateCircle(value,circleSelector) {
-        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")
-        )) / 100);
+        let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", ""))) / 100);
 
         // This is to animate the circle
         document.querySelectorAll(".progress-circle svg circle")[circleSelector].animate([{strokeDashoffset: parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", "")),}, {strokeDashoffset: offsetValue,},], {duration: 500,});
 
         // Without this, circle gets filled 100% after the animation
         document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
+    }
+
+    #map() {
+        var map = L.map('map').setView([52.360938, 4.890879], 16);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var popup = L.popup();
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+
+        }
+
+        map.on('click', onMapClick);
+
+        var polygon = L.polygon([
+            [52.364006, 4.8788], [52.363449, 4.879546], [52.362847, 4.880356], [52.362162, 4.881096], [52.361918, 4.881624], [52.361731, 4.882268], [52.361697, 4.883526],
+            [52.361587, 4.884014], [52.360208, 4.886874], [52.360092, 4.886997], [52.359841, 4.887458], [52.359623, 4.887737], [52.358976, 4.888421], [52.358766, 4.88873],
+            [52.358562, 4.889102], [52.358409, 4.889448], [52.358195, 4.890277], [52.358154, 4.890765], [52.358046, 4.891423], [52.357644, 4.898061], [52.357654, 4.898375],
+            [52.35872, 4.903519], [52.358768, 4.904013], [52.358702, 4.904042], [52.358663, 4.903541], [52.3576, 4.898402], [52.357592, 4.89815], [52.357877, 4.892841],
+            [52.357987, 4.891393], [52.358005, 4.89083], [52.358134, 4.890256], [52.35835, 4.889416], [52.358771, 4.88859], [52.359078, 4.888215], [52.359774, 4.887442],
+            [52.360064, 4.886906], [52.360111, 4.886731], [52.360666, 4.885669], [52.36149, 4.883961], [52.361607, 4.883518], [52.361638, 4.882172], [52.361733, 4.881673],
+            [52.362011, 4.881061], [52.362352, 4.880616], [52.362848, 4.880002], [52.363574, 4.878918], [52.363769, 4.87869], [52.363972, 4.878612]
+        ], {
+            color: 'green'
+        }).addTo(map);
     }
 }

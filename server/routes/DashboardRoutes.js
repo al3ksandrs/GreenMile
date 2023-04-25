@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 class DashboardRoutes {
     #app
     #errorCodes = require("../framework/utils/httpErrorCodes");
@@ -8,13 +10,67 @@ class DashboardRoutes {
 
         this.#getSelectMonthGroen();
         this.#getLKI();
-        this.#getTreeAmount();
         this.#getTemp();
-        this.#getGroen();
-        this.#getGevel();
         this.#getSelectMonthTree();
         this.#getSelectGevelMaand();
         this.#ValuesPM25Today();
+
+        this.#getDashboardDatabaseValues();
+        this.#getDashboardAPIValues();
+    }
+
+    async #getDashboardDatabaseValues() {
+        this.#app.get("/dashboard/database", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT " +
+                                "SUM(CASE WHEN type_id = 1 THEN 1 ELSE 0 END) AS treeGarden, " +
+                                "SUM(CASE WHEN type_id = 2 THEN 1 ELSE 0 END) AS facadeGarden, " +
+                                 "(SELECT COUNT(*) FROM GroeneM2) AS greenery " +
+                            "FROM Groen"
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getDashboardAPIValues() {
+        this.#app.get("/dashboard/API/Luchtmeetnet", async (req,res) => {
+            let requestOptions = {
+                method: "GET",
+                redirect: "Follow"
+            }
+
+            let today = new Date(Date.now()).toISOString();
+            let yesterday = new Date(Date.now() - 7200001).toISOString();
+
+            try {
+                let AQI;
+                let PM25;
+
+                await fetch("https://api.luchtmeetnet.nl/open_api/lki?station_number=NL49017&" + "start=" + yesterday + "&end=" + today, requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data){
+                        AQI = data.data[0].value;
+                    })
+
+                await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" + "start=" + yesterday + "&end=" + today +
+                    "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        PM25 = data.data[0].value
+                    })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({AQI: AQI, PM25: PM25})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
     }
 
     /**
@@ -49,23 +105,6 @@ class DashboardRoutes {
         })
     }
 
-    // get amount of trees for the dashboard (@author Aleksandrs Soskolainens)
-    async #getTreeAmount(){
-        this.#app.get("/treeAmountRoute", async(req, res) => {
-
-            try {
-                let data = await this.#databaseHelper.handleQuery( {
-                    query: "SELECT * FROM groen WHERE type_id = 1;",
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
-
-            } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
-            }
-        });
-    }
-
     async #getTemp() {
         this.#app.get("/fineDust", async (req, res) => {
             try {
@@ -95,9 +134,8 @@ class DashboardRoutes {
         });
     }
 
-
     /**
-     * Function gets all of the PM25 values from the luchtmeetnet API.
+     * Function to get all of the PM25 values from today, from the luchtmeetnet API
      * @returns {Promise<void>}
      */
     async #ValuesPM25Today() {
@@ -124,37 +162,6 @@ class DashboardRoutes {
         })
     }
 
-    async #getGroen() {
-        this.#app.get("/groen", async(req,res) => {
-            try {
-                let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT COUNT(groenem2) AS GroenM2 FROM GroeneM2"
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
-
-            } catch (e) {
-
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
-            }
-        })
-    }
-
-    async #getGevel(){
-        this.#app.get("/gevel", async(req, res) => {
-
-            try {
-                let data = await this.#databaseHelper.handleQuery( {
-                    query: "SELECT * FROM groen WHERE type_id = 2;",
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
-
-            } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
-            }
-        });
-    }
 
     /**
      * Selects the amount of trees planted in specified month. Used to create charts on dashboard
@@ -174,6 +181,7 @@ class DashboardRoutes {
             }
         })
     }
+
     async #getSelectGevelMaand() {
         this.#app.get("/gevel/maand/:id", async (req,res) => {
             try {
@@ -203,6 +211,9 @@ class DashboardRoutes {
             }
         })
     }
+
+
+
 }
 
 module.exports = DashboardRoutes;
