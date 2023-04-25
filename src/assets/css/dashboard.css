@@ -133,6 +133,21 @@
     height: 35rem;
 }
 
+.grfiek-weergave{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 8px;
+}
+
+.weergave{
+    margin: 4px;
+    color: #212529;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #efefef;
+}
+
 .grey-text{
     color: #737373;
 }
