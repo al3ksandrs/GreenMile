@@ -58,7 +58,10 @@ export class DashboardController extends Controller {
             this.#boomtuinGrafiekData();
         })
         this.#dashboardView.querySelector("#groenData").addEventListener("click",() => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");this.#groenData()})
+            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+            this.#groenData();
+            this.#groenGraphData();
+        })
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow"); this.#lkiData()})
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
@@ -269,6 +272,37 @@ export class DashboardController extends Controller {
 
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
             month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
+            total += month.data[0].TreeAmount;
+            amounts.push(month.data[0].TreeAmount)
+        }
+
+        new Chart(targetBox, {
+            type: 'line',
+            data: {
+                labels: this.#getMonthsArray(4),
+                datasets: [{
+                    label: 'Boomtuinen in deze maand',
+                    data: amounts,
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+    }
+
+    async #groenGraphData() {
+        this.#clearCanvas();
+
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+        let month;
+        let amounts = []
+        let total = 0;
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
+            console.log(month)
             total += month.data[0].TreeAmount;
             amounts.push(month.data[0].TreeAmount)
         }

@@ -1,5 +1,3 @@
-const {response} = require("express");
-
 class DashboardRoutes {
     #app
     #errorCodes = require("../framework/utils/httpErrorCodes");
@@ -8,6 +6,7 @@ class DashboardRoutes {
     constructor(app) {
         this.#app = app;
 
+        this.#getSelectMonthGroen();
         this.#getLKI();
         this.#getTreeAmount();
         this.#getTemp();
@@ -129,7 +128,7 @@ class DashboardRoutes {
         this.#app.get("/groen", async(req,res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT SUM(groeneM2) AS GroenM2 FROM gebied"
+                    query: "SELECT COUNT(groenem2) AS GroenM2 FROM GroeneM2"
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
@@ -186,6 +185,21 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})
+            }
+        })
+    }
+
+    async #getSelectMonthGroen() {
+        this.#app.get("/groen/maand/:id", async (req,res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE MONTH(datum) = ?",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
     }

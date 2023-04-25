@@ -11,6 +11,8 @@ export class DashboardRepository {
     #gevelRoute;
     #treeAmountMonthRoute;
     #gevelAmountMonthRoute;
+    #groenAmountMonthRoute;
+
 
     constructor() {
         this.#lkiRoute = "/lki";
@@ -21,6 +23,7 @@ export class DashboardRepository {
         this.#gevelRoute = "/gevel";
         this.#treeAmountMonthRoute = "/treeAmount/maand/"
         this.#gevelAmountMonthRoute = "/gevel/maand/"
+        this.#groenAmountMonthRoute = "/groen/maand/"
 
         this.#networkManager = new NetworkManager();
     }
@@ -56,5 +59,9 @@ export class DashboardRepository {
 
     getSelectedMonthGevelValues(monthId) {
         return this.#networkManager.doRequest(this.#gevelAmountMonthRoute + monthId, "GET")
+    }
+
+    getSelectedMonthGroenValues(monthId) {
+        return this.#networkManager.doRequest(this.#groenAmountMonthRoute + monthId, "GET")
     }
 }
