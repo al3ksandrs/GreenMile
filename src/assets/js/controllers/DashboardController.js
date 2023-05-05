@@ -369,16 +369,22 @@ export class DashboardController extends Controller {
         }).addTo(map);
 
         const groenID = await this.#dashboardRepository.getGroenID();
+        const coordinateX = await this.#dashboardRepository.getXcoordinate();
+        const coordinateY = await this.#dashboardRepository.getYcoordinate();
+        const typeID = await this.#dashboardRepository.getGreenTypeID();
+        const type = await this.#dashboardRepository.getGreen();
+        const areaID = await this.#dashboardRepository.getMapAreaID();
+        const area = await this.#dashboardRepository.getArea();
+
+        console.log(typeID)
+        console.log(areaID)
+        console.log(type)
+        console.log(area)
 
         for (let i = 0; i < groenID.data.length; i++) {
-            const coordinateX = this.#dashboardRepository.getXcoordinate();
-            const coordinateY = this.#dashboardRepository.getYcoordinate();
-            const type = this.#dashboardRepository.getGreenType();
-            const area = this.#dashboardRepository.getMapArea();
-
-            var groenMapObject = L.marker([coordinateX, coordinateY], {
-                title: "Groenstrook",
-            }).addTo(map).bindPopup("<b>Type: </b>Groenstrook<br><b>Gebied: </b>Stadhouderskade 1-40");
+            var groenMapObject = L.marker([coordinateX.data[i].coordinaatX, coordinateY.data[i].coordinaatY], {
+                title: type.data[typeID.data[i].type_id].naam,
+            }).addTo(map).bindPopup("<b>Type: </b>" + type.data[typeID.data[i].type_id].naam + "<br><b>Gebied: </b>" + area.data[areaID.data[i].gebied_id].opmerking);
         }
     }
 }

@@ -15,7 +15,9 @@ export class DashboardRepository {
     #mapGroenIDRoute;
     #mapXcoordinateRoute;
     #mapYcoordinateRoute;
-    #mapGreenTypeRoute;
+    #mapGreenTypeIDRoute;
+    #mapAreaIDRoute;
+    #mapGreenRoute;
     #mapAreaRoute;
 
     constructor() {
@@ -30,9 +32,11 @@ export class DashboardRepository {
 
         // map routes @author Aleksandrs
         this.#mapGroenIDRoute = "/map/ID";
-        this.#mapXcoordinateRoute = "/map/Xcoordinate/";
-        this.#mapYcoordinateRoute = "/map/Ycoordinate/";
-        this.#mapGreenTypeRoute = "/map/greenType";
+        this.#mapXcoordinateRoute = "/map/Xcoordinate";
+        this.#mapYcoordinateRoute = "/map/Ycoordinate";
+        this.#mapGreenTypeIDRoute = "/map/greenTypeID";
+        this.#mapAreaIDRoute = "/map/areaID";
+        this.#mapGreenRoute = "/map/greenType";
         this.#mapAreaRoute = "/map/area";
 
         this.#networkManager = new NetworkManager();
@@ -47,19 +51,27 @@ export class DashboardRepository {
         return this.#networkManager.doRequest(this.#mapGroenIDRoute, "GET")
     }
 
-    getXcoordinate(id) {
-        return this.#networkManager.doRequest(this.#mapXcoordinateRoute + id, "GET")
+    getXcoordinate() {
+        return this.#networkManager.doRequest(this.#mapXcoordinateRoute, "GET")
     }
 
-    getYcoordinate(id) {
-        return this.#networkManager.doRequest(this.#mapYcoordinateRoute  + id, "GET")
+    getYcoordinate() {
+        return this.#networkManager.doRequest(this.#mapYcoordinateRoute, "GET")
     }
 
-    getGreenType() {
-        return this.#networkManager.doRequest(this.#mapGreenTypeRoute, "GET")
+    getGreenTypeID() {
+        return this.#networkManager.doRequest(this.#mapGreenTypeIDRoute, "GET")
     }
 
-    getMapArea() {
+    getMapAreaID() {
+        return this.#networkManager.doRequest(this.#mapAreaIDRoute, "GET")
+    }
+
+    getGreen() {
+        return this.#networkManager.doRequest(this.#mapGreenRoute, "GET")
+    }
+
+    getArea() {
         return this.#networkManager.doRequest(this.#mapAreaRoute, "GET")
     }
 
