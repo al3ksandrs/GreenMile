@@ -17,6 +17,12 @@ class DashboardRoutes {
 
         this.#getDashboardDatabaseValues();
         this.#getDashboardAPIValues();
+
+        this.#getGroenID();
+        this.#getXcoordinate();
+        this.#getYcoordinate();
+        this.#getGreenType();
+        this.#getMapArea();
     }
 
     async #getDashboardDatabaseValues() {
@@ -212,6 +218,79 @@ class DashboardRoutes {
         })
     }
 
+    // map routes @author Aleksandrs
+
+    async #getGroenID() {
+        this.#app.get("/map/ID", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT id FROM groen"
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getXcoordinate() {
+        this.#app.get("/map/Xcoordinate/:id", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT coordinaatX FROM groen WHERE id = ?;",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getYcoordinate() {
+        this.#app.get("/map/Ycoordinate/:id", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT coordinaatY FROM groen WHERE id = ?;",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getGreenType() {
+        this.#app.get("/map/greenType", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT type_id FROM groen"
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getMapArea() {
+        this.#app.get("/map/area", async (req,res) => {
+            try {
+                let allValues = await this.#databaseHelper.handleQuery({
+                    query: "SELECT gebied_id FROM groen"
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: allValues})
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
 
 
 }

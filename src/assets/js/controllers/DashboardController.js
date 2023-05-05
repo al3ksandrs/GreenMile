@@ -329,7 +329,13 @@ export class DashboardController extends Controller {
         document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
     }
 
-    #map() {
+
+    ///////////////////////////////////////// MAP ////////////////////////////////////////////
+
+
+    async #map() {
+
+        // map setup @author Aleksandrs
         var map = L.map('map').setView([52.360938, 4.890879], 16);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -337,6 +343,7 @@ export class DashboardController extends Controller {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
+        // get coordinates when clicking on map
         var popup = L.popup();
         function onMapClick(e) {
             popup
@@ -348,6 +355,7 @@ export class DashboardController extends Controller {
 
         map.on('click', onMapClick);
 
+        // Stadhouderskade area on map @author Aleksandrs
         var polygon = L.polygon([
             [52.364006, 4.8788], [52.363449, 4.879546], [52.362847, 4.880356], [52.362162, 4.881096], [52.361918, 4.881624], [52.361731, 4.882268], [52.361697, 4.883526],
             [52.361587, 4.884014], [52.360208, 4.886874], [52.360092, 4.886997], [52.359841, 4.887458], [52.359623, 4.887737], [52.358976, 4.888421], [52.358766, 4.88873],
@@ -359,5 +367,18 @@ export class DashboardController extends Controller {
         ], {
             color: 'green'
         }).addTo(map);
+
+        const groenID = await this.#dashboardRepository.getGroenID();
+
+        for (let i = 0; i < groenID.data.length; i++) {
+            const coordinateX = this.#dashboardRepository.getXcoordinate();
+            const coordinateY = this.#dashboardRepository.getYcoordinate();
+            const type = this.#dashboardRepository.getGreenType();
+            const area = this.#dashboardRepository.getMapArea();
+
+            var groenMapObject = L.marker([coordinateX, coordinateY], {
+                title: "Groenstrook",
+            }).addTo(map).bindPopup("<b>Type: </b>Groenstrook<br><b>Gebied: </b>Stadhouderskade 1-40");
+        }
     }
 }
