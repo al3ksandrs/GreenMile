@@ -5,7 +5,6 @@
  *  -@beerstj
  */
 
-
 //['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
 
 import {Controller} from "./controller.js";
@@ -22,6 +21,8 @@ export class DashboardController extends Controller {
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
+    #dashboardChart
+    #chartTarget
 
     constructor() {
         super();
@@ -35,27 +36,51 @@ export class DashboardController extends Controller {
         this.#graphTextBox = this.#dashboardView.querySelector(".graph-type-text");
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
+        this.#chartTarget = this.#dashboardView.querySelector("#myChart")
 
-        this.#loadDashboardValues()
+        await this.#loadDashboardValues()
         this.#gevelData();
-        this.#map();
 
-        this.#gevelTuinGrafiek()
+        await this.#map();
+
+        this.#dashboardChart = new Chart(this.#chartTarget, {
+            type: 'line',
+            data: {
+                labels: this.#getMonthsArray(4),
+                datasets: [{
+                    label: 'Geveltuinen in deze maand',
+                    data: [1,25,60,87],
+                },]
+            },
+            options: {
+                scales: {y: {beginAtZero: true}},
+                borderColor: '#058C42'
+            }
+        });
+
+
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#gevelData()
-            this.#gevelTuinGrafiek()
+
+            this.#getFacadeGardenData().then(function(result) {
+                this.#updateChart(result,"Geveltuinen geplant in deze maand");
+            }.bind(this)); // ask why this works lmao
         })
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#boomData();
-            this.#boomtuinGrafiekData();
+            this.#getTreeGardenData().then(function(result) {
+                this.#updateChart(result,"Boomtuinen geplant in deze maand");
+            }.bind(this));
         })
         this.#dashboardView.querySelector("#groenData").addEventListener("click",() => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#groenData();
-            this.#groenGraphData();
+            this.#getGreeneryData().then(function(result) {
+                this.#updateChart(result,"GroeneM2 geplant in deze maand");
+            }.bind(this));
         })
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
@@ -64,20 +89,84 @@ export class DashboardController extends Controller {
 
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#tempData()
-            this.#PM25TodayGraph()
+            this.#PM25info()
+
+            this.#updateChart([100,73,50,23], "test") // TODO temproray, put it correctly when luchtmeetnet APi comes online
+
+            // TODO this.#PM25TodayGraph() // fix this one when luchtmeetnet API comes back
         })
     }
 
+    /**
+     * Gets the values on the dashboard through the luchtmeetnet APi and our database
+     * Displays these values on the dashboard.
+     * @author @beerstj
+     */
     async #loadDashboardValues() {
+        // Gets dashboard data from the database
         const databaseValues = await this.#dashboardRepository.getDashboardValues();
-        const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
 
         this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
         this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
         this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
-        this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
-        this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+
+        // gets dashboard values from the luchtmeetnet API
+        try {
+            const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
+            this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
+            this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+        } catch(e) {
+            console.log("Luchtmeetnet API is unavailable")
+            console.log(e)
+        }
+    }
+
+    async #getTreeGardenData() {
+        let month;
+        let amounts = []
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
+            amounts.push(month.data[0].TreeAmount)
+        }
+
+        return amounts;
+    }
+
+
+    async #getGreeneryData() {
+        let month;
+        let amounts = []
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthGroenValues(i)
+            amounts.push(month.data[0].GroeneM2)
+        }
+
+        return amounts;
+    }
+
+    async #getFacadeGardenData() {
+        let month;
+        let amounts = []
+
+        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
+            month = await this.#dashboardRepository.getSelectedMonthGevelValues(i)
+            amounts.push(month.data[0].GevelAmount)
+        }
+
+        return amounts;
+    }
+
+    async #PM25TodayGraph() {
+        let values = await this.#dashboardRepository.getPM25Today();
+        let array = []
+        const targetBox = this.#dashboardView.querySelector("#myChart")
+
+        for (let i = 0; i <24; i++) {
+            array.push(values.data[i].value)
+        }
+        // TODO fix this one when the API works again lol
     }
 
     #gevelData() {
@@ -108,7 +197,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">LKI uitleg</div>
         <div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`;
     }
-    #tempData() {
+    #PM25info() {
         this.#dashboardView.querySelector("#tempData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Fijnstof";
         this.#infoTextBox.innerText = "/ Fijnstof"
@@ -116,120 +205,16 @@ export class DashboardController extends Controller {
         <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
     }
 
-    async #boomtuinGrafiekData() {
-        this.#clearCanvas();
+    /**
+     * Functions to update the values and labels of the chart when yyou want to switch the chart.
+     * @param data - data to place in the chart
+     * @param label - label to display above the chart.
+     */
+    #updateChart(data, label) {
+        this.#dashboardChart.data.datasets[0].data = data
+        this.#dashboardChart.data.datasets[0].label = label;
 
-        const targetBox = this.#dashboardView.querySelector("#myChart")
-        let month;
-        let amounts = []
-        let total = 0;
-
-        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
-            month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
-            total += month.data[0].TreeAmount;
-            amounts.push(month.data[0].TreeAmount)
-        }
-
-        new Chart(targetBox, {
-            type: 'line',
-            data: {
-                labels: this.#getMonthsArray(4),
-                datasets: [{
-                    label: 'Boomtuinen in deze maand',
-                    data: amounts,
-                },]
-            },
-            options: {
-                scales: {y: {beginAtZero: true}},
-                borderColor: '#058C42'
-            }
-        });
-    }
-
-    async #groenGraphData() {
-        this.#clearCanvas();
-
-        const targetBox = this.#dashboardView.querySelector("#myChart")
-        let month;
-        let amounts = []
-        let total = 0;
-
-        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
-            month = await this.#dashboardRepository.getSelectedMonthGroenValues(i)
-            total += month.data[0].GroeneM2;
-            amounts.push(month.data[0].GroeneM2)
-        }
-
-        new Chart(targetBox, {
-            type: 'line',
-            data: {
-                labels: this.#getMonthsArray(4),
-                datasets: [{
-                    label: 'Boomtuinen in deze maand',
-                    data: amounts,
-                },]
-            },
-            options: {
-                scales: {y: {beginAtZero: true}},
-                borderColor: '#058C42'
-            }
-        });
-    }
-
-    async #gevelTuinGrafiek() {
-        this.#clearCanvas();
-
-        const targetBox = this.#dashboardView.querySelector("#myChart")
-        let month;
-        let amounts = []
-        let total = 0;
-
-        for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
-            month = await this.#dashboardRepository.getSelectedMonthGevelValues(i)
-            total += month.data[0].GevelAmount;
-            amounts.push(month.data[0].GevelAmount)
-        }
-
-        new Chart(targetBox, {
-            type: 'line',
-            data: {
-                labels: this.#getMonthsArray(4),
-                datasets: [{
-                    label: 'Boomtuinen in deze maand',
-                    data: amounts,
-                },]
-            },
-            options: {
-                scales: {y: {beginAtZero: true}},
-                borderColor: '#058C42'
-            }
-        });
-    }
-
-    async #PM25TodayGraph() {
-        this.#clearCanvas();
-        let values = await this.#dashboardRepository.getPM25Today();
-        let array = []
-        const targetBox = this.#dashboardView.querySelector("#myChart")
-
-        for (let i = 0; i <24; i++) {
-            array.push(values.data[i].value)
-        }
-
-        new Chart(targetBox, {
-            type: 'line',
-            data: {
-                labels: this.#getPast24Hours(),
-                datasets: [{
-                    label: 'Fijnstof waarde aan het begin van elk uur',
-                    data: array,
-                },]
-            },
-            options: {
-                scales: {y: {beginAtZero: true}},
-                borderColor: '#058C42'
-            }
-        });
+        this.#dashboardChart.update()
     }
 
     /**
@@ -272,15 +257,6 @@ export class DashboardController extends Controller {
         }
 
         return values;
-    }
-
-    /**
-     * Clears the canvas thats filled with the chart.
-     * used for the charts
-     */
-    #clearCanvas() {
-        this.#dashboardView.querySelector("#chartbox").innerHTML = ""
-        this.#dashboardView.querySelector("#chartbox").innerHTML = "<canvas id=\"myChart\"></canvas>"
     }
 
     /**
