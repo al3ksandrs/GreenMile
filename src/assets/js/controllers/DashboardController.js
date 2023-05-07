@@ -371,8 +371,21 @@ export class DashboardController extends Controller {
         //icon for the green map icon object
         var greenIcon = L.icon({
             iconUrl: 'assets/pictures/map/green-icon.png',
-            iconSize:     [30, 40], // size of the icon
+            iconSize: [30, 40], // size of the icon
         });
+
+        //map legend
+        var legend = L.control({ position: "bottomleft" });
+
+        legend.onAdd = function(map) {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML += "<h4>Legenda</h4>";
+            div.innerHTML += '<i style="background: green"></i><span>Stadhouderskade</span><br>';
+            div.innerHTML += '<i class="icon" style="background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Map_pin_icon_green.svg/94px-Map_pin_icon_green.svg.png);background-repeat: no-repeat; background-size: 18px 18px;"></i><span>Groen locatie</span><br>';
+            return div;
+        };
+
+        legend.addTo(map);
 
         const groenID = await this.#dashboardRepository.getGroenID();
         const coordinateX = await this.#dashboardRepository.getXcoordinate();
