@@ -368,6 +368,12 @@ export class DashboardController extends Controller {
             color: 'green'
         }).addTo(map);
 
+        //icon for the green map icon object
+        var greenIcon = L.icon({
+            iconUrl: 'assets/pictures/map/green-icon.png',
+            iconSize:     [30, 40], // size of the icon
+        });
+
         const groenID = await this.#dashboardRepository.getGroenID();
         const coordinateX = await this.#dashboardRepository.getXcoordinate();
         const coordinateY = await this.#dashboardRepository.getYcoordinate();
@@ -381,9 +387,11 @@ export class DashboardController extends Controller {
         console.log(type)
         console.log(area)
 
+        // place green icon on map with data from database @author Aleksandrs
         for (let i = 0; i < groenID.data.length; i++) {
             var groenMapObject = L.marker([coordinateX.data[i].coordinaatX, coordinateY.data[i].coordinaatY], {
                 title: type.data[typeID.data[i].type_id].naam,
+                icon: greenIcon,
             }).addTo(map).bindPopup("<b>Type: </b>" + type.data[typeID.data[i].type_id].naam + "<br><b>Gebied: </b>" + area.data[areaID.data[i].gebied_id].opmerking);
         }
     }
