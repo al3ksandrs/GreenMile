@@ -23,7 +23,8 @@ export class DashboardController extends Controller {
     #infoContentBox;
     #dashboardChart
     #chartTarget
-    #comparing;
+    #currentlyComparing;
+    #compareList = []
 
     constructor() {
         super();
@@ -40,7 +41,7 @@ export class DashboardController extends Controller {
         this.#chartTarget = this.#dashboardView.querySelector("#myChart")
 
         await this.#loadDashboardValues()
-        this.#gevelData();
+        this.#facadeGardeninfo();
 
         await this.#map();
 
@@ -61,7 +62,7 @@ export class DashboardController extends Controller {
             }
         });
 
-        this.#comparing = false;
+        this.#currentlyComparing = false;
         this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
             this.#compareSwitch();
         })
@@ -69,7 +70,7 @@ export class DashboardController extends Controller {
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#gevelData()
+            this.#facadeGardeninfo()
 
             this.#getFacadeGardenData().then(function (result) {
                 this.#updateChart(result, "Geveltuinen geplant in deze maand");
@@ -77,27 +78,27 @@ export class DashboardController extends Controller {
         })
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#boomData();
+            this.#treeGardeninfo();
             this.#getTreeGardenData().then(function (result) {
                 this.#updateChart(result, "Boomtuinen geplant in deze maand");
             }.bind(this));
         })
         this.#dashboardView.querySelector("#groenData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#groenData();
+            this.#greeneryinfo();
             this.#getGreeneryData().then(function (result) {
                 this.#updateChart(result, "GroeneM2 geplant in deze maand");
             }.bind(this));
         })
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#lkiData()
+            this.#AQIinfo()
         })
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#PM25info()
 
-            this.#dashboardChart.data.labels = this.#getPast24Hours(2) // todo fix after presentation (no hard-coded)
+            this.#dashboardChart.data.labels = this.#getPast24Hours(24)
 
             this.#PM25TodayGraph().then(function(result) {
                 this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
@@ -108,7 +109,7 @@ export class DashboardController extends Controller {
     }
 
     #compareSwitch() {
-        switch(this.#comparing) {
+        switch(this.#currentlyComparing) {
             case true:
                 this.#stopCompare();
                 break;
@@ -123,9 +124,18 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="#058C42";
-        this.#comparing = true;
+        this.#currentlyComparing = true;
 
-        console.log(this.#dashboardView.querySelector(".shadow"))
+        let circles = this.#dashboardView.querySelectorAll(".progress-bar-container")
+
+        for (let i = 0; i < circles.length; i++) {
+            circles[i].addEventListener("click", () => {
+                if(!this.#compareList.includes(circles[i].id)) {
+                    this.#compareList.push(circles[i].id)
+                }
+            })
+        }
+
     }
 
     #stopCompare() {
@@ -133,7 +143,8 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="white";
-        this.#comparing = false;
+        this.#currentlyComparing = false;
+        console.log(this.#compareList)
     }
 
 
@@ -202,14 +213,14 @@ export class DashboardController extends Controller {
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 12; i++) {
             array.push(values.data[i].value)
         }
 
         return array;
     }
 
-    #gevelData() {
+    #facadeGardeninfo() {
         this.#dashboardView.querySelector("#gevelData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Geveltuinen";
         this.#infoTextBox.innerText = "/ Geveltuinen"
@@ -217,7 +228,7 @@ export class DashboardController extends Controller {
         <div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`;
     }
 
-    #boomData() {
+    #treeGardeninfo() {
         this.#dashboardView.querySelector("#boomData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Boomtuinen";
         this.#infoTextBox.innerText = "/ Boomtuinen"
@@ -225,7 +236,7 @@ export class DashboardController extends Controller {
         <div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`;
     }
 
-    #groenData() {
+    #greeneryinfo() {
         this.#dashboardView.querySelector("#groenData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Groene M²";
         this.#infoTextBox.innerText = "/ Groene M²"
@@ -233,7 +244,7 @@ export class DashboardController extends Controller {
         <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`;
     }
 
-    #lkiData() {
+    #AQIinfo() {
         this.#dashboardView.querySelector("#lkiData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ LKI";
         this.#infoTextBox.innerText = "/ LKI"
@@ -246,7 +257,7 @@ export class DashboardController extends Controller {
         this.#graphTextBox.innerText = "/ Fijnstof";
         this.#infoTextBox.innerText = "/ Fijnstof"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
-        <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is.</div>`;
+        <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is. Als de grafiek niet helemaal gevuld is, komt dit doordat de luchtmeetnet API er een tijdje uit heeft geleden.</div>`;
     }
 
     /**
