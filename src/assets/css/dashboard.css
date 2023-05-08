@@ -212,6 +212,33 @@ svg:not(:root) {
     background-color: rgba(255, 255, 255, 1);
 }
 
+.compare-button {
+    display: flex;
+    justify-content: center;
+    background-color: #058C42;
+    border-radius: 13px;
+    padding-top: 15px;
+}
+
+.compare-text {
+    display: flex;
+    color: white;
+}
+
+.invert-compare-button {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    border-radius: 13px;
+    padding-top: 15px;
+    border: #058C42 1px solid;
+}
+
+.invert-compare-text {
+    display: flex;
+    color: #058C42;
+}
+
 
 @media (max-width: 990px) {
     .circle-diagrams{

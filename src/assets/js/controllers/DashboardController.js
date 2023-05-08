@@ -23,6 +23,7 @@ export class DashboardController extends Controller {
     #infoContentBox;
     #dashboardChart
     #chartTarget
+    #comparing;
 
     constructor() {
         super();
@@ -43,6 +44,8 @@ export class DashboardController extends Controller {
 
         await this.#map();
 
+
+
         this.#dashboardChart = new Chart(this.#chartTarget, {
             type: 'line',
             data: {
@@ -58,6 +61,10 @@ export class DashboardController extends Controller {
             }
         });
 
+        this.#comparing = false;
+        this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
+            this.#compareSwitch();
+        })
 
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
@@ -86,16 +93,49 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#lkiData()
         })
-
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#PM25info()
 
-            this.#updateChart([100,73,50,23], "test") // TODO temproray, put it correctly when luchtmeetnet APi comes online
+            this.#dashboardChart.data.labels = this.#getPast24Hours(2) // todo fix after presentation (no hard-coded)
 
-            // TODO this.#PM25TodayGraph() // fix this one when luchtmeetnet API comes back
+            this.#PM25TodayGraph().then(function(result) {
+                this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
+                this.#dashboardChart.data.labels = this.#getMonthsArray(4)
+            }.bind(this))
+
         })
     }
+
+    #compareSwitch() {
+        switch(this.#comparing) {
+            case true:
+                this.#stopCompare();
+                break;
+            case false:
+                this.#startCompare();
+                break;
+        }
+    }
+
+    #startCompare() {
+        console.log("---------------- \nStart Comparing: \n----------------")
+        this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color="#058C42";
+        this.#comparing = true;
+
+        console.log(this.#dashboardView.querySelector(".shadow"))
+    }
+
+    #stopCompare() {
+        console.log("---------------- \nStop Comparing: \n----------------")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color="white";
+        this.#comparing = false;
+    }
+
 
     /**
      * Gets the values on the dashboard through the luchtmeetnet APi and our database
@@ -133,7 +173,6 @@ export class DashboardController extends Controller {
         return amounts;
     }
 
-
     async #getGreeneryData() {
         let month;
         let amounts = []
@@ -163,10 +202,11 @@ export class DashboardController extends Controller {
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        for (let i = 0; i <24; i++) {
+        for (let i = 0; i <2; i++) {
             array.push(values.data[i].value)
         }
-        // TODO fix this one when the API works again lol
+
+        return array;
     }
 
     #gevelData() {
@@ -223,7 +263,7 @@ export class DashboardController extends Controller {
      * Used for the labels in today charts.
      * @returns array of past 24 hours.
      */
-    #getPast24Hours() {
+    #getPast24Hours(amount) {
         let curHour = new Date(Date.now()).toISOString().substring(11,13);
         let hoursArray = [];
 
@@ -231,7 +271,7 @@ export class DashboardController extends Controller {
         curHour++;
         curHour++;
 
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < amount; i++) {
             curHour = curHour - 1;
 
             if(curHour === 0) {
