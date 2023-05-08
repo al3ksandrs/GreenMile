@@ -33,7 +33,7 @@ require("fs").readdirSync(routesPath).forEach( (file) => {
         const name = file.replace(".js", "");
 
         //require the <..>routes.js file
-rs        exports[name] = require(routesPath + file);
+        exports[name] = require(routesPath + file);
 
         //check if it is a class(function), if it is instantiate it
         if (typeof exports[name] === "function") {

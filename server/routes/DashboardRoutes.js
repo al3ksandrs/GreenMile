@@ -17,13 +17,7 @@ class DashboardRoutes {
         this.#getDashboardAPIValues();
 
         // map routes
-        this.#getGroenID();
-        this.#getXcoordinate();
-        this.#getYcoordinate();
-        this.#getGreenTypeID();
-        this.#getMapAreaID();
         this.#getGroen();
-        this.#getArea();
     }
 
     async #getDashboardDatabaseValues() {
