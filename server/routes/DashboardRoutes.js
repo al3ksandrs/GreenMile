@@ -1,5 +1,3 @@
-const fetch = require("node-fetch");
-
 class DashboardRoutes {
     #app
     #errorCodes = require("../framework/utils/httpErrorCodes");

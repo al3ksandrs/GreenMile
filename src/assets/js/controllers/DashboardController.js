@@ -23,6 +23,7 @@ export class DashboardController extends Controller {
     #infoContentBox;
     #dashboardChart
     #chartTarget
+    #comparing;
 
     constructor() {
         super();
@@ -43,6 +44,8 @@ export class DashboardController extends Controller {
 
         await this.#map();
 
+
+
         this.#dashboardChart = new Chart(this.#chartTarget, {
             type: 'line',
             data: {
@@ -58,6 +61,10 @@ export class DashboardController extends Controller {
             }
         });
 
+        this.#comparing = false;
+        this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
+            this.#compareSwitch();
+        })
 
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
         this.#dashboardView.querySelector("#gevelData").addEventListener("click", () => {
@@ -86,16 +93,49 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#lkiData()
         })
-
         this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#PM25info()
 
-            this.#updateChart([100, 73, 50, 23], "test") // TODO temproray, put it correctly when luchtmeetnet APi comes online
+            this.#dashboardChart.data.labels = this.#getPast24Hours(2) // todo fix after presentation (no hard-coded)
 
-            // TODO this.#PM25TodayGraph() // fix this one when luchtmeetnet API comes back
+            this.#PM25TodayGraph().then(function(result) {
+                this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
+                this.#dashboardChart.data.labels = this.#getMonthsArray(4)
+            }.bind(this))
+
         })
     }
+
+    #compareSwitch() {
+        switch(this.#comparing) {
+            case true:
+                this.#stopCompare();
+                break;
+            case false:
+                this.#startCompare();
+                break;
+        }
+    }
+
+    #startCompare() {
+        console.log("---------------- \nStart Comparing: \n----------------")
+        this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color="#058C42";
+        this.#comparing = true;
+
+        console.log(this.#dashboardView.querySelector(".shadow"))
+    }
+
+    #stopCompare() {
+        console.log("---------------- \nStop Comparing: \n----------------")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color="white";
+        this.#comparing = false;
+    }
+
 
     /**
      * Gets the values on the dashboard through the luchtmeetnet APi and our database
@@ -133,7 +173,6 @@ export class DashboardController extends Controller {
         return amounts;
     }
 
-
     async #getGreeneryData() {
         let month;
         let amounts = []
@@ -163,10 +202,11 @@ export class DashboardController extends Controller {
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < 2; i++) {
             array.push(values.data[i].value)
         }
-        // TODO fix this one when the API works again lol
+
+        return array;
     }
 
     #gevelData() {
@@ -227,7 +267,7 @@ export class DashboardController extends Controller {
      * Used for the labels in today charts.
      * @returns array of past 24 hours.
      */
-    #getPast24Hours() {
+    #getPast24Hours(amount) {
         let curHour = new Date(Date.now()).toISOString().substring(11, 13);
         let hoursArray = [];
 
@@ -235,7 +275,7 @@ export class DashboardController extends Controller {
         curHour++;
         curHour++;
 
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < amount; i++) {
             curHour = curHour - 1;
 
             if (curHour === 0) {
@@ -336,18 +376,48 @@ export class DashboardController extends Controller {
 
         map.on('click', onMapClick);
 
-        // Stadhouderskade area on map @author Aleksandrs
-        var polygon = L.polygon([
-            [52.364006, 4.8788], [52.363449, 4.879546], [52.362847, 4.880356], [52.362162, 4.881096], [52.361918, 4.881624], [52.361731, 4.882268], [52.361697, 4.883526],
-            [52.361587, 4.884014], [52.360208, 4.886874], [52.360092, 4.886997], [52.359841, 4.887458], [52.359623, 4.887737], [52.358976, 4.888421], [52.358766, 4.88873],
-            [52.358562, 4.889102], [52.358409, 4.889448], [52.358195, 4.890277], [52.358154, 4.890765], [52.358046, 4.891423], [52.357644, 4.898061], [52.357654, 4.898375],
-            [52.35872, 4.903519], [52.358768, 4.904013], [52.358702, 4.904042], [52.358663, 4.903541], [52.3576, 4.898402], [52.357592, 4.89815], [52.357877, 4.892841],
-            [52.357987, 4.891393], [52.358005, 4.89083], [52.358134, 4.890256], [52.35835, 4.889416], [52.358771, 4.88859], [52.359078, 4.888215], [52.359774, 4.887442],
-            [52.360064, 4.886906], [52.360111, 4.886731], [52.360666, 4.885669], [52.36149, 4.883961], [52.361607, 4.883518], [52.361638, 4.882172], [52.361733, 4.881673],
-            [52.362011, 4.881061], [52.362352, 4.880616], [52.362848, 4.880002], [52.363574, 4.878918], [52.363769, 4.87869], [52.363972, 4.878612]
+        // Stadhouderskade area on map @Sakhi Anwari
+        //Gebied 1 huisnummer 1-40
+        var gebied1 = L.polygon([
+            [52.364006, 4.8788], [52.3641, 4.879245], [52.363813, 4.879509], [52.363275, 4.881027], [52.362041, 4.881809], [52.361856, 4.88234], [52.361712, 4.884001],
+            [52.36165, 4.884218], [52.361149, 4.88521], [52.361008, 4.884972], [52.361448, 4.88399], [52.361578, 4.883518], [52.361568, 4.882268], [52.361987, 4.881061],
+            [52.3628, 4.879992], [52.363577, 4.878849]
+        ], {
+            color: 'red'
+        }).addTo(map);
+
+        //Gebied 2 huisnummer 40-80
+        var gebied2 = L.polygon([
+            [52.360989, 4.885025], [52.361135, 4.885242],
+            [52.360364, 4.886762], [52.359794, 4.887781],
+            [52.35909, 4.888564], [52.358825, 4.888977],
+            [52.35854, 4.889519], [52.358248, 4.890592], [52.358068, 4.893242],
+            [52.357786, 4.893188], [52.357963, 4.890753], [52.358382, 4.889143],
+            [52.359038, 4.88814], [52.359804, 4.887148], [52.360921, 4.885083]
         ], {
             color: 'green'
         }).addTo(map);
+
+        //Gebied 3 huisnummer 80-120
+        var gebied3 = L.polygon([
+            [52.357785, 4.893225], [52.358062, 4.893286],
+            [52.357802, 4.898071], [52.357923, 4.899026],
+            [52.357689, 4.899187], [52.357517, 4.898364],
+            [52.357778, 4.893225]
+        ], {
+            color: 'blue'
+        }).addTo(map);
+
+        //Gebied 4 huisnummer 120-160
+        var gebied4 = L.polygon([
+            [52.357684, 4.899211], [52.357914, 4.899067],
+            [52.358423, 4.901529], [52.35851, 4.901939],
+            [52.358911, 4.90394], [52.358644, 4.904085],
+            [52.3586, 4.903618], [52.357717, 4.899461]
+        ], {
+            color: 'magenta'
+        }).addTo(map);
+
 
         //icon for the green map icon object
         var greenIcon = L.icon({
