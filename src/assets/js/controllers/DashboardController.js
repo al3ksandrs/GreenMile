@@ -440,6 +440,7 @@ export class DashboardController extends Controller {
 
         const groenData = await this.#dashboardRepository.getGroen();
 
+
         for (let i = 0; i < groenData.data.length; i++) {
             let groen = groenData.data[i]
             var groenMapObject = L.marker([groen.coordinaatX, groen.coordinaatY], {
@@ -447,5 +448,6 @@ export class DashboardController extends Controller {
                 icon: greenIcon,
             }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking);
         }
+
     }
 }
