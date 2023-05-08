@@ -5,8 +5,26 @@ import {AmbitionRepository} from "../repositories/AmbitionRepository.js";
 export class AmbitionController extends Controller {
     #ambitionView;
     #ambitionRepository;
-    #timelineDate
-    #timelineInfo
+    #timelineDate0;
+    #timelineDate1;
+    #timelineDate2;
+    #timelineDate3;
+    #timelineDate4;
+    #timelineDate5;
+    #timelineDate6;
+    #timelineDate7;
+    #timelineDate8;
+
+    #timelineInfo0;
+    #timelineInfo1;
+    #timelineInfo2;
+    #timelineInfo3;
+    #timelineInfo4;
+    #timelineInfo5;
+    #timelineInfo6;
+    #timelineInfo7;
+    #timelineInfo8;
+
 
     constructor() {
         super();
@@ -19,21 +37,57 @@ export class AmbitionController extends Controller {
         this.#roadmap();
         this.#loadTimelineValues();
 
-        this.#timelineDate = this.#ambitionView.querySelector(".timeline-a")
-        this.#timelineInfo = this.#ambitionView.querySelector(".timeline-info")
+        this.#timelineDate0 = this.#ambitionView.querySelector(".date0")
+        this.#timelineDate1 = this.#ambitionView.querySelector(".date1")
+        this.#timelineDate2 = this.#ambitionView.querySelector(".date2")
+        this.#timelineDate3 = this.#ambitionView.querySelector(".date3")
+        this.#timelineDate4 = this.#ambitionView.querySelector(".date4")
+        this.#timelineDate5 = this.#ambitionView.querySelector(".date5")
+        this.#timelineDate6 = this.#ambitionView.querySelector(".date6")
+        this.#timelineDate7 = this.#ambitionView.querySelector(".date7")
+        this.#timelineDate8 = this.#ambitionView.querySelector(".date8")
+
+        this.#timelineInfo0 = this.#ambitionView.querySelector(".info0")
+        this.#timelineInfo1 = this.#ambitionView.querySelector(".info1")
+        this.#timelineInfo2 = this.#ambitionView.querySelector(".info2")
+        this.#timelineInfo3 = this.#ambitionView.querySelector(".info3")
+        this.#timelineInfo4 = this.#ambitionView.querySelector(".info4")
+        this.#timelineInfo5 = this.#ambitionView.querySelector(".info5")
+        this.#timelineInfo6 = this.#ambitionView.querySelector(".info6")
+        this.#timelineInfo7 = this.#ambitionView.querySelector(".info7")
+        this.#timelineInfo8 = this.#ambitionView.querySelector(".info8")
+
+
     }
 
     async #loadTimelineValues() {
         const timelineValues = await this.#ambitionRepository.getTimelineValues();
-            this.#timelineDate.innerHTML = timelineValues[0].jaar + " "+ timelineValues[0].maand;
-            this.#timelineInfo.innerHTML = timelineValues[0].informatie;
-            
-        }
+        this.#timelineDate0.innerHTML = timelineValues[0].jaar + " " + timelineValues[0].maand;
+        this.#timelineDate1.innerHTML = timelineValues[1].jaar + " " + timelineValues[1].maand;
+        this.#timelineDate2.innerHTML = timelineValues[2].jaar + " " + timelineValues[2].maand;
+        this.#timelineDate3.innerHTML = timelineValues[3].jaar + " "+ timelineValues[3].maand;
+        this.#timelineDate4.innerHTML = timelineValues[4].jaar + " "+ timelineValues[4].maand;
+        this.#timelineDate5.innerHTML = timelineValues[5].jaar + " "+ timelineValues[5].maand;
+        this.#timelineDate6.innerHTML = timelineValues[6].jaar + " "+ timelineValues[6].maand;
+        this.#timelineDate7.innerHTML = timelineValues[7].jaar + " "+ timelineValues[7].maand;
+        this.#timelineDate8.innerHTML = timelineValues[8].jaar + " "+ timelineValues[8].maand;
+
+        this.#timelineInfo0.innerHTML = timelineValues[0].informatie;
+        this.#timelineInfo1.innerHTML = timelineValues[1].informatie;
+        this.#timelineInfo2.innerHTML = timelineValues[2].informatie;
+        this.#timelineInfo3.innerHTML = timelineValues[3].informatie;
+        this.#timelineInfo4.innerHTML = timelineValues[4].informatie;
+        this.#timelineInfo5.innerHTML = timelineValues[5].informatie;
+        this.#timelineInfo6.innerHTML = timelineValues[6].informatie;
+        this.#timelineInfo7.innerHTML = timelineValues[7].informatie;
+        this.#timelineInfo8.innerHTML = timelineValues[8].informatie;
+
+    }
 
 
     #roadmap() {
         let timelines = document.querySelectorAll('.cd-horizontal-timeline');
-        let eventsMinDistance = 250;
+        let eventsMinDistance = 100;
 
         if (timelines.length > 0) {
             initTimeline(timelines);
@@ -59,13 +113,13 @@ export class AmbitionController extends Controller {
                 timelineComponents['timelineNavigation'].querySelector('.next').addEventListener('click', function (event) {
                     event.preventDefault();
                     updateSlide(timelineComponents, timelineTotWidth, 'next');
-                    showNewContent(timelineComponents,timelineTotWidth, 'next')
+                    showNewContent(timelineComponents, timelineTotWidth, 'next')
                 });
 
                 timelineComponents['timelineNavigation'].querySelector('.prev').addEventListener('click', function (event) {
                     event.preventDefault();
                     updateSlide(timelineComponents, timelineTotWidth, 'prev');
-                    showNewContent(timelineComponents,timelineTotWidth, 'prev')
+                    showNewContent(timelineComponents, timelineTotWidth, 'prev')
                 });
 
                 timelineComponents['eventsWrapper'].addEventListener('click', function (event) {
@@ -88,7 +142,7 @@ export class AmbitionController extends Controller {
             let translateValue = getTranslateValue(timelineComponents['eventsWrapper']);
             let wrapperWidth = Number(timelineComponents['timelineWrapper'].style.width.replace('px', ''));
             if (string === 'next') {
-                translateTimeline(timelineComponents, translateValue + wrapperWidth - eventsMinDistance,wrapperWidth - timelineTotWidth);
+                translateTimeline(timelineComponents, translateValue + wrapperWidth - eventsMinDistance, wrapperWidth - timelineTotWidth);
 
             } else {
                 translateTimeline(timelineComponents, translateValue - wrapperWidth + eventsMinDistance, wrapperWidth - timelineTotWidth);
@@ -102,7 +156,6 @@ export class AmbitionController extends Controller {
             if (newContent !== null) {
                 let selectedDate = timelineComponents['eventsWrapper'].querySelector('.selected');
                 let newEvent = (string === 'next') ? selectedDate.parentNode.nextElementSibling.querySelector('a') : selectedDate.parentNode.previousElementSibling.querySelector('a');
-
                 updateFilling(newEvent, timelineComponents['fillingLine'], timelineTotWidth);
                 updateVisibleContent(newEvent, timelineComponents['eventsContent']);
                 newEvent.classList.add('selected');
@@ -153,8 +206,8 @@ export class AmbitionController extends Controller {
             } else {
                 nextButton.classList.remove('inactive');
             }
-            console.log("totalWidth is "+totWidth)
-            console.log("value is "+ value)
+            console.log("totalWidth is " + totWidth)
+            console.log("value is " + value)
         }
 
         function updateFilling(selectedEvent, filling, totWidth) {
@@ -279,7 +332,6 @@ export class AmbitionController extends Controller {
             });
             return dateArrays;
         }
-
 
 
         function daydiff(first, second) {
