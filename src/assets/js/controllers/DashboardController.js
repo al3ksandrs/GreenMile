@@ -431,7 +431,10 @@ export class DashboardController extends Controller {
         legend.onAdd = function (map) {
             var div = L.DomUtil.create("div", "legend");
             div.innerHTML += "<h4>Legenda</h4>";
-            div.innerHTML += '<i style="background: green"></i><span>Stadhouderskade</span><br>';
+            div.innerHTML += '<i style="background: red"></i><span>Stadhouderskade 1-40</span><br>';
+            div.innerHTML += '<i style="background: green"></i><span>Stadhouderskade 40-80</span><br>';
+            div.innerHTML += '<i style="background: blue"></i><span>Stadhouderskade 80-120</span><br>';
+            div.innerHTML += '<i style="background: magenta"></i><span>Stadhouderskade 120-160</span><br>';
             div.innerHTML += '<i class="icon" style="background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Map_pin_icon_green.svg/94px-Map_pin_icon_green.svg.png);background-repeat: no-repeat; background-size: 18px 18px;"></i><span>Groen locatie</span><br>';
             return div;
         };
