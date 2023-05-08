@@ -42,6 +42,7 @@ export class App {
     static CONTROLLER_SUBMITNEWSLETTER = "submitNewsletter";
     static CONTROLLER_FOOTER = "footer"
     static CONTROLLER_NEWSLETTER = "newsletter"
+    static PARTNERS = "partners"
 
     constructor() {
         //Always load the navigation
@@ -127,6 +128,10 @@ export class App {
 
             case App.CONTROLLER_NEWSLETTER:
                 new NewsletterController();
+                break;
+
+            case App.PARTNERS:
+                new PartnersController();
                 break;
 
             default:

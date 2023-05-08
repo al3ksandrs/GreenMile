@@ -49,7 +49,7 @@ export class DashboardController extends Controller {
                 labels: this.#getMonthsArray(4),
                 datasets: [{
                     label: 'Geveltuinen in deze maand',
-                    data: [1,25,60,87],
+                    data: [1, 25, 60, 87],
                 },]
             },
             options: {
@@ -60,26 +60,26 @@ export class DashboardController extends Controller {
 
 
         // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
-        this.#dashboardView.querySelector("#gevelData").addEventListener("click",() => {
+        this.#dashboardView.querySelector("#gevelData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#gevelData()
 
-            this.#getFacadeGardenData().then(function(result) {
-                this.#updateChart(result,"Geveltuinen geplant in deze maand");
+            this.#getFacadeGardenData().then(function (result) {
+                this.#updateChart(result, "Geveltuinen geplant in deze maand");
             }.bind(this)); // ask why this works lmao
         })
         this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#boomData();
-            this.#getTreeGardenData().then(function(result) {
-                this.#updateChart(result,"Boomtuinen geplant in deze maand");
+            this.#getTreeGardenData().then(function (result) {
+                this.#updateChart(result, "Boomtuinen geplant in deze maand");
             }.bind(this));
         })
-        this.#dashboardView.querySelector("#groenData").addEventListener("click",() => {
+        this.#dashboardView.querySelector("#groenData").addEventListener("click", () => {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#groenData();
-            this.#getGreeneryData().then(function(result) {
-                this.#updateChart(result,"GroeneM2 geplant in deze maand");
+            this.#getGreeneryData().then(function (result) {
+                this.#updateChart(result, "GroeneM2 geplant in deze maand");
             }.bind(this));
         })
         this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
@@ -91,7 +91,7 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
             this.#PM25info()
 
-            this.#updateChart([100,73,50,23], "test") // TODO temproray, put it correctly when luchtmeetnet APi comes online
+            this.#updateChart([100, 73, 50, 23], "test") // TODO temproray, put it correctly when luchtmeetnet APi comes online
 
             // TODO this.#PM25TodayGraph() // fix this one when luchtmeetnet API comes back
         })
@@ -115,7 +115,7 @@ export class DashboardController extends Controller {
             const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
             this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
             this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
-        } catch(e) {
+        } catch (e) {
             console.log("Luchtmeetnet API is unavailable")
             console.log(e)
         }
@@ -163,7 +163,7 @@ export class DashboardController extends Controller {
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        for (let i = 0; i <24; i++) {
+        for (let i = 0; i < 24; i++) {
             array.push(values.data[i].value)
         }
         // TODO fix this one when the API works again lol
@@ -176,6 +176,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Geveltuin uitleg</div>
         <div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`;
     }
+
     #boomData() {
         this.#dashboardView.querySelector("#boomData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Boomtuinen";
@@ -183,6 +184,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Boom uitleg</div>
         <div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`;
     }
+
     #groenData() {
         this.#dashboardView.querySelector("#groenData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Groene M²";
@@ -190,6 +192,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Groen uitleg</div>
         <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`;
     }
+
     #lkiData() {
         this.#dashboardView.querySelector("#lkiData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ LKI";
@@ -197,6 +200,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">LKI uitleg</div>
         <div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`;
     }
+
     #PM25info() {
         this.#dashboardView.querySelector("#tempData").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Fijnstof";
@@ -224,7 +228,7 @@ export class DashboardController extends Controller {
      * @returns array of past 24 hours.
      */
     #getPast24Hours() {
-        let curHour = new Date(Date.now()).toISOString().substring(11,13);
+        let curHour = new Date(Date.now()).toISOString().substring(11, 13);
         let hoursArray = [];
 
         curHour++;
@@ -234,7 +238,7 @@ export class DashboardController extends Controller {
         for (let i = 0; i < 24; i++) {
             curHour = curHour - 1;
 
-            if(curHour === 0) {
+            if (curHour === 0) {
                 curHour = 24;
             }
             let inArray = curHour + ":00 "
@@ -265,7 +269,7 @@ export class DashboardController extends Controller {
      * @param value - the value to what number the animation should go.
      */
     #animateCircleAndValues(target, value) {
-        this.#animateValues(target,value)
+        this.#animateValues(target, value)
         this.#animateCircle(value, target)
     }
 
@@ -278,7 +282,7 @@ export class DashboardController extends Controller {
         let startTimestamp = null;
         let start = 0;
         let duration = 500;
-        const valueTargetList= this.#dashboardView.getElementsByClassName("green-value");
+        const valueTargetList = this.#dashboardView.getElementsByClassName("green-value");
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
@@ -295,7 +299,7 @@ export class DashboardController extends Controller {
      * @param value - value of the diagram (0%-100%)
      * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
      */
-    #animateCircle(value,circleSelector) {
+    #animateCircle(value, circleSelector) {
         let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", ""))) / 100);
 
         // This is to animate the circle
@@ -321,6 +325,7 @@ export class DashboardController extends Controller {
 
         // get coordinates when clicking on map
         var popup = L.popup();
+
         function onMapClick(e) {
             popup
                 .setLatLng(e.latlng)
@@ -351,9 +356,9 @@ export class DashboardController extends Controller {
         });
 
         //map legend
-        var legend = L.control({ position: "bottomleft" });
+        var legend = L.control({position: "bottomleft"});
 
-        legend.onAdd = function(map) {
+        legend.onAdd = function (map) {
             var div = L.DomUtil.create("div", "legend");
             div.innerHTML += "<h4>Legenda</h4>";
             div.innerHTML += '<i style="background: green"></i><span>Stadhouderskade</span><br>';
@@ -363,25 +368,14 @@ export class DashboardController extends Controller {
 
         legend.addTo(map);
 
-        const groenID = await this.#dashboardRepository.getGroenID();
-        const coordinateX = await this.#dashboardRepository.getXcoordinate();
-        const coordinateY = await this.#dashboardRepository.getYcoordinate();
-        const typeID = await this.#dashboardRepository.getGreenTypeID();
-        const type = await this.#dashboardRepository.getGreen();
-        const areaID = await this.#dashboardRepository.getMapAreaID();
-        const area = await this.#dashboardRepository.getArea();
+        const groenData = await this.#dashboardRepository.getGroen();
 
-        console.log(typeID)
-        console.log(areaID)
-        console.log(type)
-        console.log(area)
-
-        // place green icon on map with data from database @author Aleksandrs
-        for (let i = 0; i < groenID.data.length; i++) {
-            var groenMapObject = L.marker([coordinateX.data[i].coordinaatX, coordinateY.data[i].coordinaatY], {
-                title: type.data[typeID.data[i].type_id].naam,
+        for (let i = 0; i < groenData.data.length; i++) {
+            let groen = groenData.data[i]
+            var groenMapObject = L.marker([groen.coordinaatX, groen.coordinaatY], {
+                title: groen.naam,
                 icon: greenIcon,
-            }).addTo(map).bindPopup("<b>Type: </b>" + type.data[typeID.data[i].type_id].naam + "<br><b>Gebied: </b>" + area.data[areaID.data[i].gebied_id].opmerking);
+            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking);
         }
     }
 }

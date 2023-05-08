@@ -12,11 +12,6 @@ export class DashboardRepository {
     #dashboardDatabaseRoute;
     #dashboardAPIRoute;
 
-    #mapGroenIDRoute;
-    #mapXcoordinateRoute;
-    #mapYcoordinateRoute;
-    #mapGreenTypeIDRoute;
-    #mapAreaIDRoute;
     #mapGreenRoute;
     #mapAreaRoute;
 
@@ -31,13 +26,7 @@ export class DashboardRepository {
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
 
         // map routes @author Aleksandrs
-        this.#mapGroenIDRoute = "/map/ID";
-        this.#mapXcoordinateRoute = "/map/Xcoordinate";
-        this.#mapYcoordinateRoute = "/map/Ycoordinate";
-        this.#mapGreenTypeIDRoute = "/map/greenTypeID";
-        this.#mapAreaIDRoute = "/map/areaID";
-        this.#mapGreenRoute = "/map/greenType";
-        this.#mapAreaRoute = "/map/area";
+        this.#mapGreenRoute = "/map/getGroen";
 
         this.#networkManager = new NetworkManager();
     }
@@ -47,27 +36,8 @@ export class DashboardRepository {
     }
 
     // map requests @author Aleksandrs
-    getGroenID() {
-        return this.#networkManager.doRequest(this.#mapGroenIDRoute, "GET")
-    }
 
-    getXcoordinate() {
-        return this.#networkManager.doRequest(this.#mapXcoordinateRoute, "GET")
-    }
-
-    getYcoordinate() {
-        return this.#networkManager.doRequest(this.#mapYcoordinateRoute, "GET")
-    }
-
-    getGreenTypeID() {
-        return this.#networkManager.doRequest(this.#mapGreenTypeIDRoute, "GET")
-    }
-
-    getMapAreaID() {
-        return this.#networkManager.doRequest(this.#mapAreaIDRoute, "GET")
-    }
-
-    getGreen() {
+    getGroen() {
         return this.#networkManager.doRequest(this.#mapGreenRoute, "GET")
     }
 
