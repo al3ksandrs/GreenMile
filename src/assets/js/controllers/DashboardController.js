@@ -69,6 +69,15 @@ export class DashboardController extends Controller {
             this.#compareSwitch();
         })
 
+        this.#dashboardView.querySelector("#modal-show").addEventListener("click", () => {
+            this.#showInformationModal()
+        })
+
+        this.#dashboardView.querySelector("#hide-modal").addEventListener("click", () => {
+            this.#hideInformationModal()
+        })
+
+
         if(!this.#currentlyComparing) {
             // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
             this.#dashboardView.querySelector("#facadeGardenCircle").addEventListener("click", () => {
@@ -104,6 +113,7 @@ export class DashboardController extends Controller {
                 this.#dashboardChart.data.labels = this.#getPast24Hours(24)
 
                 this.#PM25TodayGraph().then(function(result) {
+
                     this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
                     this.#dashboardChart.data.labels = this.#getMonthsArray(4)
                 }.bind(this))
@@ -166,7 +176,7 @@ export class DashboardController extends Controller {
                         let dataset = {
                             label: "Geveltuin geplant in deze maand",
                             data: result,
-                            borderColor: '#0000ff',
+                            borderColor: '#0000ff', // Modifies the color of the specific dataset.
                             backgroundColor: "#0000ff"
                         }
 
@@ -229,6 +239,20 @@ export class DashboardController extends Controller {
         this.#dashboardChart.update()
     }
 
+    #showInformationModal() {
+        console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
+        // this.#dashboardView.querySelector("#modal").classList.remove("hidden")
+
+        let results = this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
+
+        console.log(results)
+
+    }
+
+    #hideInformationModal() {
+        console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
+        // this.#dashboardView.querySelector("#modal").classList.add("hidden")
+    }
 
     /**
      * Gets the values on the dashboard through the luchtmeetnet APi and our database
@@ -256,44 +280,49 @@ export class DashboardController extends Controller {
 
     async #getTreeGardenData() {
         let month;
-        let amounts = []
+        let totalArray = []
+        let totalNumber = 0
 
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
             month = await this.#dashboardRepository.getSelectedMonthTreeValues(i)
-            amounts.push(month.data[0].TreeAmount)
+            totalNumber += month.data[0].TreeAmount
+            totalArray.push(totalNumber)
         }
 
-        return amounts;
+        return totalArray;
     }
 
     async #getGreeneryData() {
         let month;
-        let amounts = []
+        let totalArray = []
+        let totalNumber = 0;
 
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
             month = await this.#dashboardRepository.getSelectedMonthGroenValues(i)
-            amounts.push(month.data[0].GroeneM2)
+            totalNumber += month.data[0].GroeneM2
+            totalArray.push(totalNumber)
         }
 
-        return amounts;
+        return totalArray;
     }
 
     async #getFacadeGardenData() {
         let month;
-        let amounts = []
+        let totalArray = []
+        let totalNumber = 0;
 
         for (let i = 1; i < new Date(Date.now()).getMonth() + 2; i++) {
             month = await this.#dashboardRepository.getSelectedMonthGevelValues(i)
-            amounts.push(month.data[0].GevelAmount)
+            totalNumber += month.data[0].GevelAmount
+            totalArray.push(totalNumber)
         }
 
-        return amounts;
+        return totalArray;
     }
 
     async #PM25TodayGraph() {
         let values = await this.#dashboardRepository.getPM25Today();
         let array = []
-        const targetBox = this.#dashboardView.querySelector("#myChart")
 
         for (let i = 0; i < 24; i++) {
             array.push(values.data[i].value)

@@ -17,6 +17,8 @@ class DashboardRoutes {
         this.#getDashboardDatabaseValues();
         this.#getDashboardAPIValues();
 
+        this.#getInfomation()
+
         // map routes
         this.#getGroen();
          this.#requestOptions = {
@@ -166,6 +168,21 @@ class DashboardRoutes {
                 })
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
+
+    async #getInfomation() {
+        this.#app.get("/dashboard/information/:id", async (req, res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery({
+                    query: "SELECT * FROM informationModal WHERE id = ?",
+                    values: [req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }

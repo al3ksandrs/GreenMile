@@ -15,6 +15,8 @@ export class DashboardRepository {
     #mapGreenRoute;
     #mapAreaRoute;
 
+    #informationModalRoute
+
     constructor() {
         this.#lkiRoute = "/lki";
         this.#PM25ROute = "/fineDust";
@@ -24,6 +26,8 @@ export class DashboardRepository {
         this.#groenAmountMonthRoute = "/groen/maand/"
         this.#dashboardDatabaseRoute = "/dashboard/database"
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
+
+        this.#informationModalRoute = "/dashboard/information/"
 
         // map routes @author Aleksandrs
         this.#mapGreenRoute = "/map/getGroen";
@@ -63,5 +67,9 @@ export class DashboardRepository {
 
     getSelectedMonthGroenValues(monthId) {
         return this.#networkManager.doRequest(this.#groenAmountMonthRoute + monthId, "GET")
+    }
+
+    getModalInformation(id) {
+        return this.#networkManager.doRequest(this.#informationModalRoute + id, "GET")
     }
 }

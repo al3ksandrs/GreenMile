@@ -248,6 +248,63 @@ svg:not(:root) {
     color: #058C42;
 }
 
+.info-button {
+    align-self: center;
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 10px;
+    height: 3rem;
+    width: 15rem;
+    background-color: #058c42;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.info-text {
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+.information-modal {
+    background-color: white;
+    position: absolute;
+    height: 500px;
+    z-index: 1000000000;
+    margin-top: -1300px;
+    margin-left: 20px;
+    border-radius: 30px;
+    padding: 10px;
+}
+
+.information-column {
+    display: flex;
+    flex-direction: row;
+}
+
+.hide-modal-button {
+    display: flex;
+    cursor: pointer;
+    padding-left: 7px;
+    background-color: #058c42;
+    color: white;
+    height: 2rem;
+    width: 8rem;
+    border-radius: 5px;
+    align-self: flex-end;
+}
+
+.column {
+    width: 33%;
+}
+
+.middle-column {
+    border-left: grey 1px solid;
+    border-right: 1px solid;
+}
 
 @media (max-width: 990px) {
     .circle-diagrams{
