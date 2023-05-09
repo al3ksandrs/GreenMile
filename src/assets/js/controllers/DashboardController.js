@@ -45,8 +45,10 @@ export class DashboardController extends Controller {
 
         await this.#map();
 
-
-
+        /**
+         * Initializes the main chart. 
+         * @type {wn}
+         */
         this.#dashboardChart = new Chart(this.#chartTarget, {
             type: 'line',
             data: {
@@ -67,47 +69,51 @@ export class DashboardController extends Controller {
             this.#compareSwitch();
         })
 
-        // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
-        this.#dashboardView.querySelector("#gevelData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#facadeGardeninfo()
+        if(!this.#currentlyComparing) {
+            // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
+            this.#dashboardView.querySelector("#facadeGardenCircle").addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#facadeGardeninfo()
 
-            this.#getFacadeGardenData().then(function (result) {
-                this.#updateChart(result, "Geveltuinen geplant in deze maand");
-            }.bind(this)); // ask why this works lmao
-        })
-        this.#dashboardView.querySelector("#boomData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#treeGardeninfo();
-            this.#getTreeGardenData().then(function (result) {
-                this.#updateChart(result, "Boomtuinen geplant in deze maand");
-            }.bind(this));
-        })
-        this.#dashboardView.querySelector("#groenData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#greeneryinfo();
-            this.#getGreeneryData().then(function (result) {
-                this.#updateChart(result, "GroeneM2 geplant in deze maand");
-            }.bind(this));
-        })
-        this.#dashboardView.querySelector("#lkiData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#AQIinfo()
-        })
-        this.#dashboardView.querySelector("#tempData").addEventListener("click", () => {
-            this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-            this.#PM25info()
+                this.#getFacadeGardenData().then(function (result) {
+                    this.#updateChart(result, "Geveltuinen geplant in deze maand");
+                }.bind(this)); // ask why this works lmao
+            })
+            this.#dashboardView.querySelector("#treeGardenCircle").addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#treeGardeninfo();
+                this.#getTreeGardenData().then(function (result) {
+                    this.#updateChart(result, "Boomtuinen geplant in deze maand");
+                }.bind(this));
+            })
+            this.#dashboardView.querySelector("#greeneryCircle").addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#greeneryinfo();
+                this.#getGreeneryData().then(function (result) {
+                    this.#updateChart(result, "GroeneM2 geplant in deze maand");
+                }.bind(this));
+            })
+            this.#dashboardView.querySelector("#aqiCircle").addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#AQIinfo()
+            })
+            this.#dashboardView.querySelector("#PM25Circle").addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#PM25info()
 
-            this.#dashboardChart.data.labels = this.#getPast24Hours(24)
+                this.#dashboardChart.data.labels = this.#getPast24Hours(24)
 
-            this.#PM25TodayGraph().then(function(result) {
-                this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
-                this.#dashboardChart.data.labels = this.#getMonthsArray(4)
-            }.bind(this))
-
-        })
+                this.#PM25TodayGraph().then(function(result) {
+                    this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
+                    this.#dashboardChart.data.labels = this.#getMonthsArray(4)
+                }.bind(this))
+            })
+        }
     }
 
+    /**
+     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
+     */
     #compareSwitch() {
         switch(this.#currentlyComparing) {
             case true:
@@ -119,32 +125,102 @@ export class DashboardController extends Controller {
         }
     }
 
+    /**
+     * Method to start a comparison between multiple graphs.
+     */
     #startCompare() {
+        // Changes the color of the compare button to indidcate that the comparisons started
         console.log("---------------- \nStart Comparing: \n----------------")
         this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="#058C42";
         this.#currentlyComparing = true;
 
+        // Array of every circle diagram on the page.
         let circles = this.#dashboardView.querySelectorAll(".progress-bar-container")
 
+        // attaches eventlisteners to every circle diagram on the dashboard
         for (let i = 0; i < circles.length; i++) {
-            circles[i].addEventListener("click", () => {
+            circles[i].addEventListener("click", () => { // Adds a listener to every circle, and puts it in an array
                 if(!this.#compareList.includes(circles[i].id)) {
-                    this.#compareList.push(circles[i].id)
+                    this.#compareList.push(circles[i].id) // If the circle diagram is not yet in the array, its puts it in there.
+                    this.#addCompareChart(circles[i].id) // Compares the diagram in the chart
                 }
             })
         }
-
     }
 
+    /**
+     * Method to add a new chart to the chart.
+     * @param graph - graph you want to add to the chart.
+     */
+    #addCompareChart(graph) {
+        if(this.#currentlyComparing) { // checks if the users actually wants to compare,
+            switch(graph) { // switch to see which garph to add
+                case "facadeGardenCircle":
+                    this.#getFacadeGardenData().then(function (result) { // gets the data to put in the chart
+                        console.log("Geveltuin: \n")
+                        console.log(result)
+
+                        // puts the new data in a dataset array
+                        let dataset = {
+                            label: "Geveltuin geplant in deze maand",
+                            data: result
+                        }
+
+                        this.#dashboardChart.data.datasets.push(dataset) // pushes the data to the dataset array and updates the Chart
+                        this.#dashboardChart.update()
+                    }.bind(this));
+                    break;
+
+                case "treeGardenCircle":
+                    this.#getTreeGardenData().then(function (result) {
+                        console.log("Boomtuin: \n")
+                        console.log(result)
+                        let dataset = {
+                            label: "Boomtuinen geplant in deze maand",
+                            data: result
+                        }
+
+                        this.#dashboardChart.data.datasets.push(dataset)
+                        this.#dashboardChart.update()
+                    }.bind(this));
+                    break;
+
+                case "greeneryCircle":
+                    this.#getGreeneryData().then(function (result) {
+                        console.log("Groene m2: \n")
+                        console.log(result)
+                        let dataset = {
+                            label: "Groene M2 geplant in deze maand",
+                            data: result
+                        }
+
+                        this.#dashboardChart.data.datasets.push(dataset)
+                        this.#dashboardChart.update()
+                    }.bind(this));
+                    console.log(this.#dashboardChart.data.datasets)
+                    break;
+            }
+        } else {
+            this.#dashboardChart.data.datasets.splice(1,5)
+            this.#dashboardChart.update()
+        }
+    }
+
+    /**
+     * Stops the comparisons, changes the compare box to indicate the comparisons has stopped,
+     * Removes all the datasets from the chart and updates it aswell
+     */
     #stopCompare() {
         console.log("---------------- \nStop Comparing: \n----------------")
+        this.#compareList = [];
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="white";
         this.#currentlyComparing = false;
-        console.log(this.#compareList)
+        this.#dashboardChart.data.datasets.splice(1,5)
+        this.#dashboardChart.update()
     }
 
 
@@ -221,7 +297,7 @@ export class DashboardController extends Controller {
     }
 
     #facadeGardeninfo() {
-        this.#dashboardView.querySelector("#gevelData").classList.add("shadow")
+        this.#dashboardView.querySelector("#facadeGardenCircle").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Geveltuinen";
         this.#infoTextBox.innerText = "/ Geveltuinen"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Geveltuin uitleg</div>
@@ -229,7 +305,7 @@ export class DashboardController extends Controller {
     }
 
     #treeGardeninfo() {
-        this.#dashboardView.querySelector("#boomData").classList.add("shadow")
+        this.#dashboardView.querySelector("#treeGardenCircle").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Boomtuinen";
         this.#infoTextBox.innerText = "/ Boomtuinen"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Boom uitleg</div>
@@ -237,7 +313,7 @@ export class DashboardController extends Controller {
     }
 
     #greeneryinfo() {
-        this.#dashboardView.querySelector("#groenData").classList.add("shadow")
+        this.#dashboardView.querySelector("#greeneryCircle").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Groene M²";
         this.#infoTextBox.innerText = "/ Groene M²"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Groen uitleg</div>
@@ -245,7 +321,7 @@ export class DashboardController extends Controller {
     }
 
     #AQIinfo() {
-        this.#dashboardView.querySelector("#lkiData").classList.add("shadow")
+        this.#dashboardView.querySelector("#aqiCircle").classList.add("shadow")
         this.#graphTextBox.innerText = "/ LKI";
         this.#infoTextBox.innerText = "/ LKI"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">LKI uitleg</div>
@@ -253,7 +329,7 @@ export class DashboardController extends Controller {
     }
 
     #PM25info() {
-        this.#dashboardView.querySelector("#tempData").classList.add("shadow")
+        this.#dashboardView.querySelector("#PM25Circle").classList.add("shadow")
         this.#graphTextBox.innerText = "/ Fijnstof";
         this.#infoTextBox.innerText = "/ Fijnstof"
         this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>

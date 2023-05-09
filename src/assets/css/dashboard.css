@@ -130,7 +130,7 @@
     border: 1px solid #efefef;
     /*box-shadow: 4px 5px 1px 1px #ababab;*/
     width: 21.4rem;
-    height: 35rem;
+    height: 30rem;
 }
 
 .grfiek-weergave{
@@ -217,7 +217,11 @@ svg:not(:root) {
     justify-content: center;
     background-color: #058C42;
     border-radius: 13px;
-    padding-top: 15px;
+    padding-top: 1.15rem;
+    height: 4rem;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 .compare-text {
@@ -230,8 +234,13 @@ svg:not(:root) {
     justify-content: center;
     background-color: white;
     border-radius: 13px;
-    padding-top: 15px;
+    padding-top: 1.15rem;
     border: #058C42 1px solid;
+    height: 4rem;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+
 }
 
 .invert-compare-text {
