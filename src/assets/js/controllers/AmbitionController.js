@@ -5,25 +5,10 @@ import {AmbitionRepository} from "../repositories/AmbitionRepository.js";
 export class AmbitionController extends Controller {
     #ambitionView;
     #ambitionRepository;
-    #timelineDate0;
-    #timelineDate1;
-    #timelineDate2;
-    #timelineDate3;
-    #timelineDate4;
-    #timelineDate5;
-    #timelineDate6;
-    #timelineDate7;
-    #timelineDate8;
+    #timelineDate;
+    #timelineInfo;
+    #timelineTitle;
 
-    #timelineInfo0;
-    #timelineInfo1;
-    #timelineInfo2;
-    #timelineInfo3;
-    #timelineInfo4;
-    #timelineInfo5;
-    #timelineInfo6;
-    #timelineInfo7;
-    #timelineInfo8;
 
 
     constructor() {
@@ -37,57 +22,36 @@ export class AmbitionController extends Controller {
         this.#roadmap();
         this.#loadTimelineValues();
 
-        this.#timelineDate0 = this.#ambitionView.querySelector(".date0")
-        this.#timelineDate1 = this.#ambitionView.querySelector(".date1")
-        this.#timelineDate2 = this.#ambitionView.querySelector(".date2")
-        this.#timelineDate3 = this.#ambitionView.querySelector(".date3")
-        this.#timelineDate4 = this.#ambitionView.querySelector(".date4")
-        this.#timelineDate5 = this.#ambitionView.querySelector(".date5")
-        this.#timelineDate6 = this.#ambitionView.querySelector(".date6")
-        this.#timelineDate7 = this.#ambitionView.querySelector(".date7")
-        this.#timelineDate8 = this.#ambitionView.querySelector(".date8")
+        const timelineDates = [];
+        const timelineTitles = [];
+        const timelineInfos = [];
 
-        this.#timelineInfo0 = this.#ambitionView.querySelector(".info0")
-        this.#timelineInfo1 = this.#ambitionView.querySelector(".info1")
-        this.#timelineInfo2 = this.#ambitionView.querySelector(".info2")
-        this.#timelineInfo3 = this.#ambitionView.querySelector(".info3")
-        this.#timelineInfo4 = this.#ambitionView.querySelector(".info4")
-        this.#timelineInfo5 = this.#ambitionView.querySelector(".info5")
-        this.#timelineInfo6 = this.#ambitionView.querySelector(".info6")
-        this.#timelineInfo7 = this.#ambitionView.querySelector(".info7")
-        this.#timelineInfo8 = this.#ambitionView.querySelector(".info8")
+        for (let i = 0; i < 10; i++) {
+            timelineDates[i] = this.#ambitionView.querySelector(`.date${i}`);
+            timelineTitles[i] = this.#ambitionView.querySelector(`.title${i}`);
+            timelineInfos[i] = this.#ambitionView.querySelector(`.info${i}`);
+        }
+
+        this.#timelineDate = timelineDates;
+        this.#timelineTitle = timelineTitles;
+        this.#timelineInfo = timelineInfos;
 
 
     }
 
     async #loadTimelineValues() {
         const timelineValues = await this.#ambitionRepository.getTimelineValues();
-        this.#timelineDate0.innerHTML = timelineValues[0].jaar + " " + timelineValues[0].maand;
-        this.#timelineDate1.innerHTML = timelineValues[1].jaar + " " + timelineValues[1].maand;
-        this.#timelineDate2.innerHTML = timelineValues[2].jaar + " " + timelineValues[2].maand;
-        this.#timelineDate3.innerHTML = timelineValues[3].jaar + " "+ timelineValues[3].maand;
-        this.#timelineDate4.innerHTML = timelineValues[4].jaar + " "+ timelineValues[4].maand;
-        this.#timelineDate5.innerHTML = timelineValues[5].jaar + " "+ timelineValues[5].maand;
-        this.#timelineDate6.innerHTML = timelineValues[6].jaar + " "+ timelineValues[6].maand;
-        this.#timelineDate7.innerHTML = timelineValues[7].jaar + " "+ timelineValues[7].maand;
-        this.#timelineDate8.innerHTML = timelineValues[8].jaar + " "+ timelineValues[8].maand;
-
-        this.#timelineInfo0.innerHTML = timelineValues[0].informatie;
-        this.#timelineInfo1.innerHTML = timelineValues[1].informatie;
-        this.#timelineInfo2.innerHTML = timelineValues[2].informatie;
-        this.#timelineInfo3.innerHTML = timelineValues[3].informatie;
-        this.#timelineInfo4.innerHTML = timelineValues[4].informatie;
-        this.#timelineInfo5.innerHTML = timelineValues[5].informatie;
-        this.#timelineInfo6.innerHTML = timelineValues[6].informatie;
-        this.#timelineInfo7.innerHTML = timelineValues[7].informatie;
-        this.#timelineInfo8.innerHTML = timelineValues[8].informatie;
-
+        for (let i = 0; i < 10; i++) {
+            this.#timelineDate[i].innerHTML =timelineValues[i].jaar + " "+ timelineValues[i].maand;
+            this.#timelineInfo[i].innerHTML = timelineValues[i].informatie;
+            this.#timelineTitle[i].innerHTML = timelineValues[i].titel;
+        }
     }
 
 
     #roadmap() {
         let timelines = document.querySelectorAll('.cd-horizontal-timeline');
-        let eventsMinDistance = 100;
+        let eventsMinDistance = 150;
 
         if (timelines.length > 0) {
             initTimeline(timelines);
@@ -190,7 +154,7 @@ export class AmbitionController extends Controller {
             value = (value > 0) ? 0 : value; // Only negative translate value
             eventsWrapper.style.transform = 'translateX(' + value + 'px)';
             value = (!(typeof totWidth === 'undefined') && value < totWidth) ? totWidth : value; // Do not translate more than timeline width
-            totWidth = -5400;
+            totWidth = -3430;
             // Update navigation arrows visibility
             let prevButton = timelineComponents['timelineNavigation'].querySelector('.prev');
             let nextButton = timelineComponents['timelineNavigation'].querySelector('.next');
@@ -201,7 +165,7 @@ export class AmbitionController extends Controller {
                 prevButton.classList.remove('inactive');
             }
 
-            if (value === totWidth) {
+            if (value <= totWidth) {
                 nextButton.classList.add('inactive');
             } else {
                 nextButton.classList.remove('inactive');
@@ -348,4 +312,6 @@ export class AmbitionController extends Controller {
         }
 
     }
+
+
 }

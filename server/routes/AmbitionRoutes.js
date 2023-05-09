@@ -14,7 +14,7 @@ class AmbitionRoutes {
         this.#app.get("/timeline", async (req,res) => {
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT jaar, maand, informatie FROM roadmap"
+                    query: "SELECT jaar, maand, informatie, titel FROM roadmap"
                 });
 
                 //just give all data back as json, could also be empty
