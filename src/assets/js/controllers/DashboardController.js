@@ -165,7 +165,9 @@ export class DashboardController extends Controller {
                         // puts the new data in a dataset array
                         let dataset = {
                             label: "Geveltuin geplant in deze maand",
-                            data: result
+                            data: result,
+                            borderColor: '#0000ff',
+                            backgroundColor: "#0000ff"
                         }
 
                         this.#dashboardChart.data.datasets.push(dataset) // pushes the data to the dataset array and updates the Chart
@@ -179,7 +181,9 @@ export class DashboardController extends Controller {
                         console.log(result)
                         let dataset = {
                             label: "Boomtuinen geplant in deze maand",
-                            data: result
+                            data: result,
+                            borderColor: '#a020f0',
+                            backgroundColor: '#a020f0'
                         }
 
                         this.#dashboardChart.data.datasets.push(dataset)
@@ -193,7 +197,9 @@ export class DashboardController extends Controller {
                         console.log(result)
                         let dataset = {
                             label: "Groene M2 geplant in deze maand",
-                            data: result
+                            data: result,
+                            borderColor: '#ffff00',
+                            backgroundColor: '#ffff00'
                         }
 
                         this.#dashboardChart.data.datasets.push(dataset)
@@ -289,7 +295,7 @@ export class DashboardController extends Controller {
         let array = []
         const targetBox = this.#dashboardView.querySelector("#myChart")
 
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 24; i++) {
             array.push(values.data[i].value)
         }
 
