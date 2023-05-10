@@ -8,7 +8,8 @@
  */
 
 import { SessionManager } from "./framework/utils/sessionManager.js"
-import { LoginController } from "./controllers/loginController.js"
+// import { LoginController } from "./controllers/loginController.js"
+import { LoginsiteController } from "./controllers/loginsiteController.js"
 import { NavbarController }  from "./controllers/navbarController.js"
 import { UploadController }  from "./controllers/uploadController.js"
 import { WelcomeController }  from "./controllers/welcomeController.js"
@@ -29,7 +30,8 @@ export class App {
 
     //controller identifiers, add new controllers here
     static CONTROLLER_NAVBAR = "navbar";
-    static CONTROLLER_LOGIN = "login";
+    // static CONTROLLER_LOGIN = "login";
+    static CONTROLLER_LOGINSITE = "loginsite"
     static CONTROLLER_LOGOUT = "logout";
     static CONTROLLER_WELCOME = "welcome";
     static CONTROLLER_UPLOAD = "upload";
@@ -86,9 +88,9 @@ export class App {
         App.setCurrentController(name, controllerData);
         
         switch (name) {
-            case App.CONTROLLER_LOGIN:
-                App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
-                break;
+            // case App.CONTROLLER_LOGIN:
+            //     App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
+            //     break;
 
             case App.CONTROLLER_WELCOME:
                 App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
@@ -132,6 +134,11 @@ export class App {
 
             case App.PARTNERS:
                 new PartnersController();
+                break;
+
+            case App.CONTROLLER_LOGINSITE:
+                App.setCurrentController(name);
+                App.isLoggedIn(() => new LoginsiteController(), ()=> LoginsiteController());
                 break;
 
             default:
