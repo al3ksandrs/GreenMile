@@ -8,13 +8,29 @@ class AmbitionRoutes {
 
         //call method per route for the rooms entity
         this.#getAmbitionDatabaseValues()
+        this.#getNewsletters()
     }
 
     #getAmbitionDatabaseValues() {
         this.#app.get("/timeline", async (req,res) => {
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT jaar, maand, informatie, titel FROM roadmap"
+                    query: "SELECT jaar, maand, informatie, titel, date FROM roadmap"
+                });
+
+                //just give all data back as json, could also be empty
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+            } catch(e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        });
+    }
+
+    #getNewsletters(){
+        this.#app.get("/newsletter", async (req,res)=>{
+            try {
+                const data = await this.#databaseHelper.handleQuery({
+                    query: "SELECT title, content, date, month, year FROM newsletter"
                 });
 
                 //just give all data back as json, could also be empty
