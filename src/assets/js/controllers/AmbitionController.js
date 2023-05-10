@@ -64,6 +64,9 @@ export class AmbitionController extends Controller {
                 const newsletterElement = this.#timelineNews[index];
                 newsletterElement.innerHTML += `<div>${newsletter.title}</div>`;
             }
+            // else if (index){
+            //     newsletterElement.innerHTML = "Geen nieuwsbrieven beschikbaar."
+            // }
         }
     }
 
@@ -189,8 +192,6 @@ export class AmbitionController extends Controller {
                 } else {
                     nextButton.classList.remove('inactive');
                 }
-                console.log("totalWidth is " + totWidth)
-                console.log("value is " + value)
             }
 
             function updateFilling(selectedEvent, filling, totWidth) {
