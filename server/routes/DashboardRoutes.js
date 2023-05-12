@@ -21,7 +21,7 @@ class DashboardRoutes {
         this.#getGroen();
          this.#requestOptions = {
             method: "GET",
-            redirect: "Follow"
+            redirect: "follow"
         }
 
     }
@@ -95,7 +95,7 @@ class DashboardRoutes {
             await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
                 "start=" + new Date(Date.now() - 106400000).toISOString() +
                 "&end=" + new Date(Date.now()).toISOString() +
-                "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc&", reqOptions)
+                "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc&", this.#requestOptions)
                 .then (function (response) {
                     return response.json();
                 }).then(function (data) {
