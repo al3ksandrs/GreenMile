@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="row">
+        <div class="h1 border-bottom col-12">Roadmap-items</div>
+        <div class="p col-12 my-3">Op deze pagina kunt u alle roadmap items, zien, verwijderen en aanpassen.</div>
+
+        <table class="table table-hover col-5">
+            <thead>
+                <tr>
+                    <th class="col-1" scope="col">ID</th>
+                    <th class="col-1" scope="col">Invoerdatum</th>
+                    <th scope="col">Titel</th>
+                    <th scope="col">inhoud</th>
+                    <th scope="col">Verwijderen</th>
+                </tr>
+            </thead>
+            <tbody id="roadmap-table">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="h1 border-bottom col-12">Roadmap Item toevoegen</div>
+        <div class="p col-12 my-3">Hier kunt u roadmap items toevoegen.</div>
+
+        <form class="col-12 h5 my-2">
+            <div class="form-group">
+                <label for="roadmap-content">Roadmap item titel</label>
+                <input type="email" class="form-control" id="roadmap-title"
+                       placeholder="Titel van het roadmap item">
+            </div>
+        </form>
+        <form class="col-112 h5 my-2">
+            <div class="form-group">
+                <label for="roadmap-content">Roadmap item inhoud</label>
+                <textarea class="form-control" id="roadmap-content" rows="10" placeholder="Inhoud van het roadmap - item"></textarea>
+            </div>
+        </form>
+
+        <button id="roadmap-submit" type="button" class="col-3 mt-3 mx-3 btn btn-success btn-block">Roadmap item invoeren</button>
+    </div>
+</div>

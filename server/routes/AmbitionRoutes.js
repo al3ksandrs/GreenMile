@@ -9,13 +9,15 @@ class AmbitionRoutes {
         //call method per route for the rooms entity
         this.#getAmbitionDatabaseValues()
         this.#getNewsletters()
+        this.#removeRoadmapById()
+        this.#submitRoadmap()
     }
 
     #getAmbitionDatabaseValues() {
         this.#app.get("/timeline", async (req,res) => {
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT jaar, maand, informatie, titel, date FROM roadmap"
+                    query: "SELECT id, jaar, maand, informatie, titel, date FROM roadmap"
                 });
 
                 //just give all data back as json, could also be empty
@@ -41,11 +43,36 @@ class AmbitionRoutes {
         });
     }
 
+    #removeRoadmapById() {
+        this.#app.get("/roadmap/delete/:id", async (req,res) => {
+            try {
+                let results = await this.#databaseHelper.handleQuery({
+                    query: "DELETE FROM Roadmap WHERE id= ?",
+                    values: [req.params.id]
+                });
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
 
-
-
-
-
+    #submitRoadmap() {
+        this.#app.get("/roadmap/submit/title/:title/content/:content", async (req, res) => {
+            let months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+            let date = new Date(Date.now())
+            try {
+                let results = await this.#databaseHelper.handleQuery({
+                    query: "INSERT INTO Roadmap (jaar, maand, titel, informatie, date)" +
+                        "VALUES (?,?,?,?,?)",
+                    values: [date.toISOString().substring(0,4), months[date.getMonth()], req.params.title, req.params.content, date]
+                })
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+    }
 }
 
 module.exports = AmbitionRoutes

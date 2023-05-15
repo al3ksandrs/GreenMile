@@ -22,6 +22,7 @@ import {AccountsController} from "./controllers/AccountsController.js";
 import {footerController} from "./controllers/footerController.js";
 import {SubmitNewslettersController} from "./controllers/submitNewslettersController.js";
 import {NewsletterController} from "./controllers/NewsletterController.js";
+import {submitRoadmapController} from "./controllers/submitRoadmapController.js";
 
 export class App {
     //we only need one instance of the sessionManager, thus static use here
@@ -45,6 +46,7 @@ export class App {
     static CONTROLLER_FOOTER = "footer"
     static CONTROLLER_NEWSLETTER = "newsletter"
     static PARTNERS = "partners"
+    static CONTROLLER_SUBMITROADMAP = "submitRoadmap"
 
     constructor() {
         //Always load the navigation
@@ -139,6 +141,10 @@ export class App {
             case App.CONTROLLER_LOGINSITE:
                 App.setCurrentController(name);
                 App.isLoggedIn(() => new LoginsiteController(), ()=> LoginsiteController());
+                break;
+
+            case App.CONTROLLER_SUBMITROADMAP:
+                new submitRoadmapController();
                 break;
 
             default:
