@@ -1,3 +1,9 @@
+/**
+ * Class that contains all of the routes for the dashboard
+ * @authors
+ *  - beerstj
+ */
+
 class DashboardRoutes {
     #app
     #errorCodes = require("../framework/utils/httpErrorCodes");
@@ -26,6 +32,10 @@ class DashboardRoutes {
 
     }
 
+    /**
+     * Gets the values that we want to display on the dashbaord through our database
+     * @returns promise that contains the data
+     */
     async #getDashboardDatabaseValues() {
         this.#app.get("/dashboard/database", async (req,res) => {
             try {
@@ -44,6 +54,10 @@ class DashboardRoutes {
         })
     }
 
+    /**
+     * Gets the data we want to display from the luchtmeetnet API
+     * @returns {Promise<void>}
+     */
     async #getDashboardAPIValues() {
         this.#app.get("/dashboard/API/Luchtmeetnet", async (req,res) => {
             let today = new Date(Date.now()).toISOString();
@@ -142,6 +156,11 @@ class DashboardRoutes {
         })
     }
 
+    /**
+     * Gets the amount of greenery M2 that was added in a specified month from our database.
+     * Used in the dashboard controller to one of the graphs.
+     * @returns {Promise<void>}
+     */
     async #getSelectMonthGroen() {
         this.#app.get("/groen/maand/:id", async (req,res) => {
             try {

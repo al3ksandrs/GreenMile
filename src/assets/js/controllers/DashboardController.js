@@ -239,6 +239,9 @@ export class DashboardController extends Controller {
         this.#dashboardChart.update()
     }
 
+    /**
+     * Checks the selected data type from which you want to see more information.
+     */
     #showInformationModal() {
         console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
         // this.#dashboardView.querySelector("#modal").classList.remove("hidden")
@@ -249,15 +252,17 @@ export class DashboardController extends Controller {
 
     }
 
+    /**
+     * Hides the information modal
+     */
     #hideInformationModal() {
         console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
         // this.#dashboardView.querySelector("#modal").classList.add("hidden")
     }
 
     /**
-     * Gets the values on the dashboard through the luchtmeetnet APi and our database
+     * Gets the values on the dashboard through the luchtmeetnet API and our database
      * Displays these values on the dashboard.
-     * @author @beerstj
      */
     async #loadDashboardValues() {
         // Gets dashboard data from the database
@@ -278,6 +283,10 @@ export class DashboardController extends Controller {
         }
     }
 
+    /**
+     * Gathers the data for the greengarden graph, by month
+     * @returns {Promise<*[]>}
+     */
     async #getTreeGardenData() {
         let month;
         let totalArray = []
@@ -292,6 +301,10 @@ export class DashboardController extends Controller {
         return totalArray;
     }
 
+    /**
+     * Gathers the data for the greenery M2 graph, by month
+     * @returns {Promise<*[]>}
+     */
     async #getGreeneryData() {
         let month;
         let totalArray = []
@@ -306,6 +319,10 @@ export class DashboardController extends Controller {
         return totalArray;
     }
 
+    /**
+     * Gathers the data for the facadeGarden graph, by month
+     * @returns {Promise<*[]>}
+     */
     async #getFacadeGardenData() {
         let month;
         let totalArray = []
@@ -320,6 +337,10 @@ export class DashboardController extends Controller {
         return totalArray;
     }
 
+    /**
+     * Gets the data for the PM2.5 today chart.
+     * @returns {Promise<*[]>}
+     */
     async #PM25TodayGraph() {
         let values = await this.#dashboardRepository.getPM25Today();
         let array = []

@@ -7,7 +7,6 @@ describe("dashboardCompare", () => {
     beforeEach(() => {
         cy.visit("http://localhost:8080")
     })
-    
     // Test: check if the button even exists
     it("Compare buttons exist", () => {
         cy.get("#compare-box").should("exist")
