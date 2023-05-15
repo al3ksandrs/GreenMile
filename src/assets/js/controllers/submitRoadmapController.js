@@ -25,6 +25,7 @@ export class submitRoadmapController extends Controller {
         this.#roadmapRepository = new AmbitionRepository();
 
         this.#submitRoadmapView.querySelector("#roadmap-submit").addEventListener("click", () => {
+            console.log("testasdfkasdf")
             this.#submitNewRoadmapItem()
         })
 
@@ -40,14 +41,14 @@ export class submitRoadmapController extends Controller {
         let items =  this.#roadmapRepository.getTimelineValues();
         items.then(function (result) {
             for (let i = 0; i < result.length; i++) {
-                let id = result[i].id
                 target.innerHTML += `
                 <tr>
-                    <td>`+ id + `</td>
+                    <td>`+ result[i].id + `</td>
                     <td>`+ result[i].date.substring(0,10) + `</td>
                     <td>`+ result[i].titel + `</td>
                     <td>`+ result[i].informatie.substring(0,800) + `...</td>
-                    <td><button type="button" class="btn btn-danger" id="`+id`">Verwijder</button></td>
+                    <td><button type="button" class="btn btn-danger" id="`+result[i].id+`">Verwijder</button>
+                    <button class="btn btn-secondary" type="submit" id="edit`+result[i].id+`">Wijzigen</button></td>
                 </tr>
                 `
             }
@@ -60,13 +61,35 @@ export class submitRoadmapController extends Controller {
      * editing a roadmap item
      */
     #attachEventListeners() {
-        let deleteButtonsList = this.#submitRoadmapView.querySelectorAll("button")
+        let deleteButtonsList = this.#submitRoadmapView.querySelectorAll(".btn-danger")
+        let editButtonsList = this.#submitRoadmapView.querySelectorAll(".btn-secondary")
         for (let i = 0; i < deleteButtonsList.length; i++) {
             deleteButtonsList[i].addEventListener("click", () => {
                 this.#roadmapRepository.removeItemById(deleteButtonsList[i].id)
                 this.#showAllItems()
             })
+            editButtonsList[i].addEventListener("click", () => {
+                this.#editItem(editButtonsList[i].id.substring(4,7))
+            })
         }
+    }
+
+    #editItem(id) {
+        let modal = this.#submitRoadmapView.querySelector("#change-modal")
+        modal.classList.remove("hidden")
+        window.scrollTo(0, 0)
+
+        let newTitle = this.#submitRoadmapView.querySelector("#change-roadmap-title")
+        let newContent = this.#submitRoadmapView.querySelector("#change-roadmap-content")
+
+        this.#submitRoadmapView.querySelector("#change-roadmap-submit").addEventListener("click", () => {
+            this.#roadmapRepository.changeItem(id, newTitle.value, newContent.value)
+            modal.classList.add("hidden")
+        })
+
+        this.#submitRoadmapView.querySelector("#close-modal").addEventListener("click", () => {
+            modal.classList.add("hidden")
+        })
     }
 
     /**
@@ -75,6 +98,7 @@ export class submitRoadmapController extends Controller {
     #submitNewRoadmapItem() {
         let title = this.#submitRoadmapView.querySelector("#roadmap-title")
         let content = this.#submitRoadmapView.querySelector("#roadmap-content")
-        this.#roadmapRepository.submitItem(title, content)
+
+        this.#roadmapRepository.submitItem(title.value, content.value)
     }
 }

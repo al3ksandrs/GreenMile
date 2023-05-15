@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container bg-light">
     <div class="row">
         <div class="h1 border-bottom col-12">Roadmap-items</div>
         <div class="p col-12 my-3">Op deze pagina kunt u alle roadmap items, zien, verwijderen en aanpassen.</div>
@@ -10,7 +10,7 @@
                     <th class="col-1" scope="col">Invoerdatum</th>
                     <th scope="col">Titel</th>
                     <th scope="col">inhoud</th>
-                    <th scope="col">Verwijderen</th>
+                    <th scope="col">Acties</th>
                 </tr>
             </thead>
             <tbody id="roadmap-table">
@@ -26,8 +26,7 @@
         <form class="col-12 h5 my-2">
             <div class="form-group">
                 <label for="roadmap-content">Roadmap item titel</label>
-                <input type="email" class="form-control" id="roadmap-title"
-                       placeholder="Titel van het roadmap item">
+                <input class="form-control" id="roadmap-title" placeholder="Titel van het roadmap item">
             </div>
         </form>
         <form class="col-112 h5 my-2">
@@ -38,5 +37,24 @@
         </form>
 
         <button id="roadmap-submit" type="button" class="col-3 mt-3 mx-3 btn btn-success btn-block">Roadmap item invoeren</button>
+    </div>
+
+    <div class="row col-8 shadow change-popup hidden" id="change-modal">
+        <div class="h1 border-bottom col-12">Roadmap Item Wijzigen</div>
+        <form class="col-12 h5 my-2">
+            <div class="form-group">
+                <label for="roadmap-content">Roadmap item titel</label>
+                <input class="form-control" id="change-roadmap-title" placeholder="Titel van het roadmap item">
+            </div>
+        </form>
+        <form class="col-112 h5 my-2">
+            <div class="form-group">
+                <label for="roadmap-content">Roadmap item inhoud</label>
+                <textarea class="form-control" id="change-roadmap-content" rows="10" placeholder="Inhoud van het roadmap - item"></textarea>
+            </div>
+        </form>
+
+        <button id="change-roadmap-submit" type="button" class="col-3 mt-3 mx-3 btn btn-success btn-block">Wijzigen</button>
+        <button id="close-modal" type="button" class="col-3 mt-3 mx-3 btn btn-dark">Sluiten</button>
     </div>
 </div>

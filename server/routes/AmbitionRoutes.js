@@ -11,6 +11,7 @@ class AmbitionRoutes {
         this.#getNewsletters()
         this.#removeRoadmapById()
         this.#submitRoadmap()
+        this.#changeRoadmapItemById()
     }
 
     #getAmbitionDatabaseValues() {
@@ -72,6 +73,22 @@ class AmbitionRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
+    }
+
+    #changeRoadmapItemById() {
+        this.#app.get("/roadmap/id/:id/title/:title/content/:content", async (req, res) => {
+            try {
+                let data = await this.#databaseHelper.handleQuery({
+                    query: "UPDATE roadmap SET titel = ?, informatie = ? WHERE id = ?;",
+                    values: [req.params.title, req.params.content, req.params.id]
+                })
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data)
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        })
+
     }
 }
 

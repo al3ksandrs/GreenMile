@@ -344,6 +344,17 @@
     line-height: 1.6;
 }
 
+.change-popup {
+    position: absolute;
+    background-color: white;
+    border-radius: 30px;
+    height: 32rem;
+    z-index: 10000000;
+    margin-top: -2000px;
+    margin-left: 20px;
+    padding: 10px;
+}
+
 @-webkit-keyframes cd-enter-right {
     0% {
         opacity: 0;
