@@ -149,7 +149,7 @@
                     <p class="info-type-text graph-type-text"></p>
                 </div>
                 <div class="information-box-content flex-column"></div>
-                <div class="info-button hidden" id="modal-show">
+                <div class="info-button" id="modal-show">
                     <p class="info-text"> Zie meer informatie </p>
                 </div>
             </div>
@@ -162,27 +162,34 @@
     <div id="map"></div>
 </div>
 
-<div class="information-modal hidden shadow-lg col-8" id="modal">
-    <div class="information-column">
-       <div class="left-column column">
-           <h3>Wat betekent dit?</h3>
-           <p>Tekst 1</p>
-       </div>
-        <div class="middle-column column">
-            <h3>Waarom moeten we dit veranderen?</h3>
-            <p>Tekst 2</p>
-        </div>
-        <div class="right-column column">
-            <h3>Wat kun jij hier aan doen?</h3>
-            <p>Tekst 3</p>
-        </div>
-    </div>
+<div class="test-container hidden" id="modal">
+    <div class="information-modal shadow-lg col-9" >
+        <h2 class="information-title fw-bold">
+            Fijnstof
+        </h2>
 
-    <div class="modal-hide-container">
-        <div class="hide-modal-button" id="hide-modal">
-            <p class="close-modal-text">Sluit informatie</p>
+        <div class="information-column">
+            <div class="left-column column">
+                <p class="column-title">Wat betekent dit?</p>
+                <p id="definitionType"></p>
+            </div>
+            <div class="middle-column column">
+                <p class="column-title">Waarom veranderen we dit?</p>
+                <p id="whyChange"></p>
+            </div>
+            <div class="right-column column">
+                <p class="column-title">Wat kan ik hier aan doen?</p>
+                <p id="howChange"></p>
+            </div>
+        </div>
+
+        <div class="modal-hide-container">
+            <div class="hide-modal-button" id="hide-modal">
+                <p class="close-modal-text">Sluit informatie</p>
+            </div>
         </div>
     </div>
 </div>
+
 
 

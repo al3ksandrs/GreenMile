@@ -270,6 +270,7 @@ svg:not(:root) {
 }
 
 .information-modal {
+    display: flex;
     background-color: white;
     position: absolute;
     height: 500px;
@@ -278,6 +279,7 @@ svg:not(:root) {
     margin-left: 20px;
     border-radius: 30px;
     padding: 10px;
+    flex-direction: column;
 }
 
 .information-column {
@@ -298,12 +300,20 @@ svg:not(:root) {
 }
 
 .column {
+    display: flex;
     width: 33%;
+    flex-direction: column;
 }
 
-.middle-column {
-    border-left: grey 1px solid;
-    border-right: 1px solid;
+.column-title {
+    display: flex;
+    align-self: center;
+    border-bottom: lightgray 1px solid;
+    font-size: 30px;
+}
+
+.information-title {
+    align-self: center;
 }
 
 @media (max-width: 990px) {

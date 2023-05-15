@@ -244,12 +244,14 @@ export class DashboardController extends Controller {
      */
     #showInformationModal() {
         console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
-        // this.#dashboardView.querySelector("#modal").classList.remove("hidden")
+        this.#dashboardView.querySelector("#modal").classList.remove("hidden")
 
-        let results = this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
-
-        console.log(results)
-
+        this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
+            .then(function(result) {
+                this.#dashboardView.querySelector("#definitionType").innerText = result.data[0].definitionType.substring(0,600)
+                this.#dashboardView.querySelector("#whyChange").innerText = result.data[0].whyChange.substring(0,600)
+                this.#dashboardView.querySelector("#howChange").innerText = result.data[0].howChange.substring(0,600)
+            }.bind(this))
     }
 
     /**
@@ -257,7 +259,7 @@ export class DashboardController extends Controller {
      */
     #hideInformationModal() {
         console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
-        // this.#dashboardView.querySelector("#modal").classList.add("hidden")
+        this.#dashboardView.querySelector("#modal").classList.add("hidden")
     }
 
     /**
@@ -273,14 +275,16 @@ export class DashboardController extends Controller {
         this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
 
         // gets dashboard values from the luchtmeetnet API
-        try {
-            const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
-            this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
-            this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
-        } catch (e) {
-            console.log("Luchtmeetnet API is unavailable")
-            console.log(e)
-        }
+        // try {
+        //     const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
+        //     this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
+        //     this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+        // } catch (e) {
+        //     console.log("Luchtmeetnet API is unavailable")
+        //     console.log(e)
+        // }
+        this.#animateCircleAndValues(this.#LKI, 9)
+        this.#animateCircleAndValues(this.#FINE_DUST,26.4)
     }
 
     /**
