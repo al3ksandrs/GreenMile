@@ -15,6 +15,7 @@ class AccountsRoutes {
     /**
      * Endpoint to retrieve all the users from the database,
      * when it gets all the accounts, it returns all of it in JSON-Format
+     * @author beerstj
      */
     #loadAllAccounts() {
         this.#app.get("/accountsOverview", async (req, res) =>{
@@ -30,6 +31,10 @@ class AccountsRoutes {
         })
     }
 
+    /**
+     * Removes an account based on the ID provided in the parameters of the request
+     * @author beerstj
+     */
     #removeAccount() {
         this.#app.get("/delete/:id", async (req,res) => {
             try {

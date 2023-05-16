@@ -35,6 +35,7 @@ class DashboardRoutes {
     /**
      * Gets the values that we want to display on the dashbaord through our database
      * @returns promise that contains the data
+     * @author beerstj
      */
     async #getDashboardDatabaseValues() {
         this.#app.get("/dashboard/database", async (req,res) => {
@@ -57,6 +58,7 @@ class DashboardRoutes {
     /**
      * Gets the data we want to display from the luchtmeetnet API
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #getDashboardAPIValues() {
         this.#app.get("/dashboard/API/Luchtmeetnet", async (req,res) => {
@@ -96,6 +98,7 @@ class DashboardRoutes {
     /**
      * Function to get all of the PM25 values from today, from the luchtmeetnet API
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #ValuesPM25Today() {
         this.#app.get("/PM25Today", async (req,res) => {
@@ -125,6 +128,7 @@ class DashboardRoutes {
     /**
      * Selects the amount of trees planted in specified month. Used to create charts on dashboard
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #getSelectMonthTree() {
         this.#app.get("/treeAmount/maand/:id", async (req,res) => {
@@ -160,6 +164,7 @@ class DashboardRoutes {
      * Gets the amount of greenery M2 that was added in a specified month from our database.
      * Used in the dashboard controller to one of the graphs.
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #getSelectMonthGroen() {
         this.#app.get("/groen/maand/:id", async (req,res) => {
@@ -191,6 +196,11 @@ class DashboardRoutes {
         })
     }
 
+    /**
+     * Gets all of the information for the modal on the dashboard from our database
+     * @returns {Promise<void>}
+     * @author beerstj
+     */
     async #getInfomation() {
         this.#app.get("/dashboard/information/:id", async (req, res) => {
             try {

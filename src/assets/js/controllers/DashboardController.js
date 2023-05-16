@@ -45,10 +45,8 @@ export class DashboardController extends Controller {
 
         await this.#map();
 
-        /**
-         * Initializes the main chart. 
-         * @type {wn}
-         */
+
+        //Initializes the main chart.
         this.#dashboardChart = new Chart(this.#chartTarget, {
             type: 'line',
             data: {
@@ -123,6 +121,7 @@ export class DashboardController extends Controller {
 
     /**
      * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
+     * @author beerstj
      */
     #compareSwitch() {
         switch(this.#currentlyComparing) {
@@ -137,6 +136,7 @@ export class DashboardController extends Controller {
 
     /**
      * Method to start a comparison between multiple graphs.
+     * @author beerstj
      */
     #startCompare() {
         // Changes the color of the compare button to indidcate that the comparisons started
@@ -163,6 +163,7 @@ export class DashboardController extends Controller {
     /**
      * Method to add a new chart to the chart.
      * @param graph - graph you want to add to the chart.
+     * @author beerstj
      */
     #addCompareChart(graph) {
         if(this.#currentlyComparing) { // checks if the users actually wants to compare,
@@ -227,6 +228,7 @@ export class DashboardController extends Controller {
     /**
      * Stops the comparisons, changes the compare box to indicate the comparisons has stopped,
      * Removes all the datasets from the chart and updates it aswell
+     * @author beerstj
      */
     #stopCompare() {
         console.log("---------------- \nStop Comparing: \n----------------")
@@ -241,6 +243,7 @@ export class DashboardController extends Controller {
 
     /**
      * Checks the selected data type from which you want to see more information.
+     * @author beerstj
      */
     #showInformationModal() {
         console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
@@ -256,6 +259,7 @@ export class DashboardController extends Controller {
 
     /**
      * Hides the information modal
+     * @author beerstj
      */
     #hideInformationModal() {
         console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
@@ -265,6 +269,7 @@ export class DashboardController extends Controller {
     /**
      * Gets the values on the dashboard through the luchtmeetnet API and our database
      * Displays these values on the dashboard.
+     * @author beerstj
      */
     async #loadDashboardValues() {
         // Gets dashboard data from the database
@@ -290,6 +295,7 @@ export class DashboardController extends Controller {
     /**
      * Gathers the data for the greengarden graph, by month
      * @returns {Promise<*[]>}
+     * @author beerstj
      */
     async #getTreeGardenData() {
         let month;
@@ -308,6 +314,7 @@ export class DashboardController extends Controller {
     /**
      * Gathers the data for the greenery M2 graph, by month
      * @returns {Promise<*[]>}
+     * @author beerstj
      */
     async #getGreeneryData() {
         let month;
@@ -326,6 +333,7 @@ export class DashboardController extends Controller {
     /**
      * Gathers the data for the facadeGarden graph, by month
      * @returns {Promise<*[]>}
+     * @authors beerstj ivan chan
      */
     async #getFacadeGardenData() {
         let month;
@@ -344,6 +352,7 @@ export class DashboardController extends Controller {
     /**
      * Gets the data for the PM2.5 today chart.
      * @returns {Promise<*[]>}
+     * @author beerstj
      */
     async #PM25TodayGraph() {
         let values = await this.#dashboardRepository.getPM25Today();
@@ -400,6 +409,7 @@ export class DashboardController extends Controller {
      * Functions to update the values and labels of the chart when yyou want to switch the chart.
      * @param data - data to place in the chart
      * @param label - label to display above the chart.
+     * @author beerstj
      */
     #updateChart(data, label) {
         this.#dashboardChart.data.datasets[0].data = data
@@ -413,6 +423,7 @@ export class DashboardController extends Controller {
      * ['15:00 ', '14:00 ', '13:00 ', '12:00 ', '11:00 ', '10:00 ', '9:00 ', '8:00 ', '7:00 ', '6:00 ', '5:00 ', '4:00 ', '3:00 ', '2:00 ', '1:00 ', '24:00 ', '23:00 ', '22:00 ', '21:00 ', '20:00 ', '19:00 ', '18:00 ', '17:00 ', '16:00 ']
      * Used for the labels in today charts.
      * @returns array of past 24 hours.
+     * @author beerstj
      */
     #getPast24Hours(amount) {
         let curHour = new Date(Date.now()).toISOString().substring(11, 13);
@@ -435,9 +446,11 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Gets the amount of selected
+     * Gets an array of months in string format based on how far back you want to go. For example:
+     * if argument "amount" is 5 you would get ["Januari", "Februari", "Maart", "April", "Mei"]
      * @param amount
      * @returns {*[]}
+     * @author beerstj
      */
     #getMonthsArray(amount) {
         const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
@@ -454,6 +467,7 @@ export class DashboardController extends Controller {
      * Animates both the circle and the number value in one function.
      * @param target - the html element you want to animate
      * @param value - the value to what number the animation should go.
+     * @author beerstj
      */
     #animateCircleAndValues(target, value) {
         this.#animateValues(target, value)
@@ -464,6 +478,7 @@ export class DashboardController extends Controller {
      * Animates the values, that counts up.
      * @param value_selector - which html element you want to animate
      * @param end - value at which you want the animation to stop.
+     * @author beerstj
      */
     #animateValues(value_selector, end) {
         let startTimestamp = null;
@@ -485,6 +500,7 @@ export class DashboardController extends Controller {
      * Method is used to select how far the diagram should be.
      * @param value - value of the diagram (0%-100%)
      * @param circleSelector - select which circle you want to animate. the selectors are defined in the top of the class
+     * @author beerstj
      */
     #animateCircle(value, circleSelector) {
         let offsetValue = Math.floor(((100 - value) * parseInt(window.getComputedStyle(document.querySelectorAll(".progress-circle svg circle")[circleSelector]).getPropertyValue("stroke-dasharray").replace("px", ""))) / 100);

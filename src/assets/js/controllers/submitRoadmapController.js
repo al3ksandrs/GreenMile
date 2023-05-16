@@ -2,6 +2,7 @@
  * Controller class to view all of the items in the roadmap,
  * add new items to the roadmap, delete items from the roadmap
  * and edit items in the roadmap
+ * @author beerstj
  */
 
 import {Controller} from "./controller.js";
@@ -11,6 +12,9 @@ export class submitRoadmapController extends Controller {
     #submitRoadmapView
     #roadmapRepository
 
+    /**
+     * Constructor for the class
+     */
     constructor() {
         super();
         this.#setupView();
@@ -19,6 +23,7 @@ export class submitRoadmapController extends Controller {
     /**
      * Creates the view for the page, initializes the repository and adds event listeners
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #setupView() {
         this.#submitRoadmapView = await super.loadHtmlIntoContent("html_views/submitRoadmapItem.html")
@@ -34,6 +39,7 @@ export class submitRoadmapController extends Controller {
 
     /**
      * Gets all of the items from the database and displays these on the page
+     * @author beerstj
      */
      #showAllItems() {
         let target = this.#submitRoadmapView.querySelector("#roadmap-table")
@@ -59,6 +65,7 @@ export class submitRoadmapController extends Controller {
     /**
      * Attaches the event listeners to all of the delete buttons, one for deleting and one for
      * editing a roadmap item
+     * @author beerstj
      */
     #attachEventListeners() {
         let deleteButtonsList = this.#submitRoadmapView.querySelectorAll(".btn-danger")
@@ -74,6 +81,11 @@ export class submitRoadmapController extends Controller {
         }
     }
 
+    /**
+     * Function to edit a roadmap items content and title
+     * @param id - ID of which item you want to edit.
+     * @author beerstj
+     */
     #editItem(id) {
         let modal = this.#submitRoadmapView.querySelector("#change-modal")
         modal.classList.remove("hidden")
@@ -94,6 +106,7 @@ export class submitRoadmapController extends Controller {
 
     /**
      * This functions adds a new roadmap item to the database.
+     * @author beerstj
      */
     #submitNewRoadmapItem() {
         let title = this.#submitRoadmapView.querySelector("#roadmap-title")

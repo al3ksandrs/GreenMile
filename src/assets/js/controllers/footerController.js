@@ -1,3 +1,8 @@
+/**
+ * Controller for the footer, in the footer there is a section to put in your email to sign up
+ * for the newsletter
+ * @author beerstj
+ */
 import {Controller} from "./controller.js";
 import {footerRepository} from "../repositories/footerRepository.js";
 
@@ -18,21 +23,17 @@ export class footerController extends Controller {
 
         this.#footerView.querySelector("#signup-button").addEventListener("click", () => {
             if(this.#validateEmail(emailField.value)) {
-                this.#signup(emailField.value)
+                this.#footerRepository.signUp(email)
                 emailField.value = "";
                 // errorText.classList.add("visually-hidden")
             } else {
                 errorText.classList.remove("visually-hidden")
             }
         })
-    }
-
-    #signup(email) {
-        this.#footerRepository.signUp(email)
-    }
+    }w
 
     #validateEmail(email) {
-        let re = /\S+@\S+\.\S+/;
-        return re.test(email);
+        let regex = /\S+@\S+\.\S+/;
+        return regex.test(email);
     }
 }

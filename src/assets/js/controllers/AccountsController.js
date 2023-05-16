@@ -15,16 +15,17 @@ export class AccountsController extends Controller {
         super();
         this.#accountsRepository = new AccountsRepository();
         this.#setupView();
-        this.#loadAllAccounts();
     }
     async #setupView() {
         this.#AccountsView = await super.loadHtmlIntoContent("html_views/accounts.html")
+        this.#loadAllAccounts();
     }
 
     /**
      * First this function requests all accounts through the repository, after, using the createAcountCard function
      * is creates a html block with the account
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #loadAllAccounts() {
         try {
@@ -44,6 +45,12 @@ export class AccountsController extends Controller {
         }
     }
 
+    /**
+     * Removes a user account based on the ID provided
+     * @param accountId - ID of the account you want to delete
+     * @returns {Promise<void>}
+     * @author beerstj
+     */
     async #removeAccounts(accountId) {
         this.#accountsRepository.removeAccount(accountId);
         this.#AccountsView.querySelector("#card"+accountId).remove()
@@ -52,6 +59,7 @@ export class AccountsController extends Controller {
     /**
      * This method creates a HTML-Card for every user in the database
      * @param account - Account for which to make the card
+     * @author beerstj
      */
     #createAccountCard(account) {
         let accountsContainer = document.querySelector("#allAccounts");

@@ -15,6 +15,7 @@ class newsletterRoutes {
 
     /**
      * Adds users email to the mailing list table in database
+     * @author beerstj
      */
     #signUp() {
         this.#app.get("/mailingList/signup/:email", async (req,res) => {
@@ -32,7 +33,8 @@ class newsletterRoutes {
     }
 
     /**
-     * saves the newsletter to the database.
+     * saves the newsletter to the database
+     * @author beerstj.
      */
     #submitNewsletter() {
         this.#app.get("/mailinglist/submit/title/:title/content/:content", async (req,res) => {
@@ -53,6 +55,7 @@ class newsletterRoutes {
 
     /**
      * sends newsletter with content and title to email given in the request
+     * @author beerstj
      */
     #sendNewsletter() {
         this.#app.post("/mailingList/send/email/:email/title/:title/content/:content", async (req,res) => {
@@ -91,6 +94,7 @@ class newsletterRoutes {
 
     /**
      * Gets every email in the mailing list
+     * @author beerstj
      */
     #getAllUsers() {
         this.#app.get("/mailingList/emails", async (req,res) => {
@@ -104,6 +108,7 @@ class newsletterRoutes {
 
     /**
      * Gets all of the newsletters from the database.
+     * @author beerstj
      */
     #getAllNewsletters() {
         this.#app.get("/mailingList/getAll", async (req,res) => {

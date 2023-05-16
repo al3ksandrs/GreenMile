@@ -20,6 +20,7 @@ export class SubmitNewslettersController extends Controller {
     /**
      * Makes the view for the newsletter page.
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #setupView() {
         this.#sumbitNewsletterView = await super.loadHtmlIntoContent("html_views/submitNewsletter.html")
@@ -32,6 +33,7 @@ export class SubmitNewslettersController extends Controller {
     /**
      * Creates a new newsletter in the database and uses the #sendNewsletter method to send everyone an email
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #submitNewsLetter() {
         let title = this.#sumbitNewsletterView.querySelector("#newsletter-title")
@@ -54,6 +56,7 @@ export class SubmitNewslettersController extends Controller {
      * Gets all of de users from the mailing_list table in DB, and send all of them an emaik
      * @param title - title of the newsletter
      * @param content - contents of the newsletter
+     * @author beerstj
      */
     async #sendNewsLetter(title, content) {
         const emails = await this.#newsletterRepository.getEmails();

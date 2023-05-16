@@ -25,6 +25,7 @@ export class NewsletterController extends Controller{
     /**
      * Gets all of the newsletters from database and displays them on the page.
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #displayNewsletters() {
         let newslettersContainer = this.#newsletterView.querySelector(".newsletters-letters-container")
