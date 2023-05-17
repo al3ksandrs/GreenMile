@@ -19,7 +19,7 @@
 
 
      async createLogin(email, password) {
-         return await   this.#networkManager.doRequest(this.#route, "POST", {email: email, password: password})
+         return await this.#networkManager.doRequest(this.#route, "POST", {email: email, password: password})
      }
 
 }
