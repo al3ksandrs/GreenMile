@@ -133,20 +133,30 @@
     height: 30rem;
 }
 
-.grfiek-weergave{
+.graph-view{
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     margin: 8px;
 }
 
-.weergave{
+.graph-view-inactive{
     margin: 4px;
     color: #212529;
     background-color: #fff;
     border-radius: 8px;
     border: 1px solid #efefef;
 }
+
+.graph-view-active {
+    margin: 4px;
+    background-color: #058c42;
+    border-radius: 8px;
+    border: 1px solid #058c42;
+    color: white;
+}
+
+
 
 .grey-text{
     color: #737373;

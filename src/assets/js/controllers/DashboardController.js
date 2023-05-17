@@ -25,6 +25,7 @@ export class DashboardController extends Controller {
     #chartTarget
     #currentlyComparing;
     #compareList = []
+    #currentGraphView;
 
     constructor() {
         super();
@@ -81,6 +82,7 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector("#facadeGardenCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#facadeGardeninfo()
+                this.#getSelectedTimespan()
 
                 this.#getFacadeGardenData().then(function (result) {
                     this.#updateChart(result, "Geveltuinen geplant in deze maand");
@@ -89,6 +91,7 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector("#treeGardenCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#treeGardeninfo();
+                this.#getSelectedTimespan()
                 this.#getTreeGardenData().then(function (result) {
                     this.#updateChart(result, "Boomtuinen geplant in deze maand");
                 }.bind(this));
@@ -96,6 +99,7 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector("#greeneryCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#greeneryinfo();
+                this.#getSelectedTimespan()
                 this.#getGreeneryData().then(function (result) {
                     this.#updateChart(result, "GroeneM2 geplant in deze maand");
                 }.bind(this));
@@ -108,6 +112,8 @@ export class DashboardController extends Controller {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#PM25info()
 
+                this.#getSelectedTimespan()
+
                 this.#dashboardChart.data.labels = this.#getPast24Hours(24)
 
                 this.#PM25TodayGraph().then(function(result) {
@@ -116,6 +122,8 @@ export class DashboardController extends Controller {
                     this.#dashboardChart.data.labels = this.#getMonthsArray(4)
                 }.bind(this))
             })
+
+            this.#graphViewEventListeners()
         }
     }
 
@@ -280,16 +288,39 @@ export class DashboardController extends Controller {
         this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
 
         // gets dashboard values from the luchtmeetnet API
-        // try {
-        //     const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
-        //     this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
-        //     this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
-        // } catch (e) {
-        //     console.log("Luchtmeetnet API is unavailable")
-        //     console.log(e)
-        // }
-        this.#animateCircleAndValues(this.#LKI, 9)
-        this.#animateCircleAndValues(this.#FINE_DUST,26.4)
+        try {
+            const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
+            this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
+            this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+        } catch (e) {
+            console.log("Luchtmeetnet API is unavailable")
+            console.log(e)
+            this.#animateCircleAndValues(this.#LKI, 9)
+            this.#animateCircleAndValues(this.#FINE_DUST, 26.4)
+        }
+    }
+
+    #getSelectedTimespan() {
+        let selectedType = this.#dashboardView.querySelector(".shadow").id
+        let selectedTimespan = this.#currentGraphView
+
+        console.log("-----------------------\nShow graph for:\n\t" + selectedType + "\nWith timespan of: \n\t" + selectedTimespan+ "\n-----------------------")
+
+        switch(selectedType) {
+            case "facadeGardenCircle":
+                console.log(this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 2))
+                break;
+            case "treeGardenCircle":
+                console.log(this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 1))
+                break;
+            case "greeneryCircle":
+                console.log(this.#dashboardRepository.getSelectedTimespanGreenery(selectedTimespan))
+            default:
+                console.log("Graph nog niet ondersteund")
+                break;
+        }
+
+        console.log("Show graph for: " + selectedType + "\n With timespan: " + selectedTimespan)
     }
 
     /**
@@ -512,6 +543,31 @@ export class DashboardController extends Controller {
         document.querySelectorAll(".progress-circle svg circle")[circleSelector].style.strokeDashoffset = offsetValue;
     }
 
+    #graphViewEventListeners() {
+        let days = this.#dashboardView.querySelector("#days")
+        let weeks = this.#dashboardView.querySelector("#weeks")
+        let months = this.#dashboardView.querySelector("#months")
+        this.#currentGraphView = "days"
+
+        days.addEventListener("click", () => {
+            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
+            days.classList.add("graph-view-active")
+            this.#currentGraphView = "days"
+            this.#getSelectedTimespan()
+        })
+        weeks.addEventListener("click", () => {
+            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
+            weeks.classList.add("graph-view-active")
+            this.#currentGraphView = "weeks"
+            this.#getSelectedTimespan()
+        })
+        months.addEventListener("click", () => {
+            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
+            months.classList.add("graph-view-active")
+            this.#currentGraphView = "months"
+            this.#getSelectedTimespan()
+        })
+    }
 
     ///////////////////////////////////////// MAP ////////////////////////////////////////////
 

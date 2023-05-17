@@ -18,10 +18,14 @@ class DashboardRoutes {
         this.#getSelectGevelMaand();
         this.#ValuesPM25Today();
 
+        this.#getFacadeAndTreeGardenData()
+
         this.#getDashboardDatabaseValues();
         this.#getDashboardAPIValues();
 
         this.#getInfomation()
+
+        this.#getGreeneryM2Data();
 
         // map routes
         this.#getGroen();
@@ -102,11 +106,6 @@ class DashboardRoutes {
      */
     async #ValuesPM25Today() {
         this.#app.get("/PM25Today", async (req,res) => {
-            let reqOptions= {
-                method: "GET",
-                redirect: "follow",
-            };
-
             let values = [];
 
             await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
@@ -124,6 +123,110 @@ class DashboardRoutes {
         })
     }
 
+    async #getFacadeAndTreeGardenData() {
+        this.#app.get("/dashboard/timespan/:timespan/type/:type_id", async (req,res) => {
+            let totalArray = []
+            let totalNumber = 0;
+            let today = new Date(Date.now())
+            let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000))/7);
+            switch (req.params.timespan) {
+                case "days":
+                    try {
+                        for (let i = 0; i < 31; i++) {
+                            let data = await this.#databaseHelper.handleQuery( {
+                                query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = 3;",
+                                values: [i, req.params.type_id]
+                            })
+
+                            totalNumber += data[0].dayTotal
+                            totalArray.push(totalNumber)
+                        }
+                    } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
+                    break;
+                case "weeks":
+                    try {
+                        for (let i = weekNumber - 16; i < weekNumber; i++) {
+                            let data = await this.#databaseHelper.handleQuery({
+                                query: "SELECT COUNT(datum) AS weekTotal FROM Groen WHERE WEEK(datum) = ? AND type_id = ?",
+                                values:  [i, req.params.type_id]
+                            })
+
+                            totalNumber+= data[0].weekTotal
+                            totalArray.push(totalNumber)
+                        }
+                    } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
+                    break;
+                case "months":
+                    try {
+                        for (let i = 1; i < today.getMonth() + 1; i++) {
+                            let data = await this.#databaseHelper.handleQuery({
+                                query: "SELECT COUNT(datum) AS monthTotal FROM Groen WHERE MONTH(datum) = ? AND type_id = ?",
+                                values:  [i, req.params.type_id]
+                            })
+                            totalNumber += data[0].monthTotal
+                            totalArray.push(totalNumber)
+                        }
+                    } catch (e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
+                    break;
+            }
+            res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: req.params.timespan, totals: totalArray})
+        })
+    }
+
+    #getGreeneryM2Data() {
+        this.#app.get("/dashboard/greenery/timespan/:timespan", async (req, res) => {
+            let totalNumber = 0;
+            let totalArray = [];
+            let today = new Date(Date.now())
+            let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000))/7);
+
+            switch(req.params.timespan) {
+                case "days":
+                    try {
+                        for (let i = 0; i < 31; i++) {
+                            let data = await this.#databaseHelper.handleQuery({
+                                query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE DAY(datum) = ? AND MONTH(datum) = 1",
+                                values: [i]
+                            })
+                            totalNumber += data[0].GroeneM2
+                            totalArray.push(totalNumber)
+                        }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "days", totals: totalArray})
+
+                    } catch(e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
+                    break;
+                case "weeks":
+                    try {
+                        for (let i = weekNumber - 16; i < weekNumber; i++) {
+                            let data = await this.#databaseHelper.handleQuery({
+                                query: "SELECT SUM(groeneM2) AS weekTotal FROM GroeneM2 WHERE WEEK(datum) = ?",
+                                values:  [i]
+                            })
+
+                            totalNumber+= data[0].weekTotal
+                            totalArray.push(totalNumber)
+                        }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "week", totals: totalArray})
+
+                    } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
+                    break;
+                case "months":
+                    try {
+                        for (let i = 0; i < today.getMonth(); i++) {
+                            let data = await this.#databaseHelper.handleQuery({
+                                query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE MONTH(datum) = ?",
+                                values: [i]
+                            })
+                            totalNumber += data[0].GroeneM2
+                            totalArray.push(totalNumber)
+                        }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "months", totals: totalArray})
+
+                    } catch(e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
+                    break;
+            }
+        })
+    }
 
     /**
      * Selects the amount of trees planted in specified month. Used to create charts on dashboard
