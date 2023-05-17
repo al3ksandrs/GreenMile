@@ -5,17 +5,21 @@
     import {NetworkManager} from "../framework/utils/networkManager.js";
 
     export class LoginSiteRepository {
-        #networkManager;
-        #route;
+        //# private atribute in javascript
+        #networkManager
+        #route
+        #app
 
-        constructor {
-        this.#route = "/loginSite";
-        this.#networkManager = new NetworkManager();
-    }
 
-    createLogin(username, password) {
-            this.#networkManager.doRequest(this.#route, "POST", {usernam: username, password: password})
-    }
+        constructor(app) {
+            this.#app = app;
+            this.#route = "/loginSite/createLogin";
+            this.#networkManager = new NetworkManager();
+        }
 
+
+     async createLogin(email, password) {
+         return await   this.#networkManager.doRequest(this.#route, "POST", {email: email, password: password})
+     }
 
 }

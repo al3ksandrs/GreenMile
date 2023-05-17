@@ -2,23 +2,21 @@
  * @author Anwaris2
  * This is the log in controller used for the site.
  */
-
-import {UsersRepository} from "../repositories/usersRepository.js";
-import {App} from "../app.js";
 import {Controller} from "./controller.js";
+import {LoginSiteRepository} from "../repositories/loginSiteRepository.js";
+import {App} from "../app.js";
+
+
 // import {Login}
 
 export class LoginsiteController extends Controller {
-    #usersRepository;
     #loginsiteView;
     #loginSiteRepository;
 
     constructor() {
         super();
-
+        this.#loginSiteRepository = new LoginSiteRepository();
         this.#setupview();
-        this.#loginSiteRepository= new LoginSiteController();
-        this.#usersRepository = new UsersRepository();
     }
 
 
@@ -28,20 +26,23 @@ export class LoginsiteController extends Controller {
     }
 
 
-    #processLogin(event) {
+    async #processLogin(event) {
         event.preventDefault();
 
-        const username = this.#loginsiteView.querySelector("#username").value;
+        const email = this.#loginsiteView.querySelector("#username").value;
         const password = this.#loginsiteView.querySelector("#password").value;
 
         const errorBox = this.#loginsiteView.querySelector(".error")
-        if(username.length ===0 || password.length === 0 ) {
+        if (username.length === 0 || password.length === 0) {
             errorBox.innerHTML = "Gebruikersnaam en wachtwoord moeten ingevuld zijn!";
         } else {
-            errorBox.innerHTML = "" ;
+            errorBox.innerHTML = "";
         }
 
-        console.log(username + " " + password)
+        
+        let response = await this.#loginSiteRepository.createLogin(email, password)
+        console.log(response)
+
 
 
     }
