@@ -9,6 +9,7 @@ class DashboardRoutes {
     #errorCodes = require("../framework/utils/httpErrorCodes");
     #databaseHelper = require("../framework/utils/databaseHelper");
     #requestOptions
+    #greenType;
 
     constructor(app) {
         this.#app = app;
@@ -125,11 +126,24 @@ class DashboardRoutes {
 
     async #getFacadeAndTreeGardenData() {
         this.#app.get("/dashboard/timespan/:timespan/type/:type_id", async (req,res) => {
+            switch (req.params.type_id) {
+                case "1": // String because req.params.type_id is a string
+                    this.#greenType = "Boomtuinen"
+                    break;
+                case "2":
+                    this.#greenType = "Geveltuinen"
+                    break;
+                default:
+                    break;
+            }
+
             let totalArray = []
             let totalNumber = 0;
             let today = new Date(Date.now())
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000))/7);
-            switch (req.params.timespan) {
+            const timespan = req.params.timespan
+
+            switch (timespan) {
                 case "days":
                     try {
                         for (let i = 0; i < 31; i++) {
@@ -141,11 +155,12 @@ class DashboardRoutes {
                             totalNumber += data[0].dayTotal
                             totalArray.push(totalNumber)
                         }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 30 dagen", data: totalArray, labels: this.#getLabels(timespan)})
                     } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
                     break;
                 case "weeks":
                     try {
-                        for (let i = weekNumber - 16; i < weekNumber; i++) {
+                        for (let i = weekNumber - 15; i < weekNumber +1; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS weekTotal FROM Groen WHERE WEEK(datum) = ? AND type_id = ?",
                                 values:  [i, req.params.type_id]
@@ -154,11 +169,12 @@ class DashboardRoutes {
                             totalNumber+= data[0].weekTotal
                             totalArray.push(totalNumber)
                         }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken", data: totalArray, labels: this.#getLabels(timespan)})
                     } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
                     break;
                 case "months":
                     try {
-                        for (let i = 1; i < today.getMonth() + 1; i++) {
+                        for (let i = 1; i < today.getMonth() + 2; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS monthTotal FROM Groen WHERE MONTH(datum) = ? AND type_id = ?",
                                 values:  [i, req.params.type_id]
@@ -166,10 +182,10 @@ class DashboardRoutes {
                             totalNumber += data[0].monthTotal
                             totalArray.push(totalNumber)
                         }
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar", data: totalArray, labels: this.#getLabels(timespan)})
                     } catch (e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
                     break;
             }
-            res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: req.params.timespan, totals: totalArray})
         })
     }
 
@@ -179,8 +195,9 @@ class DashboardRoutes {
             let totalArray = [];
             let today = new Date(Date.now())
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000))/7);
+            const timespan = req.params.timespan
 
-            switch(req.params.timespan) {
+            switch(timespan) {
                 case "days":
                     try {
                         for (let i = 0; i < 31; i++) {
@@ -191,7 +208,7 @@ class DashboardRoutes {
                             totalNumber += data[0].GroeneM2
                             totalArray.push(totalNumber)
                         }
-                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "days", totals: totalArray})
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van geplante Groene M2 de de afgelopen 30 dagen", data: totalArray, labels: this.#getLabels(timespan)})
 
                     } catch(e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
                     break;
@@ -206,13 +223,13 @@ class DashboardRoutes {
                             totalNumber+= data[0].weekTotal
                             totalArray.push(totalNumber)
                         }
-                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "week", totals: totalArray})
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van geplante Groene M2 de de afgelopen 15 weken", data: totalArray, labels: this.#getLabels(timespan)})
 
                     } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
                     break;
                 case "months":
                     try {
-                        for (let i = 0; i < today.getMonth(); i++) {
+                        for (let i = 0; i < today.getMonth() +1; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE MONTH(datum) = ?",
                                 values: [i]
@@ -220,7 +237,7 @@ class DashboardRoutes {
                             totalNumber += data[0].GroeneM2
                             totalArray.push(totalNumber)
                         }
-                        res.status(this.#errorCodes.HTTP_OK_CODE).json({timespan: "months", totals: totalArray})
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van geplante Groene M2 aan het begin van elke maand sinds het begin van het jaar", data: totalArray, labels: this.#getLabels(timespan)})
 
                     } catch(e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
                     break;
@@ -317,6 +334,40 @@ class DashboardRoutes {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         })
+    }
+
+    #getLabels(timespan) {
+        const months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
+        let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000))/7);
+        let labelArray = [];
+
+        switch(timespan) {
+            case "days":
+                for (let i = 0; i < 31; i++) {
+                    let date = new Date();
+                    date.setDate(date.getDate() - i);
+                    let dayNumber = date.getDate()
+                    let month = months[date.getMonth()]
+                    labelArray.push(dayNumber + " " + month);
+                }
+                labelArray.reverse()
+                break;
+            case "weeks":
+                for (let i = weekNumber - 15; i < weekNumber +1; i++) {
+                    labelArray.push("Week " + i)
+                }
+
+                break;
+            case "months":
+                for (let i = 0; i < new Date(Date.now()).getMonth() + 1; i++) {
+                    labelArray.push(months[i])
+                }
+                break;
+            default:
+                break;
+        }
+
+        return labelArray;
     }
 }
 
