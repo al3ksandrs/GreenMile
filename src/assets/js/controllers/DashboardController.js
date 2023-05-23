@@ -24,8 +24,9 @@ export class DashboardController extends Controller {
     #dashboardChart
     #chartTarget
     #currentlyComparing;
-    #compareList = []
     #currentGraphView;
+    #PM25days
+    #PM25weeks
 
     constructor() {
         super();
@@ -98,17 +99,11 @@ export class DashboardController extends Controller {
                 this.#PM25info()
 
                 this.#getSelectedTimespan()
-
-                this.#dashboardChart.data.labels = this.#getPast24Hours(24)
-
-                this.#PM25TodayGraph().then(function(result) {
-
-                    this.#updateChart(result, "PM25 Uurwaarden aan het begin van elk uur")
-                    this.#dashboardChart.data.labels =['Januari', 'Februari', 'Maart', 'April', 'Mei']
-                }.bind(this))
             })
 
             this.#graphViewEventListeners()
+
+            await this.#preloadPM25Values()
         }
     }
 
@@ -158,35 +153,46 @@ export class DashboardController extends Controller {
                     }.bind(this))
                 break;
             case "greeneryCircle":
-                console.log(this.#dashboardRepository.getSelectedTimespanGreenery(selectedTimespan))
                 this.#dashboardRepository.getSelectedTimespanGreenery(selectedTimespan)
                     .then(function (result) {
                         this.#updateChart(result)
                     }.bind(this))
+                break;
+
+            case "PM25Circle":
+                if(this.#currentGraphView === "days") {
+                    this.#updateChart(this.#PM25days);
+                } else {
+                    this.#updateChart(this.#PM25weeks)
+                }
                 break;
             default:
                 console.log("Graph nog niet ondersteund")
                 break;
         }
 
-        console.log("Show graph for: " + selectedType + "\n With timespan: " + selectedTimespan)
+        console.log("Showing graph for: " + selectedType + "\n With timespan: " + selectedTimespan)
     }
 
-
     /**
-     * Gets the data for the PM2.5 today chart.
-     * @returns {Promise<*[]>}
-     * @author beerstj
+     * Because the website and luchtmeet API connection can be quite slow, we preload the data. So we can just load it into the charts
+     *
+     * @returns {Promise<void>}
      */
-    async #PM25TodayGraph() {
-        let values = await this.#dashboardRepository.getPM25Today();
-        let array = []
+    async #preloadPM25Values() {
+        await this.#dashboardRepository.getSelectedPM25Data("days")
+            .then(function(daysResult) {
+                this.#PM25days = daysResult
+                console.log("PM25 (Dagen) Data, vooraf ingeladen: ")
+                console.log(this.#PM25days)
+            }.bind(this))
 
-        for (let i = 0; i < 24; i++) {
-            array.push(values.data[i].value)
-        }
-
-        return array;
+        await this.#dashboardRepository.getSelectedPM25Data("weeks")
+            .then(function(weekResult) {
+                this.#PM25weeks = weekResult
+                console.log("PM25 (Weken) Data, vooraf ingeladen: ")
+                console.log(this.#PM25weeks)
+            }.bind(this))
     }
 
     #facadeGardeninfo() {

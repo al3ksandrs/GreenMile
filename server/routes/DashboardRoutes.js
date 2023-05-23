@@ -10,6 +10,7 @@ class DashboardRoutes {
     #databaseHelper = require("../framework/utils/databaseHelper");
     #requestOptions
     #greenType;
+    #avgArray
 
     constructor(app) {
         this.#app = app;
@@ -17,7 +18,6 @@ class DashboardRoutes {
         this.#getSelectMonthGroen();
         this.#getSelectMonthTree();
         this.#getSelectGevelMaand();
-        this.#ValuesPM25Today();
 
         this.#getFacadeAndTreeGardenData()
 
@@ -27,6 +27,8 @@ class DashboardRoutes {
         this.#getInfomation()
 
         this.#getGreeneryM2Data();
+
+        this.#getpm25Chart()
 
         // map routes
         this.#getGroen();
@@ -100,28 +102,56 @@ class DashboardRoutes {
         })
     }
 
-    /**
-     * Function to get all of the PM25 values from today, from the luchtmeetnet API
-     * @returns {Promise<void>}
-     * @author beerstj
-     */
-    async #ValuesPM25Today() {
-        this.#app.get("/PM25Today", async (req,res) => {
-            let values = [];
+    async #getpm25Chart() {
+        this.#app.get("/dashbaord/api/luchtmeetnet/PM25/timespan/:timespan", async (req,res) => {
+            let date1 = new Date(Date.now())
+            let date2 = new Date();
+            this.#avgArray = []
 
-            await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
-                "start=" + new Date(Date.now() - 106400000).toISOString() +
-                "&end=" + new Date(Date.now()).toISOString() +
-                "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc&", this.#requestOptions)
-                .then (function (response) {
-                    return response.json();
-                }).then(function (data) {
-                    values = data
-                })
+            switch(req.params.timespan) {
+                case "days":
 
-            res.status(this.#errorCodes.HTTP_OK_CODE).json(values)
+                    for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
+                        date2.setDate(date1.getDate() - 1)
+
+                        await this.#calculateAverageFromResult(i, date1, date2)
+
+                        date1.setDate(date1.getDate() - 1)
+                    }
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.", labels: this.#getLabels(req.params.timespan)})
+
+                    break;
+
+                case "weeks":
+                    for (let i = 0; i < 16; i++) {
+                        date2.setDate(date1.getDate()-7)
+
+                        await this.#calculateAverageFromResult(i, date1, date2)
+
+                        date1.setDate(date2.getDate())
+                    }
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Week gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 15 weken.", labels: this.#getLabels(req.params.timespan)})
+                    break;
+            }
 
         })
+    }
+
+    async #calculateAverageFromResult(i, date1, date2) {
+        await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
+            "start=" + date2.toISOString() + "&end=" + date1.toISOString() +
+            "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", this.#requestOptions)
+            .then(function (response) { return response.json();})
+            .then(function (data) {
+                if(typeof data !== 'undefined') { // If no data exists for curDay, push 0 to array
+                    let total = 0
+                    for (let curHour = 0; curHour < data.data.length; curHour++) { // loops through every hour of the day
+                        if(typeof data.data[i] !== 'undefined') { total += data.data[i].value } // Checks if curHour is undefined.
+                    }
+                    console.log("Progress: " + i + " Current Average: "+ total / data.data.length)
+                    this.#avgArray.push(total/data.data.length)
+                } else return 0
+            }.bind(this))
     }
 
     async #getFacadeAndTreeGardenData() {
@@ -169,7 +199,7 @@ class DashboardRoutes {
                             totalNumber+= data[0].weekTotal
                             totalArray.push(totalNumber)
                         }
-                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken", data: totalArray, labels: this.#getLabels(timespan)})
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken", data: totalArray, labels: this.#getLabels(timespan).reverse()})
                     } catch (e) { res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e}) }
                     break;
                 case "months":
@@ -182,7 +212,7 @@ class DashboardRoutes {
                             totalNumber += data[0].monthTotal
                             totalArray.push(totalNumber)
                         }
-                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar", data: totalArray, labels: this.#getLabels(timespan)})
+                        res.status(this.#errorCodes.HTTP_OK_CODE).json({label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar", data: totalArray, labels: this.#getLabels(timespan).reverse()})
                     } catch (e) {res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason:e})}
                     break;
             }

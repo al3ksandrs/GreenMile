@@ -14,6 +14,7 @@ export class DashboardRepository {
 
     #dashhboardSelectedTimespanTreegarden
     #dashbaordSelectedTimespanGreenery;
+    #dashboardSelectedTimespanPM25;
 
     #mapGreenRoute;
     #mapAreaRoute;
@@ -31,6 +32,7 @@ export class DashboardRepository {
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
         this.#dashhboardSelectedTimespanTreegarden = "/dashboard/timespan/"
         this.#dashbaordSelectedTimespanGreenery = "/dashboard/greenery/timespan/"
+        this.#dashboardSelectedTimespanPM25 = "/dashbaord/api/luchtmeetnet/PM25/timespan/"
 
         this.#informationModalRoute = "/dashboard/information/"
 
@@ -58,20 +60,8 @@ export class DashboardRepository {
         return this.#networkManager.doRequest(this.#dashboardAPIRoute, "GET")
     }
 
-    getSelectedMonthTreeValues(monthId) {
-        return this.#networkManager.doRequest(this.#treeAmountMonthRoute + monthId, "GET")
-    }
-
-    getPM25Today() {
-        return this.#networkManager.doRequest(this.#PM25TodayRoute, "GET")
-    }
-
-    getSelectedMonthGevelValues(monthId) {
-        return this.#networkManager.doRequest(this.#gevelAmountMonthRoute + monthId, "GET")
-    }
-
-    getSelectedMonthGroenValues(monthId) {
-        return this.#networkManager.doRequest(this.#groenAmountMonthRoute + monthId, "GET")
+    getSelectedPM25Data(timespan) {
+        return this.#networkManager.doRequest(this.#dashboardSelectedTimespanPM25 + timespan, "GET")
     }
 
     getModalInformation(id) {
