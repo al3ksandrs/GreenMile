@@ -335,7 +335,7 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #showInformationModal() {
-        console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
+        // console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
         this.#dashboardView.querySelector("#modal").classList.remove("hidden")
 
         this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
@@ -351,8 +351,7 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #hideInformationModal() {
-        console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
-        this.#dashboardView.querySelector("#modal").classList.add("hidden")
+        // console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
     }
 
     ///////////////////////////////////////// MAP ////////////////////////////////////////////

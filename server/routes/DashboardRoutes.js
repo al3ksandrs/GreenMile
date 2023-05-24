@@ -118,7 +118,7 @@ class DashboardRoutes {
 
                         date1.setDate(date1.getDate() - 1)
                     }
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.", labels: this.#getLabels(req.params.timespan)})
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.", labels: this.#getLabels(req.params.timespan).reverse()})
 
                     break;
 
@@ -130,7 +130,7 @@ class DashboardRoutes {
 
                         date1.setDate(date2.getDate())
                     }
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Week gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 15 weken.", labels: this.#getLabels(req.params.timespan)})
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Week gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 15 weken.", labels: this.#getLabels(req.params.timespan).reverse()})
                     break;
             }
 
