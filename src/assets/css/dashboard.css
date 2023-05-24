@@ -279,6 +279,10 @@ svg:not(:root) {
     display: none;
 }
 
+#comparison-impossible {
+    margin-top: 25px;
+}
+
 .information-modal {
     display: flex;
     background-color: white;

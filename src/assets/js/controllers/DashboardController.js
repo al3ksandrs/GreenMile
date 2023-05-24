@@ -13,18 +13,24 @@ import {DashboardRepository} from "../repositories/DashboardRepository.js";
 export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
+
     #FACADEGARDENINDEX = 0;
     #TREEGARDENINDEX = 1;
     #GREENERYINDEX = 2;
     #LKI = 3;
     #FINE_DUST = 4;
+
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
+
     #dashboardChart
     #chartTarget
+
     #currentlyComparing;
     #currentGraphView;
+    #chartCompareList
+
     #PM25days
     #PM25weeks
     #PM25months
@@ -65,6 +71,12 @@ export class DashboardController extends Controller {
         });
 
         this.#currentlyComparing = false;
+        this.#chartCompareList = []
+
+        this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
+            this.#compareSwitch();
+        })
+
 
         this.#dashboardView.querySelector("#modal-show").addEventListener("click", () => {
             this.#showInformationModal()
@@ -73,7 +85,6 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#hide-modal").addEventListener("click", () => {
             this.#hideInformationModal()
         })
-
 
         if(!this.#currentlyComparing) {
             // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
@@ -84,12 +95,12 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector("#treeGardenCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#treeGardeninfo();
-                this.#getSelectedTimespan()
+                this.#showSelectedChart()
             })
             this.#dashboardView.querySelector("#greeneryCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#greeneryinfo();
-                this.#getSelectedTimespan()
+                this.#showSelectedChart()
             })
             this.#dashboardView.querySelector("#aqiCircle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
@@ -98,14 +109,14 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector("#PM25Circle").addEventListener("click", () => {
                 this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
                 this.#PM25info()
-
-                this.#getSelectedTimespan()
+                this.#showSelectedChart()
             })
-
-            this.#graphViewEventListeners()
-
-            await this.#preloadPM25Values()
         }
+
+        this.#graphViewEventListeners()
+
+        await this.#preloadPM25Values()
+
     }
 
     /**
@@ -114,93 +125,158 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     async #loadDashboardValues() {
-        // Gets dashboard data from the database
-        const databaseValues = await this.#dashboardRepository.getDashboardValues();
-
-        this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
-        this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
-        this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
-
-        // gets dashboard values from the luchtmeetnet API
+        // gets dashboard values from the luchtmeetnet API and the database
         try {
             const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
+            const databaseValues = await this.#dashboardRepository.getDashboardValues();
+
             this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
             this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+
+            this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
+            this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
+            this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
         } catch (e) {
-            console.log("Luchtmeetnet API is unavailable")
+            console.log("Luchtmeetnet API  or database is currently unavailable")
             console.log(e)
-            this.#animateCircleAndValues(this.#LKI, 9)
-            this.#animateCircleAndValues(this.#FINE_DUST, 26.4)
         }
     }
 
-    #getSelectedTimespan() {
+    /**
+     * Gets the currently selected chart, loads the correct data for the database and updates the chart accordingly
+     * @author beerstj
+     */
+    #showSelectedChart() {
+        // First the currently selected type and timespan are requested
         let selectedType = this.#dashboardView.querySelector(".shadow").id
-        let selectedTimespan = this.#currentGraphView
+        let selectedTimespan = this.#currentGraphView;
 
-        console.log("-----------------------\nShow graph for:\n\t" + selectedType + "\nWith timespan of: \n\t" + selectedTimespan+ "\n-----------------------")
-
-        switch(selectedType) {
+        // After this, there is a switch to check the selectedType, inside this switch all of the data is
+        // requested through the repository and the database. When the data is collected, the chart is updated
+        switch (selectedType) {
             case "facadeGardenCircle":
                 this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 2)
-                    .then(function (result) {
+                    .then(result => {
                         this.#updateChart(result)
-                    }.bind(this))
+                    })
                 break;
             case "treeGardenCircle":
                 this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 1)
-                    .then(function (result) {
+                    .then(result => {
                         this.#updateChart(result)
-                    }.bind(this))
+                    })
                 break;
             case "greeneryCircle":
                 this.#dashboardRepository.getSelectedTimespanGreenery(selectedTimespan)
-                    .then(function (result) {
+                    .then(result => {
                         this.#updateChart(result)
-                    }.bind(this))
+                    })
                 break;
-
             case "PM25Circle":
-                if(this.#currentGraphView === "days") {
-                    this.#updateChart(this.#PM25days);
-                } else if(this.#currentGraphView === "weeks") {
-                    this.#updateChart(this.#PM25weeks)
-                } else {
-                    this.#updateChart(this.#PM25months)
+                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
+                // selected of the chart.
+                switch (this.#currentGraphView) {
+                    case "days":
+                        this.#updateChart(this.#PM25days);
+                        break;
+                    case "weeks":
+                        this.#updateChart(this.#PM25weeks);
+                        break;
+                    case "months":
+                        this.#updateChart(this.#PM25months);
                 }
                 break;
             default:
-                console.log("Graph nog niet ondersteund")
+                console.log("Graph not yet supported")
                 break;
         }
 
-        console.log("Showing graph for: " + selectedType + "\n With timespan: " + selectedTimespan)
+        console.log(selectedType + ": " + selectedTimespan)
+    }
+
+
+    /**
+     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
+     * @author beerstj
+     */
+    #compareSwitch() {
+        switch(this.#currentlyComparing) {
+            case true:
+                this.#stopCompare();
+                this.#currentlyComparing = false;
+                break;
+            case false:
+                this.#startCompare();
+                this.#currentlyComparing = true;
+                break;
+        }
+    }
+
+    /**
+    * Method to start a comparison between multiple graphs.
+    * @author beerstj
+     * */
+    #startCompare() {
+        // Changes the color of the compare button to indidcate that the comparisons started
+        console.log("Start Compare")
+        this.#dashboardView.querySelector("#chart-view-container").classList.add("hidden")
+        this.#dashboardView.querySelector("#comparison-impossible").classList.remove("hidden")
+        this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color = "#058C42";
+
+        // Array of every circle diagram on the page.
+        let circles = this.#dashboardView.querySelectorAll(".progress-bar-container")
+
+        // attaches eventlisteners to every circle diagram on the dashboard
+        for (let i = 0; i < circles.length; i++) {
+            circles[i].addEventListener("click", () => { // Adds a listener to every circle, and puts it in an array
+                if(!this.#chartCompareList.includes(circles[i].id + " " + this.#currentGraphView)) {
+                    this.#chartCompareList.push(circles[i].id + " " + this.#currentGraphView)
+                    console.log("Add chart: " + circles[i].id + " for timespan: " + this.#currentGraphView + "Total chart: \n")
+
+                }
+                console.log(this.#chartCompareList)
+            })
+        }
+    }
+
+    /**
+     * Stops the comparisons, changes the compare box to indicate the comparisons has stopped,
+     * Removes all the datasets from the chart and updates it aswell
+     * @author beerstj
+     */
+    #stopCompare() {
+        console.log("Stop Comparing")
+        this.#dashboardView.querySelector("#chart-view-container").classList.remove("hidden")
+        this.#dashboardView.querySelector("#comparison-impossible").classList.add("hidden")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color="white";
+        this.#currentlyComparing.splice(0,16)
     }
 
     /**
      * Because the website and luchtmeet API connection can be quite slow, we preload the data. So we can just load it into the charts
-     *
      * @returns {Promise<void>}
+     * @author beerstj
      */
     async #preloadPM25Values() {
-        await this.#dashboardRepository.getSelectedPM25Data("days")
-            .then(function(daysResult) {
-                this.#PM25days = daysResult
-                console.log("Preloading data for PM2.5 (Past 31 days")
-            }.bind(this))
+        await this.#dashboardRepository.getSelectedPM25Data("days").then(daysResult => {
+            this.#PM25days = daysResult;
+            console.log("PM25 Data preloaded (Days)");
+        })
 
-        await this.#dashboardRepository.getSelectedPM25Data("weeks")
-            .then(function(weekResult) {
-                this.#PM25weeks = weekResult
-                console.log("Preloading data for PM2.5 (Past 15 Weeks")
-            }.bind(this))
+        await this.#dashboardRepository.getSelectedPM25Data("weeks").then(weekResult => {
+            this.#PM25weeks = weekResult;
+            console.log("PM25 Data preloaded (Weeks)");
+        })
 
-        await this.#dashboardRepository.getSelectedPM25Data("months")
-            .then(function (monthResult) {
-                this.#PM25months = monthResult
-                console.log("Preloading data for PM2.5 (Months since start of year)")
-            }.bind(this))
-        }
+        await this.#dashboardRepository.getSelectedPM25Data("months").then(monthResult => {
+            this.#PM25months = monthResult;
+            console.log("PM25 Data preloaded (Months)");
+        })
+    }
 
     #facadeGardeninfo() {
         this.#dashboardView.querySelector("#facadeGardenCircle").classList.add("shadow")
@@ -255,33 +331,6 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Gets the past 24 hours in a array (For example, if its 16:00, you will get:
-     * ['15:00 ', '14:00 ', '13:00 ', '12:00 ', '11:00 ', '10:00 ', '9:00 ', '8:00 ', '7:00 ', '6:00 ', '5:00 ', '4:00 ', '3:00 ', '2:00 ', '1:00 ', '24:00 ', '23:00 ', '22:00 ', '21:00 ', '20:00 ', '19:00 ', '18:00 ', '17:00 ', '16:00 ']
-     * Used for the labels in today charts.
-     * @returns array of past 24 hours.
-     * @author beerstj
-     */
-    #getPast24Hours(amount) {
-        let curHour = new Date(Date.now()).toISOString().substring(11, 13);
-        let hoursArray = [];
-
-        curHour++;
-        curHour++;
-        curHour++;
-
-        for (let i = 0; i < amount; i++) {
-            curHour = curHour - 1;
-
-            if (curHour === 0) {
-                curHour = 24;
-            }
-            let inArray = curHour + ":00 "
-            hoursArray.push(inArray)
-        }
-        return hoursArray;
-    }
-
-    /**
      * Animates both the circle and the number value in one function.
      * @param target - the html element you want to animate
      * @param value - the value to what number the animation should go.
@@ -311,6 +360,11 @@ export class DashboardController extends Controller {
         document.querySelectorAll(".progress-circle svg circle")[target].style.strokeDashoffset = offsetValue;
     }
 
+    /**
+     * Adds eventlisteners to the different views of the chart (days, weeks, months). And changes the style of the currently
+     * selected chartView
+     * @author beerstj
+     */
     #graphViewEventListeners() {
         let days = this.#dashboardView.querySelector("#days")
         let weeks = this.#dashboardView.querySelector("#weeks")
@@ -321,19 +375,19 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             days.classList.add("graph-view-active")
             this.#currentGraphView = "days"
-            this.#getSelectedTimespan()
+            this.#showSelectedChart()
         })
         weeks.addEventListener("click", () => {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             weeks.classList.add("graph-view-active")
             this.#currentGraphView = "weeks"
-            this.#getSelectedTimespan()
+            this.#showSelectedChart()
         })
         months.addEventListener("click", () => {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             months.classList.add("graph-view-active")
             this.#currentGraphView = "months"
-            this.#getSelectedTimespan()
+            this.#showSelectedChart()
         })
     }
 
@@ -342,14 +396,14 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #showInformationModal() {
-        // console.log("----------------- \nShow Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
+        console.log("Show Modal: " + this.#dashboardView.querySelector(".shadow").id)
         this.#dashboardView.querySelector("#modal").classList.remove("hidden")
 
         this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
-            .then(function(result) {
-                this.#dashboardView.querySelector("#definitionType").innerText = result.data[0].definitionType.substring(0,600)
-                this.#dashboardView.querySelector("#whyChange").innerText = result.data[0].whyChange.substring(0,600)
-                this.#dashboardView.querySelector("#howChange").innerText = result.data[0].howChange.substring(0,600)
+            .then(function (result) {
+                this.#dashboardView.querySelector("#definitionType").innerText = result.data[0].definitionType.substring(0, 600)
+                this.#dashboardView.querySelector("#whyChange").innerText = result.data[0].whyChange.substring(0, 600)
+                this.#dashboardView.querySelector("#howChange").innerText = result.data[0].howChange.substring(0, 600)
             }.bind(this))
     }
 
@@ -358,11 +412,11 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #hideInformationModal() {
-        // console.log("----------------- \nHide Modal: \n" + this.#dashboardView.querySelector(".shadow").id + "\n-----------------")
+        console.log("Hide modal: " + this.#dashboardView.querySelector(".shadow").id)
+        this.#dashboardView.querySelector("#modal").classList.add("hidden")
     }
 
     ///////////////////////////////////////// MAP ////////////////////////////////////////////
-
 
     async #map() {
 
