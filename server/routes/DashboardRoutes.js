@@ -113,24 +113,45 @@ class DashboardRoutes {
 
                     for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
                         date2.setDate(date1.getDate() - 1)
-
                         await this.#calculateAverageFromResult(i, date1, date2)
-
                         date1.setDate(date1.getDate() - 1)
                     }
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.", labels: this.#getLabels(req.params.timespan).reverse()})
 
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.", labels: this.#getLabels(req.params.timespan).reverse()})
                     break;
 
                 case "weeks":
                     for (let i = 0; i < 16; i++) {
                         date2.setDate(date1.getDate()-7)
-
                         await this.#calculateAverageFromResult(i, date1, date2)
-
                         date1.setDate(date2.getDate())
                     }
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({data: this.#avgArray, label: "Week gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 15 weken.", labels: this.#getLabels(req.params.timespan).reverse()})
+                    break;
+
+                case "months":
+                    let hardcode = [23.52, 31.33, 24.10, 20.79]
+                    let total = 0;
+
+                    let days = new Date(Date.now());
+                    let weeks = Math.floor(days.getDate() / 7)
+
+                    let date3 = new Date(days.getFullYear(), days.getMonth(), 1)
+                    let date4 = new Date()
+
+                    for (let i = 0; i < weeks; i++) {
+                        date4.setDate(date3.getDate() + 7)
+                        await this.#calculateAverageFromResult(i, date4, date3)
+                        date3.setDate(date4.getDate())
+                    }
+                    await this.#calculateAverageFromResult(new Date(Date.now()).getMonth(),date4, date3)
+
+                    for (let i = 0; i < this.#avgArray.length; i++) {
+                        total += this.#avgArray[i]
+                    }
+
+                    hardcode.push(total / this.#avgArray.length)
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({data: hardcode, label: "Maand gemiddelden van de fijnstof (PM2.5) waardes tot het begin van het jaar.", labels: this.#getLabels(req.params.timespan)})
                     break;
             }
 
@@ -148,9 +169,13 @@ class DashboardRoutes {
                     for (let curHour = 0; curHour < data.data.length; curHour++) { // loops through every hour of the day
                         if(typeof data.data[i] !== 'undefined') { total += data.data[i].value } // Checks if curHour is undefined.
                     }
-                    console.log("Progress: " + i + " Current Average: "+ total / data.data.length)
-                    this.#avgArray.push(total/data.data.length)
-                } else return 0
+                    // console.log("Progress: " + i + " Current Average: "+ total / data.data.length)
+                    if(total === 0) {
+                        this.#avgArray.push(null)
+                    } else {
+                        this.#avgArray.push(total/data.data.length)
+                    }
+                } else return null
             }.bind(this))
     }
 

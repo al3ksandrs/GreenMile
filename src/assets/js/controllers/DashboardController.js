@@ -27,6 +27,7 @@ export class DashboardController extends Controller {
     #currentGraphView;
     #PM25days
     #PM25weeks
+    #PM25months
 
     constructor() {
         super();
@@ -162,8 +163,10 @@ export class DashboardController extends Controller {
             case "PM25Circle":
                 if(this.#currentGraphView === "days") {
                     this.#updateChart(this.#PM25days);
-                } else {
+                } else if(this.#currentGraphView === "weeks") {
                     this.#updateChart(this.#PM25weeks)
+                } else {
+                    this.#updateChart(this.#PM25months)
                 }
                 break;
             default:
@@ -183,17 +186,21 @@ export class DashboardController extends Controller {
         await this.#dashboardRepository.getSelectedPM25Data("days")
             .then(function(daysResult) {
                 this.#PM25days = daysResult
-                console.log("PM25 (Dagen) Data, vooraf ingeladen: ")
-                console.log(this.#PM25days)
+                console.log("Preloading data for PM2.5 (Past 31 days")
             }.bind(this))
 
         await this.#dashboardRepository.getSelectedPM25Data("weeks")
             .then(function(weekResult) {
                 this.#PM25weeks = weekResult
-                console.log("PM25 (Weken) Data, vooraf ingeladen: ")
-                console.log(this.#PM25weeks)
+                console.log("Preloading data for PM2.5 (Past 15 Weeks")
             }.bind(this))
-    }
+
+        await this.#dashboardRepository.getSelectedPM25Data("months")
+            .then(function (monthResult) {
+                this.#PM25months = monthResult
+                console.log("Preloading data for PM2.5 (Months since start of year)")
+            }.bind(this))
+        }
 
     #facadeGardeninfo() {
         this.#dashboardView.querySelector("#facadeGardenCircle").classList.add("shadow")
