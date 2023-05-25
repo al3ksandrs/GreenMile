@@ -15,10 +15,6 @@ class DashboardRoutes {
     constructor(app) {
         this.#app = app;
 
-        this.#getSelectMonthGroen();
-        this.#getSelectMonthTree();
-        this.#getSelectGevelMaand();
-
         this.#getFacadeAndTreeGardenData()
 
         this.#getDashboardDatabaseValues();
@@ -32,6 +28,7 @@ class DashboardRoutes {
 
         // map routes
         this.#getGroen();
+
         this.#requestOptions = {
             method: "GET",
             redirect: "follow"
@@ -125,7 +122,7 @@ class DashboardRoutes {
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({
                         data: this.#avgArray,
                         label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.",
-                        labels: this.#getLabels(req.params.timespan).reverse()
+                        labels: this.#getLabels(req.params.timespan)
                     })
                     break;
 
@@ -143,7 +140,7 @@ class DashboardRoutes {
                     break;
 
                 case "months":
-                    let hardcode = [23.52, 31.33, 24.10, 20.79]
+                    let hardcode = [23.52, 31.33, 24.10, 20.79] // Hardcode because the request would take like 7 years
                     let total = 0;
 
                     let weeks = Math.floor(date1.getDate() / 7)
@@ -164,9 +161,9 @@ class DashboardRoutes {
 
                     hardcode.push(total / this.#avgArray.length)
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        data: hardcode,
+                        data: hardcode.reverse(),
                         label: "Maand gemiddelden van de fijnstof (PM2.5) waardes tot het begin van het jaar.",
-                        labels: this.#getLabels(req.params.timespan)
+                        labels: this.#getLabels(req.params.timespan).reverse()
                     })
                     break;
             }
@@ -196,27 +193,25 @@ class DashboardRoutes {
                             total += data.data[i].value
                         } // Checks if curHour is undefined.
                     }
-                    // console.log("Progress: " + i + " Current Average: "+ total / data.data.length)
-                    if (total === 0) {
+                    // console.log("Progress: " + i + " Current Average: "+ total / data.data.length) // Use this if this breaks (it will)
+                    if (total === 0) { // Checks if the total = 0 (Means no data to calculate average) pushes 'null' if its zero
                         this.#avgArray.push(null)
-                    } else {
-                        this.#avgArray.push(total / data.data.length)
-                    }
+                    } else this.#avgArray.push(total / data.data.length)
                 } else return null
             }.bind(this))
-
     }
 
     /**
      * Function to get all of the data for the facade and treegardens added in the selected timespan
      * @param type_id: type you want to get the data for (type_id is column in our database):
-     *  - type_id: 1 = treeGarden
-     *  - type_id: 2 = facadeGarden
+     *  - type_id: 1 = treeGarden (Dashboard -> Boomtuinen)
+     *  - type_id: 2 = facadeGarden (Dashboard -> Geveltuinen
      *  @param timespan: timespan of the data you want
      * @returns {Promise<void>}
      */
     async #getFacadeAndTreeGardenData() {
         this.#app.get("/dashboard/timespan/:timespan/type/:type_id", async (req, res) => {
+            // Switch to change the greentype, used in the labels
             switch (req.params.type_id) {
                 case "1": // String because req.params.type_id is a string
                     this.#greenType = "Boomtuinen"
@@ -232,11 +227,13 @@ class DashboardRoutes {
             let totalNumber = 0;
             let today = new Date(Date.now())
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000)) / 7);
-            const timespan = req.params.timespan
 
-            switch (timespan) {
+            // Switch to swich between de requested timespn
+            switch (req.params.timespan) {
+                // If req.params.timespan === "days" the totals of the last 31 days are queried to the databse
                 case "days":
                     try {
+                        // Loop through the last 30 days, "i" is used in the SQL-Keyword DATE(DATE) to get the correct data
                         for (let i = 0; i < 31; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = 3;",
@@ -246,17 +243,20 @@ class DashboardRoutes {
                             totalNumber += data[0].dayTotal
                             totalArray.push(totalNumber)
                         }
+                        // Formats the data, label and labels used in the chart to display the correct data. Uses JSON to respond to the request
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 30 dagen",
                             data: totalArray,
-                            labels: this.#getLabels(timespan)
+                            labels: this.#getLabels(req.params.timespan)
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
                     }
                     break;
+                // If req.params.timespan === "weeks" the totals of the last 15 weeks are queried to the database
                 case "weeks":
                     try {
+                        // Loop through the last 15 weeks, "i" is used in the SQL-Keyword WEEK(DATE) to get the correct data
                         for (let i = weekNumber - 15; i < weekNumber + 1; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS weekTotal FROM Groen WHERE WEEK(datum) = ? AND type_id = ?",
@@ -266,17 +266,20 @@ class DashboardRoutes {
                             totalNumber += data[0].weekTotal
                             totalArray.push(totalNumber)
                         }
+                        // Formats the data, label and labels used in the chart to display the correct data. Uses JSON to respond to the request
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken",
                             data: totalArray,
-                            labels: this.#getLabels(timespan).reverse()
+                            labels: this.#getLabels(req.params.timespan).reverse()
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
                     }
                     break;
+                // If req.params.timespan === "days" the totals of the last past months to the start of the year
                 case "months":
                     try {
+                        // Loop through the past months to the start of the year, "i" is used in the SQL-Keyword MONTH(DATE) to get the correct data
                         for (let i = 1; i < today.getMonth() + 2; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS monthTotal FROM Groen WHERE MONTH(datum) = ? AND type_id = ?",
@@ -285,10 +288,11 @@ class DashboardRoutes {
                             totalNumber += data[0].monthTotal
                             totalArray.push(totalNumber)
                         }
+                        // Formats the data, label and labels used in the chart to display the correct data. Uses JSON to respond to the request
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar",
                             data: totalArray,
-                            labels: this.#getLabels(timespan).reverse()
+                            labels: this.#getLabels(req.params.timespan).reverse()
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
@@ -424,6 +428,7 @@ class DashboardRoutes {
         let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000)) / 7); //Number of currentWeek
         let labelArray = [];
 
+        // Switch to get the requested timespan
         switch (timespan) {
                 // Gets past 31 days in format dayNumber + "curMonth"
             case "days":
@@ -447,8 +452,6 @@ class DashboardRoutes {
                 for (let i = 0; i < new Date(Date.now()).getMonth() + 1; i++) {
                     labelArray.push(months[i])
                 }
-                break;
-            default:
                 break;
         }
 

@@ -3,12 +3,6 @@ import {NetworkManager} from "../framework/utils/networkManager.js";
 export class DashboardRepository {
     #networkManager;
 
-    #lkiRoute;
-    #PM25ROute;
-    #PM25TodayRoute;
-    #treeAmountMonthRoute;
-    #gevelAmountMonthRoute;
-    #groenAmountMonthRoute;
     #dashboardDatabaseRoute;
     #dashboardAPIRoute;
 
@@ -16,18 +10,12 @@ export class DashboardRepository {
     #dashbaordSelectedTimespanGreenery;
     #dashboardSelectedTimespanPM25;
 
+    #informationModalRoute
+
     #mapGreenRoute;
     #mapAreaRoute;
 
-    #informationModalRoute
-
     constructor() {
-        this.#lkiRoute = "/lki";
-        this.#PM25ROute = "/fineDust";
-        this.#PM25TodayRoute = "/PM25Today";
-        this.#treeAmountMonthRoute = "/treeAmount/maand/"
-        this.#gevelAmountMonthRoute = "/gevel/maand/"
-        this.#groenAmountMonthRoute = "/groen/maand/"
         this.#dashboardDatabaseRoute = "/dashboard/database"
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
         this.#dashhboardSelectedTimespanTreegarden = "/dashboard/timespan/"
@@ -42,30 +30,18 @@ export class DashboardRepository {
         this.#networkManager = new NetworkManager();
     }
 
+    // Values for the dashboard
     getDashboardValues() {
         return this.#networkManager.doRequest(this.#dashboardDatabaseRoute, "GET")
-    }
-
-    // map requests @author Aleksandrs
-
-    getGroen() {
-        return this.#networkManager.doRequest(this.#mapGreenRoute, "GET")
-    }
-
-    getArea() {
-        return this.#networkManager.doRequest(this.#mapAreaRoute, "GET")
     }
 
     getDashboardAPIValues() {
         return this.#networkManager.doRequest(this.#dashboardAPIRoute, "GET")
     }
 
+    // Values for the charts
     getSelectedPM25Data(timespan) {
         return this.#networkManager.doRequest(this.#dashboardSelectedTimespanPM25 + timespan, "GET")
-    }
-
-    getModalInformation(id) {
-        return this.#networkManager.doRequest(this.#informationModalRoute + id, "GET")
     }
 
     getSelectedTimespanTreeGardenData(timespan, type) {
@@ -74,5 +50,19 @@ export class DashboardRepository {
 
     getSelectedTimespanGreenery(timespan) {
         return this.#networkManager.doRequest(this.#dashbaordSelectedTimespanGreenery + timespan, "GET")
+    }
+
+    // informations for the modal
+    getModalInformation(id) {
+        return this.#networkManager.doRequest(this.#informationModalRoute + id, "GET")
+    }
+
+    // map requests @author Aleksandrs
+    getGroen() {
+        return this.#networkManager.doRequest(this.#mapGreenRoute, "GET")
+    }
+
+    getArea() {
+        return this.#networkManager.doRequest(this.#mapAreaRoute, "GET")
     }
 }

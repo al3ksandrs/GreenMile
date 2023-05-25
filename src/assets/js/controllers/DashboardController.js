@@ -49,8 +49,20 @@ export class DashboardController extends Controller {
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
         this.#chartTarget = this.#dashboardView.querySelector("#myChart")
 
+        const elements = ["#facadeGardenCircle", "#treeGardenCircle", "#greeneryCircle", "#aqiCircle", "#PM25Circle"];
+        const texts = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M²", "/ LKI", "/ Fijnstof"];
+        const infoContent = [
+            `<div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`,
+            `<div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`,
+            ` <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`,
+            `<div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`,
+            `<div class="p">Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is. Als de grafiek niet helemaal gevuld is, komt dit doordat de luchtmeetnet API er een tijdje uit heeft geleden.</div>`];
+
+        this.#graphTextBox.innerText = texts[0];
+        this.#infoTextBox.innerText = texts[0];
+        this.#infoContentBox.innerHTML = infoContent[0];
+
         await this.#loadDashboardValues()
-        this.#facadeGardeninfo();
 
         await this.#map();
 
@@ -77,7 +89,6 @@ export class DashboardController extends Controller {
             this.#compareSwitch();
         })
 
-
         this.#dashboardView.querySelector("#modal-show").addEventListener("click", () => {
             this.#showInformationModal()
         })
@@ -87,36 +98,21 @@ export class DashboardController extends Controller {
         })
 
         if(!this.#currentlyComparing) {
-            // Adds the eventlisteners to switch betweens all of the types, adds shadows and changes the text boxes
-            this.#dashboardView.querySelector("#facadeGardenCircle").addEventListener("click", () => {
-                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                this.#facadeGardeninfo()
-            })
-            this.#dashboardView.querySelector("#treeGardenCircle").addEventListener("click", () => {
-                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                this.#treeGardeninfo();
-                this.#showSelectedChart()
-            })
-            this.#dashboardView.querySelector("#greeneryCircle").addEventListener("click", () => {
-                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                this.#greeneryinfo();
-                this.#showSelectedChart()
-            })
-            this.#dashboardView.querySelector("#aqiCircle").addEventListener("click", () => {
-                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                this.#AQIinfo()
-            })
-            this.#dashboardView.querySelector("#PM25Circle").addEventListener("click", () => {
-                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                this.#PM25info()
-                this.#showSelectedChart()
-            })
+            elements.forEach((element, index) => {
+                this.#dashboardView.querySelector(element).addEventListener("click", () => {
+                    this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                    this.#dashboardView.querySelector(element).classList.add("shadow")
+                    this.#graphTextBox.innerText = texts[index];
+                    this.#infoTextBox.innerText = texts[index];
+                    this.#infoContentBox.innerHTML = infoContent[index];
+                    this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
+                });
+            });
         }
 
         this.#graphViewEventListeners()
 
         await this.#preloadPM25Values()
-
     }
 
     /**
@@ -143,71 +139,18 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Gets the currently selected chart, loads the correct data for the database and updates the chart accordingly
-     * @author beerstj
-     */
-    #showSelectedChart() {
-        // First the currently selected type and timespan are requested
-        let selectedType = this.#dashboardView.querySelector(".shadow").id
-        let selectedTimespan = this.#currentGraphView;
-
-        // After this, there is a switch to check the selectedType, inside this switch all of the data is
-        // requested through the repository and the database. When the data is collected, the chart is updated
-        switch (selectedType) {
-            case "facadeGardenCircle":
-                this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 2)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
-                break;
-            case "treeGardenCircle":
-                this.#dashboardRepository.getSelectedTimespanTreeGardenData(selectedTimespan, 1)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
-                break;
-            case "greeneryCircle":
-                this.#dashboardRepository.getSelectedTimespanGreenery(selectedTimespan)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
-                break;
-            case "PM25Circle":
-                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
-                // selected of the chart.
-                switch (this.#currentGraphView) {
-                    case "days":
-                        this.#updateChart(this.#PM25days);
-                        break;
-                    case "weeks":
-                        this.#updateChart(this.#PM25weeks);
-                        break;
-                    case "months":
-                        this.#updateChart(this.#PM25months);
-                }
-                break;
-            default:
-                console.log("Graph not yet supported")
-                break;
-        }
-
-        console.log(selectedType + ": " + selectedTimespan)
-    }
-
-
-    /**
      * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
      * @author beerstj
      */
     #compareSwitch() {
         switch(this.#currentlyComparing) {
             case true:
-                this.#stopCompare();
                 this.#currentlyComparing = false;
+                this.#stopCompare();
                 break;
             case false:
-                this.#startCompare();
                 this.#currentlyComparing = true;
+                this.#startCompare();
                 break;
         }
     }
@@ -231,14 +174,13 @@ export class DashboardController extends Controller {
         // attaches eventlisteners to every circle diagram on the dashboard
         for (let i = 0; i < circles.length; i++) {
             circles[i].addEventListener("click", () => { // Adds a listener to every circle, and puts it in an array
-                if(!this.#chartCompareList.includes(circles[i].id + " " + this.#currentGraphView)) {
-                    this.#chartCompareList.push(circles[i].id + " " + this.#currentGraphView)
-                    console.log("Add chart: " + circles[i].id + " for timespan: " + this.#currentGraphView + "Total chart: \n")
-
+                if(!this.#chartCompareList.includes(circles[i].id)) {
+                    this.#chartCompareList.push(circles[i].id) // If the circle diagram is not yet in the array, its puts it in there.
                 }
                 console.log(this.#chartCompareList)
             })
         }
+
     }
 
     /**
@@ -253,7 +195,56 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="white";
-        this.#currentlyComparing.splice(0,16)
+        this.#chartCompareList = [];
+    }
+
+
+    /**
+     * Gets the currently selected chart, loads the correct data for the database and updates the chart accordingly
+     * @author beerstj
+     */
+    #addSelectedChart(selectedType) {
+        // After this, there is a switch to check the selectedType, inside this switch all of the data is
+        // requested through the repository and the database. When the data is collected, the chart is updated
+        switch (selectedType) {
+            case "facadeGardenCircle":
+                this.#dashboardRepository.getSelectedTimespanTreeGardenData(this.#currentGraphView, 2)
+                    .then(result => {
+                        this.#updateChart(result)
+                    })
+                break;
+            case "treeGardenCircle":
+                this.#dashboardRepository.getSelectedTimespanTreeGardenData(this.#currentGraphView, 1)
+                    .then(result => {
+                        this.#updateChart(result)
+                    })
+                break;
+            case "greeneryCircle":
+                this.#dashboardRepository.getSelectedTimespanGreenery(this.#currentGraphView)
+                    .then(result => {
+                        this.#updateChart(result)
+                    })
+                break;
+            case "PM25Circle":
+                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
+                // selected of the chart.
+                switch (this.#currentGraphView) {
+                    case "days":
+                        this.#updateChart(this.#PM25days);
+                        break;
+                    case "weeks":
+                        this.#updateChart(this.#PM25weeks);
+                        break;
+                    case "months":
+                        this.#updateChart(this.#PM25months);
+                }
+                break;
+            default:
+                console.log("Graph not yet supported")
+                break;
+        }
+
+        console.log(selectedType + ": " + this.#currentGraphView)
     }
 
     /**
@@ -276,46 +267,6 @@ export class DashboardController extends Controller {
             this.#PM25months = monthResult;
             console.log("PM25 Data preloaded (Months)");
         })
-    }
-
-    #facadeGardeninfo() {
-        this.#dashboardView.querySelector("#facadeGardenCircle").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Geveltuinen";
-        this.#infoTextBox.innerText = "/ Geveltuinen"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Geveltuin uitleg</div>
-        <div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`;
-    }
-
-    #treeGardeninfo() {
-        this.#dashboardView.querySelector("#treeGardenCircle").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Boomtuinen";
-        this.#infoTextBox.innerText = "/ Boomtuinen"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Boom uitleg</div>
-        <div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`;
-    }
-
-    #greeneryinfo() {
-        this.#dashboardView.querySelector("#greeneryCircle").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Groene M²";
-        this.#infoTextBox.innerText = "/ Groene M²"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Groen uitleg</div>
-        <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`;
-    }
-
-    #AQIinfo() {
-        this.#dashboardView.querySelector("#aqiCircle").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ LKI";
-        this.#infoTextBox.innerText = "/ LKI"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">LKI uitleg</div>
-        <div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`;
-    }
-
-    #PM25info() {
-        this.#dashboardView.querySelector("#PM25Circle").classList.add("shadow")
-        this.#graphTextBox.innerText = "/ Fijnstof";
-        this.#infoTextBox.innerText = "/ Fijnstof"
-        this.#infoContentBox.innerHTML = `<div class="p fw-bold">Fijnstof uitleg</div>
-        <div class="p">>Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is. Als de grafiek niet helemaal gevuld is, komt dit doordat de luchtmeetnet API er een tijdje uit heeft geleden.</div>`;
     }
 
     /**
@@ -375,19 +326,19 @@ export class DashboardController extends Controller {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             days.classList.add("graph-view-active")
             this.#currentGraphView = "days"
-            this.#showSelectedChart()
+            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
         })
         weeks.addEventListener("click", () => {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             weeks.classList.add("graph-view-active")
             this.#currentGraphView = "weeks"
-            this.#showSelectedChart()
+            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
         })
         months.addEventListener("click", () => {
             this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
             months.classList.add("graph-view-active")
             this.#currentGraphView = "months"
-            this.#showSelectedChart()
+            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
         })
     }
 
