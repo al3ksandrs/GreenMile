@@ -279,17 +279,21 @@ svg:not(:root) {
     display: none;
 }
 
+#comparison-impossible {
+    margin-top: 25px;
+}
+
 .information-modal {
     display: flex;
     background-color: white;
     position: absolute;
-    height: 500px;
+    flex-direction: row;
+    flex-wrap: wrap;
     z-index: 1000000000;
     margin-top: -1300px;
-    margin-left: 20px;
+    margin-left: 10%;
     border-radius: 30px;
-    padding: 10px;
-    flex-direction: column;
+    padding: 24px;
 }
 
 .information-column {
@@ -298,20 +302,18 @@ svg:not(:root) {
 }
 
 .hide-modal-button {
-    display: flex;
     cursor: pointer;
-    padding-left: 7px;
+    padding: 8px;
     background-color: #058c42;
     color: white;
-    height: 2rem;
-    width: 8rem;
+    height: 36px;
     border-radius: 5px;
-    align-self: flex-end;
 }
 
 .column {
     display: flex;
     width: 33%;
+    padding: 16px;
     flex-direction: column;
 }
 
@@ -319,7 +321,7 @@ svg:not(:root) {
     display: flex;
     align-self: center;
     border-bottom: lightgray 1px solid;
-    font-size: 30px;
+    font-size: 24px;
 }
 
 .information-title {

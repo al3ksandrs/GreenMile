@@ -5,7 +5,7 @@
         deze data is verzameld door aardrijdskunde studenten
     </div>
     <div class="circle-diagrams">
-        <div class="progress-bar-container" id="facadeGardenCircle">
+        <div class="progress-bar-container shadow" id="facadeGardenCircle">
             <!-- Contains both of the circles -->
             <div class="circle-container">
                 <div class="progress-circle-background"></div> <!--Circle behind (ligt-green) -->
@@ -136,7 +136,8 @@
             <div id="chartbox">
                 <canvas id="myChart"></canvas>
             </div>
-            <div class="graph-view">
+            <h6 id="comparison-impossible" class="hidden">Switchen van tijdsperiode is niet mogelijk tijdens vergelijken!</h6>
+            <div class="graph-view" id="chart-view-container">
                 <button class="graph-view-active graph-view-inactive" id="days">Dag</button>
                 <button class="graph-view-inactive" id="weeks">Week</button>
                 <button class="graph-view-inactive" id="months">Maand</button>
@@ -165,7 +166,7 @@
 <div class="test-container hidden" id="modal">
     <div class="information-modal shadow-lg col-9" >
         <h2 class="information-title fw-bold">
-            Fijnstof
+
         </h2>
 
         <div class="information-column">
