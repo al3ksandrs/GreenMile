@@ -8,6 +8,8 @@ export class AdminRepository {
     #addGreenRoute;
     #removeGreenTypeRoute;
     #removeGreenAreaRoute;
+    #greenObjectRoute;
+    #removeGreenObjectRoute;
 
     constructor() {
         this.#networkmanager = new NetworkManager();
@@ -17,6 +19,8 @@ export class AdminRepository {
         this.#addGreenRoute = "/adminAddGreen"
         this.#removeGreenTypeRoute = "/removeGreenTypeRoute"
         this.#removeGreenAreaRoute = "/removeGreenAreaRoute"
+        this.#removeGreenObjectRoute = "/removeGreenObjectRoute"
+        this.#greenObjectRoute = "/greenObjectList"
     }
 
     async removeGreenType(type){
@@ -28,6 +32,12 @@ export class AdminRepository {
     async removeGreenArea(area){
         return await this.#networkmanager.doRequest(this.#removeGreenAreaRoute, "POST", {
             "area": area
+        });
+    }
+
+    async removeGreenObject(greenObject){
+        return await this.#networkmanager.doRequest(this.#removeGreenObjectRoute, "POST", {
+            "greenObject": greenObject
         });
     }
 
@@ -43,6 +53,10 @@ export class AdminRepository {
 
     async getType() {
         return await this.#networkmanager.doRequest(this.#typeListRoute, "GET");
+    }
+
+    async getGreenObject() {
+        return await this.#networkmanager.doRequest(this.#greenObjectRoute, "GET");
     }
 
     async addGreenType(type) {

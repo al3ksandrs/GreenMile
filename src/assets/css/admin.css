@@ -66,3 +66,16 @@ select{
     font-size: 10rem;
     background-color: green;
 }
+
+#add-object-map{
+    display: flex;
+    justify-content: center;
+    height: 50em;
+    width: 120em;
+    margin-top: 5em;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+}

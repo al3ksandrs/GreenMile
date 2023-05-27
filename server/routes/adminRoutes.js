@@ -16,9 +16,11 @@ class adminRoutes {
         this.#addGreenType();
         this.#refreshAreaList();
         this.#refreshTypeList();
+        this.#refreshGreenObjectList();
         this.#addGreen();
         this.#removeGreenType();
         this.#removeGreenArea();
+        this.#removeGreenObject();
     }
 
     #removeGreenType(){
@@ -50,6 +52,26 @@ class adminRoutes {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "DELETE FROM gebied WHERE Gebiedsnummer = ?",
                     values: [area]
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+
+        });
+    }
+
+    #removeGreenObject(){
+        this.#app.post("/removeGreenObjectRoute", async(req, res) => {
+
+            const greenObject = req.body.greenObject;
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "DELETE FROM groen WHERE id = ?",
+                    values: [greenObject]
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
@@ -127,6 +149,22 @@ class adminRoutes {
             try {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "SELECT id, naam FROM type",
+                });
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
+
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+            }
+        });
+    }
+
+    #refreshGreenObjectList(){
+        this.#app.get("/greenObjectList", async(req, res) => {
+
+            try {
+                let data = await this.#databaseHelper.handleQuery( {
+                    query: "SELECT * FROM groen",
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
