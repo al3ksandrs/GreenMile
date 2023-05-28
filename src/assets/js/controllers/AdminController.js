@@ -122,9 +122,9 @@ export class adminController extends Controller {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        // get coordinates when clicking on map
         var popup = L.popup();
 
+        // coordinates are automatically added to the inputforms when clicking on a point on the map @author Aleksandrs
         function onMapClick(e) {
             var X = e.latlng.lat;
             var Y = e.latlng.lng;

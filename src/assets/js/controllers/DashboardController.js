@@ -112,7 +112,7 @@ export class DashboardController extends Controller {
 
         this.#graphViewEventListeners()
 
-        await this.#preloadPM25Values()
+        //await this.#preloadPM25Values()
 
         await this.#map();
     }
@@ -199,20 +199,20 @@ export class DashboardController extends Controller {
                         this.#updateChart(result)
                     })
                 break;
-            case "PM25Circle":
-                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
-                // selected of the chart.
-                switch (this.#currentGraphView) {
-                    case "days":
-                        this.#updateChart(this.#PM25days);
-                        break;
-                    case "weeks":
-                        this.#updateChart(this.#PM25weeks);
-                        break;
-                    case "months":
-                        this.#updateChart(this.#PM25months);
-                }
-                break;
+            // case "PM25Circle":
+            //     // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
+            //     // selected of the chart.
+            //     switch (this.#currentGraphView) {
+            //         case "days":
+            //             this.#updateChart(this.#PM25days);
+            //             break;
+            //         case "weeks":
+            //             this.#updateChart(this.#PM25weeks);
+            //             break;
+            //         case "months":
+            //             this.#updateChart(this.#PM25months);
+            //     }
+            //     break;
             default:
                 console.log("Graph not yet supported")
                 break;
@@ -375,19 +375,6 @@ export class DashboardController extends Controller {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
-
-        // get coordinates when clicking on map
-        var popup = L.popup();
-
-        function onMapClick(e) {
-            popup
-                .setLatLng(e.latlng)
-                .setContent("You clicked the map at " + e.latlng.toString())
-                .openOn(map);
-
-        }
-
-        map.on('click', onMapClick);
 
         // Stadhouderskade area on map @Sakhi Anwari
         //Gebied 1 huisnummer 1-40
