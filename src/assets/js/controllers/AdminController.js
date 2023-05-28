@@ -126,11 +126,14 @@ export class adminController extends Controller {
         var popup = L.popup();
 
         function onMapClick(e) {
+            var X = e.latlng.lat;
+            var Y = e.latlng.lng;
             popup
                 .setLatLng(e.latlng)
-                .setContent("You clicked the map at " + e.latlng.toString())
+                .setContent("Coordinaten: " + e.latlng.toString() + " zijn ingevuld op de invulform.")
                 .openOn(map);
-
+            document.getElementById('coordinateX').value = X;
+            document.getElementById('coordinateY').value = Y;
         }
 
         map.on('click', onMapClick);

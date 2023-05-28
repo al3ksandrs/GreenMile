@@ -9,6 +9,10 @@
     font-weight: 1000;
 }
 
+#coordinateTIP{
+    width: 23em;
+}
+
 .dropdownForm{
     display: flex;
     flex-direction: column;
