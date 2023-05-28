@@ -20,7 +20,7 @@ export class DashboardRepository {
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
         this.#dashhboardSelectedTimespanTreegarden = "/dashboard/timespan/"
         this.#dashbaordSelectedTimespanGreenery = "/dashboard/greenery/timespan/"
-        this.#dashboardSelectedTimespanPM25 = "/dashbaord/api/luchtmeetnet/PM25/timespan/"
+        this.#dashboardSelectedTimespanPM25 = "/dashboard/database/PM25/timespan/"
 
         this.#informationModalRoute = "/dashboard/information/"
 

@@ -24,7 +24,8 @@ class DashboardRoutes {
 
         this.#getGreeneryM2Data();
 
-        this.#getPM25DataForChart()
+        this.#writePM25ToDatabase()
+        this.#requestPM25FromDatabase()
 
         // map routes
         this.#getGroen();
@@ -100,14 +101,60 @@ class DashboardRoutes {
     }
 
     /**
-     * Method to get all of the data for the PM25 values, gets the data from the luchtmeetnet
+     * Gets the PM25 data from the database, for the selected timespan. Used on the dashbaoard
+     * @returns {Promise<void>}
+     */
+    async #requestPM25FromDatabase() {
+        this.#app.get("/dashboard/database/PM25/timespan/:timespan", async (req, res) => {
+            let timespan = req.params.timespan;
+            let text = ""
+            switch(timespan) {
+                case "days":
+                    text = "30 dagen"
+                    break
+                case "weeks":
+                    text = "15 weken"
+                    break
+                case "months":
+                    text = (new Date().getMonth() +1) + " maanden tot aan het van dit jaar"
+            }
+
+            let array = []
+            let values = this.#databaseHelper.handleQuery({
+                query: "SELECT value FROM PM25 WHERE timespan = ?",
+                values: [timespan]
+            })
+
+            values.then(result => {
+                for (let i = 0; i < result.length; i++) {
+                    array.push(result[i].value)
+                }
+
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({
+                    label: "Fijnstof (PM25) gemiddelde van de afgelopen " + text,
+                    data: array,
+                    labels: this.#getLabels(timespan),
+                    color: "#4ADEDE"
+                })
+            })
+        })
+    }
+
+    /**
+     * Method to write data from PM25 data to the database, for selected timespan.
      * @param timespan: timespan you want the data for.
      * @returns {Promise<void>}
      */
-    async #getPM25DataForChart() {
-        this.#app.get("/dashbaord/api/luchtmeetnet/PM25/timespan/:timespan", async (req, res) => {
+    async #writePM25ToDatabase() {
+        this.#app.get("/dashboard/API/write/timespan/:timespan", async (req, res) => {
             let date1 = new Date(Date.now())
             let date2 = new Date();
+
+            let deleteData = this.#databaseHelper.handleQuery({
+                query: "DELETE FROM PM25 WHERE timespan = ?",
+                values: [req.params.timespan]
+            })
+
             this.#avgArray = []
 
             switch (req.params.timespan) {
@@ -115,27 +162,38 @@ class DashboardRoutes {
 
                     for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
                         date2.setDate(date1.getDate() - 1)
-                        await this.#calculateAverageFromResult(i, date1, date2)
+                        await this.#calculateAverageFromFetch(i, date1, date2)
                         date1.setDate(date1.getDate() - 1)
                     }
 
+                    for (let i = 0; i < this.#avgArray.length; i++) {
+                        let insertData = this.#databaseHelper.handleQuery({
+                            query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
+                            values: [this.#avgArray[i], req.params.timespan, i]
+                        })
+                    }
+
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        data: this.#avgArray,
-                        label: "Dag gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 30 dagen.",
-                        labels: this.#getLabels(req.params.timespan)
+                        success: "Yes"
                     })
                     break;
 
                 case "weeks":
                     for (let i = 0; i < 16; i++) {
                         date2.setDate(date1.getDate() - 7)
-                        await this.#calculateAverageFromResult(i, date1, date2)
+                        await this.#calculateAverageFromFetch(i, date1, date2)
                         date1.setDate(date2.getDate())
                     }
+
+                    for (let i = 0; i < this.#avgArray.length; i++) {
+                        let insertData = this.#databaseHelper.handleQuery({
+                            query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
+                            values: [this.#avgArray[i], req.params.timespan, i]
+                        })
+                    }
+
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        data: this.#avgArray,
-                        label: "Week gemiddelden van de fijnstof (PM2.5) waardes van de afgelopen 15 weken.",
-                        labels: this.#getLabels(req.params.timespan).reverse()
+                        success: "Yes"
                     })
                     break;
 
@@ -148,26 +206,36 @@ class DashboardRoutes {
                     let startOfMonth = new Date(date1.getFullYear(), date1.getMonth(), 1)
                     let weekAfterStartOfMonth = new Date()
 
+                    // Loops through the whole weeks until the start of the year. then calculates the avrage from
+                    // every one of these weeks.
                     for (let i = 0; i < weeks; i++) {
                         weekAfterStartOfMonth.setDate(startOfMonth.getDate() + 7)
-                        await this.#calculateAverageFromResult(i, weekAfterStartOfMonth, startOfMonth)
+                        await this.#calculateAverageFromFetch(i, weekAfterStartOfMonth, startOfMonth)
                         startOfMonth.setDate(weekAfterStartOfMonth.getDate())
                     }
-                    await this.#calculateAverageFromResult(new Date(Date.now()).getMonth(), weekAfterStartOfMonth, startOfMonth)
+
+                    // Gets the leftover data
+                    await this.#calculateAverageFromFetch(new Date(Date.now()).getMonth(), weekAfterStartOfMonth, startOfMonth)
 
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         total += this.#avgArray[i]
                     }
 
                     hardcode.push(total / this.#avgArray.length)
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        data: hardcode.reverse(),
-                        label: "Maand gemiddelden van de fijnstof (PM2.5) waardes tot het begin van het jaar.",
-                        labels: this.#getLabels(req.params.timespan).reverse()
-                    })
-                    break;
-            }
 
+                    // INserts al of the data of the array
+                    for (let i = 0; i < hardcode.length; i++) {
+                        let insertData = this.#databaseHelper.handleQuery({
+                            query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
+                            values: [hardcode[i], req.params.timespan, i]
+                        })
+                    }
+
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({
+                        data: "PM25 data pre-loaded",
+                        timespan: req.params.timespan
+                    })
+            }
         })
     }
 
@@ -178,7 +246,7 @@ class DashboardRoutes {
      * @param date2 - start of date to get the data
      * @returns {Promise<void>}
      */
-    async #calculateAverageFromResult(i, date1, date2) {
+    async #calculateAverageFromFetch(i, date1, date2) {
         await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
             "start=" + date2.toISOString() + "&end=" + date1.toISOString() +
             "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", this.#requestOptions)
@@ -442,7 +510,7 @@ class DashboardRoutes {
 
         // Switch to get the requested timespan
         switch (timespan) {
-                // Gets past 31 days in format dayNumber + "curMonth"
+            // Gets past 31 days in format dayNumber + "curMonth"
             case "days":
                 for (let i = 0; i < 31; i++) {
                     let date = new Date();
@@ -453,13 +521,13 @@ class DashboardRoutes {
                 }
                 labelArray.reverse()
                 break;
-                // Gets past 15 weeks in format: "Week" + weekNumber
+            // Gets past 15 weeks in format: "Week" + weekNumber
             case "weeks":
                 for (let i = weekNumber - 15; i < weekNumber + 1; i++) {
                     labelArray.push("Week " + i)
                 }
                 break;
-                // Gets month from start of year to now. In string format
+            // Gets month from start of year to now. In string format
             case "months":
                 for (let i = 0; i < new Date(Date.now()).getMonth() + 1; i++) {
                     labelArray.push(months[i])
