@@ -18,18 +18,17 @@ export class DashboardController extends Controller {
     #TREEGARDENINDEX = 1;
     #GREENERYINDEX = 2;
     #LKI = 3;
-    #FINE_DUST = 4;
+    PM25 = 4;
 
     #graphTextBox;
     #infoTextBox;
     #infoContentBox;
 
     #dashboardChart
-    #chartTarget
+    #chartCanvas
 
     #currentlyComparing;
-    #currentGraphView;
-    #chartCompareList
+    #currentGraphView
 
     #PM25days
     #PM25weeks
@@ -47,33 +46,30 @@ export class DashboardController extends Controller {
         this.#graphTextBox = this.#dashboardView.querySelector(".graph-type-text");
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
-        this.#chartTarget = this.#dashboardView.querySelector("#myChart")
+        this.#chartCanvas = this.#dashboardView.querySelector("#myChart")
 
-        const elements = ["#facadeGardenCircle", "#treeGardenCircle", "#greeneryCircle", "#aqiCircle", "#PM25Circle"];
-        const texts = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M²", "/ LKI", "/ Fijnstof"];
-        const infoContent = [
+        const titleText = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M ²", "/ LKI", "/ Fijnstof"];
+        const informationText = [
             `<div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`,
             `<div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`,
             ` <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`,
             `<div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`,
             `<div class="p">Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is. Als de grafiek niet helemaal gevuld is, komt dit doordat de luchtmeetnet API er een tijdje uit heeft geleden.</div>`];
 
-        this.#graphTextBox.innerText = texts[0];
-        this.#infoTextBox.innerText = texts[0];
-        this.#infoContentBox.innerHTML = infoContent[0];
+        this.#graphTextBox.innerText = titleText[0];
+        this.#infoTextBox.innerText = titleText[0];
+        this.#infoContentBox.innerHTML = informationText[0];
 
         await this.#loadDashboardValues()
 
-        await this.#map();
-
         //Initializes the main chart.
-        this.#dashboardChart = new Chart(this.#chartTarget, {
+        this.#dashboardChart = new Chart(this.#chartCanvas, {
             type: 'line',
             data: {
-                labels: ["Januari", "Februari", "Maart", "April"],
+                labels: ["null", "null", "null", "null"],
                 datasets: [{
-                    label: 'Geveltuinen in deze maand',
-                    data: [1, 25, 60, 87],
+                    label: 'null',
+                    data: [null, null, null, null],
                 },]
             },
             options: {
@@ -82,9 +78,12 @@ export class DashboardController extends Controller {
             }
         });
 
-        this.#currentlyComparing = false;
-        this.#chartCompareList = []
+        this.#dashboardRepository.getSelectedTimespanTreeGardenData("days", 2)
+            .then(result => {
+                this.#updateChart(result)
+            })
 
+        this.#currentlyComparing = false;
         this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
             this.#compareSwitch();
         })
@@ -97,14 +96,15 @@ export class DashboardController extends Controller {
             this.#hideInformationModal()
         })
 
+        const circleDiagrams = ["#facadeGardenCircle", "#treeGardenCircle", "#greeneryCircle", "#aqiCircle", "#PM25Circle"];
         if(!this.#currentlyComparing) {
-            elements.forEach((element, index) => {
-                this.#dashboardView.querySelector(element).addEventListener("click", () => {
+            circleDiagrams.forEach((circleDiagram, index) => {
+                this.#dashboardView.querySelector(circleDiagram).addEventListener("click", () => {
                     this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                    this.#dashboardView.querySelector(element).classList.add("shadow")
-                    this.#graphTextBox.innerText = texts[index];
-                    this.#infoTextBox.innerText = texts[index];
-                    this.#infoContentBox.innerHTML = infoContent[index];
+                    this.#dashboardView.querySelector(circleDiagram).classList.add("shadow")
+                    this.#graphTextBox.innerText = titleText[index];
+                    this.#infoTextBox.innerText = titleText[index];
+                    this.#infoContentBox.innerHTML = informationText[index];
                     this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
                 });
             });
@@ -113,6 +113,8 @@ export class DashboardController extends Controller {
         this.#graphViewEventListeners()
 
         await this.#preloadPM25Values()
+
+        await this.#map();
     }
 
     /**
@@ -127,7 +129,7 @@ export class DashboardController extends Controller {
             const databaseValues = await this.#dashboardRepository.getDashboardValues();
 
             this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
-            this.#animateCircleAndValues(this.#FINE_DUST, apiValues.PM25)
+            this.#animateCircleAndValues(this.PM25, apiValues.PM25)
 
             this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
             this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
@@ -135,23 +137,6 @@ export class DashboardController extends Controller {
         } catch (e) {
             console.log("Luchtmeetnet API  or database is currently unavailable")
             console.log(e)
-        }
-    }
-
-    /**
-     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
-     * @author beerstj
-     */
-    #compareSwitch() {
-        switch(this.#currentlyComparing) {
-            case true:
-                this.#currentlyComparing = false;
-                this.#stopCompare();
-                break;
-            case false:
-                this.#currentlyComparing = true;
-                this.#startCompare();
-                break;
         }
     }
 
@@ -167,24 +152,10 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color = "#058C42";
-
-        // Array of every circle diagram on the page.
-        let circles = this.#dashboardView.querySelectorAll(".progress-bar-container")
-
-        // attaches eventlisteners to every circle diagram on the dashboard
-        for (let i = 0; i < circles.length; i++) {
-            circles[i].addEventListener("click", () => { // Adds a listener to every circle, and puts it in an array
-                if(!this.#chartCompareList.includes(circles[i].id)) {
-                    this.#chartCompareList.push(circles[i].id) // If the circle diagram is not yet in the array, its puts it in there.
-                }
-                console.log(this.#chartCompareList)
-            })
-        }
-
     }
 
     /**
-     * Stops the comparisons, changes the compare box to indicate the comparisons has stopped,
+     * Stops the comparisons, changes the compare box to indicate the comparison has stopped,
      * Removes all the datasets from the chart and updates it aswell
      * @author beerstj
      */
@@ -195,7 +166,10 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color="white";
-        this.#chartCompareList = [];
+        this.#dashboardChart.data.datasets.splice(1,this.#dashboardChart.data.datasets.length)
+        this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
+        this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
+        this.#dashboardChart.update()
     }
 
 
@@ -244,7 +218,7 @@ export class DashboardController extends Controller {
                 break;
         }
 
-        console.log(selectedType + ": " + this.#currentGraphView)
+        console.log("Show chart: " + selectedType + ": " + this.#currentGraphView)
     }
 
     /**
@@ -270,14 +244,32 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Updates the chart's labels, data and label
-     * @param object - object that contains all of the data
+     * Updates and adds the given chart to the canvas. If the user is comparing currently, the chart is pushed
+     * to the datasets array, which will display it in the chart.
+     * @param object - object you want to add
+     * @author beerstj
      */
     #updateChart(object) {
-        this.#dashboardChart.data.datasets[0].data = object.data; // data in the chart
-        this.#dashboardChart.data.datasets[0].label = object.label; // label (title) of the graph
+        let comparisonChart = {
+            data: object.data,
+            label: object.label,
+            borderColor: object.color,
+            backgroundColor: object.color
+        }
 
-        this.#dashboardChart.data.labels = object.labels // labels under the graph
+        if(!this.#currentlyComparing) {
+            this.#dashboardChart.data.datasets[0].data = object.data; // data in the chart
+            this.#dashboardChart.data.datasets[0].label = object.label; // label (title) of the graph
+            this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
+            this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
+
+            this.#dashboardChart.data.labels = object.labels // labels under the graph
+        } else {
+            // if the comparisonChart is not yet in the datasets array, it will add it.
+            if(!this.#dashboardChart.data.datasets.includes(comparisonChart)) {
+                this.#dashboardChart.data.datasets.push(comparisonChart)
+            }
+        }
         this.#dashboardChart.update()
     }
 
@@ -317,29 +309,34 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #graphViewEventListeners() {
-        let days = this.#dashboardView.querySelector("#days")
-        let weeks = this.#dashboardView.querySelector("#weeks")
-        let months = this.#dashboardView.querySelector("#months")
-        this.#currentGraphView = "days"
+        let viewElements = [this.#dashboardView.querySelector("#days"), this.#dashboardView.querySelector("#weeks"), this.#dashboardView.querySelector("#months")]
+        this.#currentGraphView = "days";
 
-        days.addEventListener("click", () => {
-            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
-            days.classList.add("graph-view-active")
-            this.#currentGraphView = "days"
-            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
-        })
-        weeks.addEventListener("click", () => {
-            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
-            weeks.classList.add("graph-view-active")
-            this.#currentGraphView = "weeks"
-            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
-        })
-        months.addEventListener("click", () => {
-            this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active")
-            months.classList.add("graph-view-active")
-            this.#currentGraphView = "months"
-            this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id)
-        })
+        viewElements.forEach((viewElement) => {
+            viewElement.addEventListener("click", () => {
+                this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active");
+                viewElement.classList.add("graph-view-active");
+                this.#currentGraphView = viewElement.id;
+                this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
+            });
+        });
+    }
+
+    /**
+     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
+     * @author beerstj
+     */
+    #compareSwitch() {
+        switch(this.#currentlyComparing) {
+            case true:
+                this.#currentlyComparing = false;
+                this.#stopCompare();
+                break;
+            case false:
+                this.#currentlyComparing = true;
+                this.#startCompare();
+                break;
+        }
     }
 
     /**

@@ -55,6 +55,7 @@ export class App {
 
         //Attempt to load the controller from the URL, if it fails, fall back to the welcome controller.
         App.loadControllerFromUrl(App.CONTROLLER_WELCOME);
+
         App.loadController(App.CONTROLLER_FOOTER)
     }
 
@@ -96,7 +97,7 @@ export class App {
             //     break;
 
             case App.CONTROLLER_WELCOME:
-                App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
+                App.isLoggedIn(() => new DashboardController(), () => new DashboardController());
                 break;
 
             case App.CONTROLLER_UPLOAD:

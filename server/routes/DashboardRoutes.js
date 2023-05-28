@@ -211,13 +211,16 @@ class DashboardRoutes {
      */
     async #getFacadeAndTreeGardenData() {
         this.#app.get("/dashboard/timespan/:timespan/type/:type_id", async (req, res) => {
+            let color;
             // Switch to change the greentype, used in the labels
             switch (req.params.type_id) {
                 case "1": // String because req.params.type_id is a string
                     this.#greenType = "Boomtuinen"
+                    color = "#de4ab9"
                     break;
                 case "2":
                     this.#greenType = "Geveltuinen"
+                    color = "#058C42"
                     break;
                 default:
                     break;
@@ -247,7 +250,8 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 30 dagen",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan)
+                            labels: this.#getLabels(req.params.timespan),
+                            color: color
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
@@ -270,7 +274,9 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan).reverse()
+                            labels: this.#getLabels(req.params.timespan),
+                            color: color
+
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
@@ -292,7 +298,8 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan).reverse()
+                            labels: this.#getLabels(req.params.timespan),
+                            color: color
                         })
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
@@ -329,7 +336,8 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 de de afgelopen 30 dagen",
                             data: totalArray,
-                            labels: this.#getLabels(timespan)
+                            labels: this.#getLabels(timespan),
+                            color: "#4ADEDE"
                         })
 
                     } catch (e) {
@@ -351,7 +359,9 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 de de afgelopen 15 weken",
                             data: totalArray,
-                            labels: this.#getLabels(timespan)
+                            labels: this.#getLabels(timespan),
+                            color: "#4ADEDE"
+
                         })
 
                     } catch (e) {
@@ -372,7 +382,9 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 aan het begin van elke maand sinds het begin van het jaar",
                             data: totalArray,
-                            labels: this.#getLabels(timespan)
+                            labels: this.#getLabels(timespan),
+                            color: "#4ADEDE"
+
                         })
 
                     } catch (e) {
