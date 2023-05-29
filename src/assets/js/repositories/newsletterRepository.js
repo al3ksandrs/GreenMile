@@ -8,24 +8,31 @@ export class newsletterRepository {
     #getNewsletters
 
     constructor() {
-        this.#submitNewsletterRoute = "/mailinglist/submit/title/"
+        this.#submitNewsletterRoute = "/mailinglist/submit"
         this.#getUsersRoute = "/mailingList/emails/"
-        this.#sendNewsletterRoute = "/mailingList/send/email/"
+        this.#sendNewsletterRoute = "/mailingList/send"
         this.#getNewsletters = "/mailingList/getAll"
 
         this.#networkManager = new NetworkManager();
     }
 
-    submitNewsLetter(title, content) {
-        return this.#networkManager.doRequest(this.#submitNewsletterRoute + title + "/content/" + content, "GET")
+    async submitNewsLetter(title, content) {
+        return await this.#networkManager.doRequest(this.#submitNewsletterRoute, "POST", {
+            "title": title,
+            "content": content
+        })
     }
 
     getEmails() {
         return this.#networkManager.doRequest(this.#getUsersRoute, "GET")
     }
 
-    sendNewsletter(email, title, content) {
-        return this.#networkManager.doRequest(this.#sendNewsletterRoute + email + "/title/" + title + "/content/" + content, "POST")
+    async sendNewsletter(email, title, content) {
+        return await this.#networkManager.doRequest(this.#sendNewsletterRoute, "POST", {
+            "email": email,
+            "title": title,
+            "content": content
+        })
     }
 
     getNewsletters() {

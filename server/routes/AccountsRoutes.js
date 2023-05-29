@@ -36,13 +36,13 @@ class AccountsRoutes {
      * @author beerstj
      */
     #removeAccount() {
-        this.#app.get("/delete/:id", async (req,res) => {
+        this.#app.post("/account/delete", async (req,res) => {
             try {
                 let results = await this.#databaseHelper.handleQuery({
                     query: "DELETE FROM Gebruiker WHERE id= ?",
                     values: [req.params.id]
                 });
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({status: "Succes"})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }

@@ -105,8 +105,8 @@ class DashboardRoutes {
      * @returns {Promise<void>}
      */
     async #requestPM25FromDatabase() {
-        this.#app.get("/dashboard/database/PM25/timespan/:timespan", async (req, res) => {
-            let timespan = req.params.timespan;
+        this.#app.post("/dashboard/database/PM25/timespan", async (req, res) => {
+            let timespan = req.body.timespan;
             let text = ""
             switch(timespan) {
                 case "days":
@@ -278,10 +278,10 @@ class DashboardRoutes {
      * @returns {Promise<void>}
      */
     async #getFacadeAndTreeGardenData() {
-        this.#app.get("/dashboard/timespan/:timespan/type/:type_id", async (req, res) => {
+        this.#app.post("/dashboard/timespan/type", async (req, res) => {
             let color;
             // Switch to change the greentype, used in the labels
-            switch (req.params.type_id) {
+            switch (req.body.type_id) {
                 case "1": // String because req.params.type_id is a string
                     this.#greenType = "Boomtuinen"
                     color = "#de4ab9"
@@ -300,7 +300,7 @@ class DashboardRoutes {
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000)) / 7);
 
             // Switch to swich between de requested timespn
-            switch (req.params.timespan) {
+            switch (req.body.timespan) {
                 // If req.params.timespan === "days" the totals of the last 31 days are queried to the databse
                 case "days":
                     try {
@@ -308,7 +308,7 @@ class DashboardRoutes {
                         for (let i = 0; i < 31; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = 3;",
-                                values: [i, req.params.type_id]
+                                values: [i, req.body.type_id]
                             })
 
                             totalNumber += data[0].dayTotal
@@ -318,7 +318,7 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 30 dagen",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan),
+                            labels: this.#getLabels(req.body.timespan),
                             color: color
                         })
                     } catch (e) {
@@ -332,7 +332,7 @@ class DashboardRoutes {
                         for (let i = weekNumber - 15; i < weekNumber + 1; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS weekTotal FROM Groen WHERE WEEK(datum) = ? AND type_id = ?",
-                                values: [i, req.params.type_id]
+                                values: [i, req.body.type_id]
                             })
 
                             totalNumber += data[0].weekTotal
@@ -342,7 +342,7 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " de de afgelopen 15 weken",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan),
+                            labels: this.#getLabels(req.body.timespan),
                             color: color
 
                         })
@@ -357,7 +357,7 @@ class DashboardRoutes {
                         for (let i = 1; i < today.getMonth() + 2; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) AS monthTotal FROM Groen WHERE MONTH(datum) = ? AND type_id = ?",
-                                values: [i, req.params.type_id]
+                                values: [i, req.body.type_id]
                             })
                             totalNumber += data[0].monthTotal
                             totalArray.push(totalNumber)
@@ -366,7 +366,7 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van gemaakte " + this.#greenType + " aan het begin van elke maand sinds het begin van het jaar",
                             data: totalArray,
-                            labels: this.#getLabels(req.params.timespan),
+                            labels: this.#getLabels(req.body.timespan),
                             color: color
                         })
                     } catch (e) {
@@ -382,12 +382,12 @@ class DashboardRoutes {
      * @param timespan: timespan you want for the data
      */
     #getGreeneryM2Data() {
-        this.#app.get("/dashboard/greenery/timespan/:timespan", async (req, res) => {
+        this.#app.post("/dashboard/greenery/timespan", async (req, res) => {
             let totalNumber = 0;
             let totalArray = [];
             let today = new Date(Date.now())
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000)) / 7);
-            const timespan = req.params.timespan
+            const timespan = req.body.timespan
 
             switch (timespan) {
                 // Gets data for past 30 days by looking through all of them
@@ -484,11 +484,11 @@ class DashboardRoutes {
      * @author beerstj
      */
     async #getInfomation() {
-        this.#app.get("/dashboard/information/:id", async (req, res) => {
+        this.#app.post("/dashboard/information", async (req, res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
                     query: "SELECT * FROM informationModal WHERE id = ?",
-                    values: [req.params.id]
+                    values: [req.body.id]
                 })
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data})
