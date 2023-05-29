@@ -116,7 +116,7 @@ class DashboardRoutes {
                     text = "15 weken"
                     break
                 case "months":
-                    text = (new Date().getMonth() +1) + " maanden tot aan het van dit jaar"
+                    text = (new Date().getMonth() + 1) + " maanden tot aan het van dit jaar"
             }
 
             let array = []

@@ -84,7 +84,7 @@ export class DashboardController extends Controller {
             })
 
         this.#currentlyComparing = false;
-        this.#dashboardView.querySelector("#compare-box").addEventListener("click",() => {
+        this.#dashboardView.querySelector("#compare-box").addEventListener("click", () => {
             this.#compareSwitch();
         })
 
@@ -97,7 +97,7 @@ export class DashboardController extends Controller {
         })
 
         const circleDiagrams = ["#facadeGardenCircle", "#treeGardenCircle", "#greeneryCircle", "#aqiCircle", "#PM25Circle"];
-        if(!this.#currentlyComparing) {
+        if (!this.#currentlyComparing) {
             circleDiagrams.forEach((circleDiagram, index) => {
                 this.#dashboardView.querySelector(circleDiagram).addEventListener("click", () => {
                     this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
@@ -112,7 +112,7 @@ export class DashboardController extends Controller {
 
         this.#graphViewEventListeners()
 
-        //await this.#preloadPM25Values()
+        await this.#preloadPM25Values()
 
         await this.#map();
     }
@@ -141,8 +141,8 @@ export class DashboardController extends Controller {
     }
 
     /**
-    * Method to start a comparison between multiple graphs.
-    * @author beerstj
+     * Method to start a comparison between multiple graphs.
+     * @author beerstj
      * */
     #startCompare() {
         // Changes the color of the compare button to indidcate that the comparisons started
@@ -165,8 +165,8 @@ export class DashboardController extends Controller {
         this.#dashboardView.querySelector("#comparison-impossible").classList.add("hidden")
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
-        this.#dashboardView.querySelector("#compare-title").style.color="white";
-        this.#dashboardChart.data.datasets.splice(1,this.#dashboardChart.data.datasets.length)
+        this.#dashboardView.querySelector("#compare-title").style.color = "white";
+        this.#dashboardChart.data.datasets.splice(1, this.#dashboardChart.data.datasets.length)
         this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
         this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
         this.#dashboardChart.update()
@@ -199,20 +199,20 @@ export class DashboardController extends Controller {
                         this.#updateChart(result)
                     })
                 break;
-            // case "PM25Circle":
-            //     // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
-            //     // selected of the chart.
-            //     switch (this.#currentGraphView) {
-            //         case "days":
-            //             this.#updateChart(this.#PM25days);
-            //             break;
-            //         case "weeks":
-            //             this.#updateChart(this.#PM25weeks);
-            //             break;
-            //         case "months":
-            //             this.#updateChart(this.#PM25months);
-            //     }
-            //     break;
+            case "PM25Circle":
+                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
+                // selected of the chart.
+                switch (this.#currentGraphView) {
+                    case "days":
+                        this.#updateChart(this.#PM25days);
+                        break;
+                    case "weeks":
+                        this.#updateChart(this.#PM25weeks);
+                        break;
+                    case "months":
+                        this.#updateChart(this.#PM25months);
+                }
+                break;
             default:
                 console.log("Graph not yet supported")
                 break;
@@ -257,7 +257,7 @@ export class DashboardController extends Controller {
             backgroundColor: object.color
         }
 
-        if(!this.#currentlyComparing) {
+        if (!this.#currentlyComparing) {
             this.#dashboardChart.data.datasets[0].data = object.data; // data in the chart
             this.#dashboardChart.data.datasets[0].label = object.label; // label (title) of the graph
             this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
@@ -266,7 +266,7 @@ export class DashboardController extends Controller {
             this.#dashboardChart.data.labels = object.labels // labels under the graph
         } else {
             // if the comparisonChart is not yet in the datasets array, it will add it.
-            if(!this.#dashboardChart.data.datasets.includes(comparisonChart)) {
+            if (!this.#dashboardChart.data.datasets.includes(comparisonChart)) {
                 this.#dashboardChart.data.datasets.push(comparisonChart)
             }
         }
@@ -327,7 +327,7 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #compareSwitch() {
-        switch(this.#currentlyComparing) {
+        switch (this.#currentlyComparing) {
             case true:
                 this.#currentlyComparing = false;
                 this.#stopCompare();

@@ -3,6 +3,10 @@
         <div class="h1 border-bottom col-12">Roadmap-items</div>
         <div class="p col-12 my-3">Op deze pagina kunt u alle roadmap items, zien, verwijderen en aanpassen.</div>
 
+        <div class="alert alert-success hidden" role="alert" id="edit-succes">
+            Wijzigen van roadmap-item goed gegaan!
+        </div>
+
         <table class="table table-hover col-5">
             <thead>
                 <tr>
@@ -35,6 +39,10 @@
                 <textarea class="form-control" id="roadmap-content" rows="10" placeholder="Inhoud van het roadmap - item"></textarea>
             </div>
         </form>
+
+        <div class="alert alert-success hidden" role="alert" id="submit-succes">
+            Toevoegen van roadmap-item goed gegaan!
+        </div>
 
         <button id="roadmap-submit" type="button" class="col-3 mt-3 mx-3 btn btn-success btn-block">Roadmap item invoeren</button>
     </div>
