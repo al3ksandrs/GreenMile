@@ -90,11 +90,13 @@ class adminRoutes {
             const coordinaatY = req.body.coordinaatY;
             const gebied_id = req.body.gebied_id;
             const type_id = req.body.type_id;
+            const today = new Date(Date.now())
+            const todayDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + (today.getDate() -1);
 
             try {
                 let data = await this.#databaseHelper.handleQuery( {
-                    query: "INSERT INTO groen(coordinaatX, coordinaatY, gebied_id, type_id) VALUES (?,?,?,?)",
-                    values: [coordinaatX, coordinaatY, gebied_id, type_id]
+                    query: "INSERT INTO groen(coordinaatX, coordinaatY, gebied_id, type_id, datum) VALUES (?,?,?,?,?)",
+                    values: [coordinaatX, coordinaatY, gebied_id, type_id, todayDate]
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);

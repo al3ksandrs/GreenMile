@@ -12,8 +12,8 @@ export class AmbitionRepository{
         this.#ambitionDatabaseRoute = "/timeline"
         this.#newsletterRoute = "/newsletter"
         this.#deleteItemById = "/roadmap/delete/"
-        this.#submitRoadmapRoute = "/roadmap/submit/title/"
-        this.#changeRoadmapRoute = "/roadmap/id/"
+        this.#submitRoadmapRoute = "/roadmap/submit"
+        this.#changeRoadmapRoute = "/roadmap/editById"
 
         this.#networkManager = new NetworkManager();
     }
@@ -25,15 +25,24 @@ export class AmbitionRepository{
         return this.#networkManager.doRequest(this.#newsletterRoute, "GET")
     }
 
-    removeItemById(id) {
-        return this.#networkManager.doRequest(this.#deleteItemById + id , "GET")
+    async removeItemById(id) {
+        return await this.#networkManager.doRequest(this.#deleteItemById, "POST", {
+            "id": id
+        })
     }
 
-    submitItem(title, content) {
-        return this.#networkManager.doRequest(this.#submitRoadmapRoute + title + "/content/" + content, "GET")
+    async submitItem(title, content) {
+        return await this.#networkManager.doRequest(this.#submitRoadmapRoute, "POST", {
+            "title": title,
+            "content": content
+        })
     }
 
-    changeItem(id, title, content) {
-        return this.#networkManager.doRequest(this.#changeRoadmapRoute + id + "/title/" + title + "/content/" + content, "GET")
+    async changeItem(id, title, content) {
+        return await this.#networkManager.doRequest(this.#changeRoadmapRoute, "POST", {
+            "id": id,
+            "title": title,
+            "content": content
+        })
     }
 }

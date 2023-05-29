@@ -7,7 +7,7 @@ export class DashboardRepository {
     #dashboardAPIRoute;
 
     #dashhboardSelectedTimespanTreegarden
-    #dashbaordSelectedTimespanGreenery;
+    #dashboardSelectedTimespanGreenery;
     #dashboardSelectedTimespanPM25;
 
     #informationModalRoute
@@ -18,9 +18,9 @@ export class DashboardRepository {
     constructor() {
         this.#dashboardDatabaseRoute = "/dashboard/database"
         this.#dashboardAPIRoute = "/dashboard/API/Luchtmeetnet";
-        this.#dashhboardSelectedTimespanTreegarden = "/dashboard/timespan/"
-        this.#dashbaordSelectedTimespanGreenery = "/dashboard/greenery/timespan/"
-        this.#dashboardSelectedTimespanPM25 = "/dashboard/database/PM25/timespan/"
+        this.#dashhboardSelectedTimespanTreegarden = "/dashboard/timespan/type"
+        this.#dashboardSelectedTimespanGreenery = "/dashboard/greenery/timespan/"
+        this.#dashboardSelectedTimespanPM25 = "/dashboard/database/PM25/timespan"
 
         this.#informationModalRoute = "/dashboard/information/"
 
@@ -40,21 +40,29 @@ export class DashboardRepository {
     }
 
     // Values for the charts
-    getSelectedPM25Data(timespan) {
-        return this.#networkManager.doRequest(this.#dashboardSelectedTimespanPM25 + timespan, "GET")
+    async getSelectedPM25Data(timespan) {
+        return await this.#networkManager.doRequest(this.#dashboardSelectedTimespanPM25, "POST", {
+            "timespan": timespan
+        });
     }
 
-    getSelectedTimespanTreeGardenData(timespan, type) {
-        return this.#networkManager.doRequest(this.#dashhboardSelectedTimespanTreegarden + timespan + "/type/" + type, "GET")
+    async getSelectedTimespanTreeGardenData(timespan, type) {
+        return await this.#networkManager.doRequest(this.#dashhboardSelectedTimespanTreegarden, "POST", {
+            "timespan": timespan, "type_id": type
+        })
     }
 
-    getSelectedTimespanGreenery(timespan) {
-        return this.#networkManager.doRequest(this.#dashbaordSelectedTimespanGreenery + timespan, "GET")
+    async getSelectedTimespanGreenery(timespan) {
+        return await this.#networkManager.doRequest(this.#dashboardSelectedTimespanGreenery, "POST", {
+            "timespan": timespan
+        })
     }
 
     // informations for the modal
-    getModalInformation(id) {
-        return this.#networkManager.doRequest(this.#informationModalRoute + id, "GET")
+    async getModalInformation(id) {
+        return await this.#networkManager.doRequest(this.#informationModalRoute, "POST", {
+            "id": id
+        })
     }
 
     // map requests @author Aleksandrs
