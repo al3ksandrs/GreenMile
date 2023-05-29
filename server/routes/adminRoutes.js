@@ -35,6 +35,7 @@ class adminRoutes {
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
 
+
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
             }
