@@ -23,7 +23,7 @@
     margin-top: 30px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 .headAdders {
@@ -59,6 +59,7 @@ input{
 .submitButton{
     margin-top: 5px;
     width: 7em;
+    box-shadow: 2px 2px rgba(0,0,0,.7);
 }
 
 select{
@@ -82,6 +83,30 @@ select{
     margin-left: auto;
     margin-right: auto;
     border-radius: 10px;
+}
+
+.addButton{
+    background-color: green;
+    border-color: green;
+    color: white;
+}
+
+.addButton:hover{
+    background-color: lightgreen;
+    border-color: green;
+    color: black;
+}
+
+.removeButton{
+    background-color: red;
+    border-color: red;
+    color: white;
+}
+
+.removeButton:hover{
+    background-color: lightsalmon;
+    border-color: red;
+    color: black;
 }
 
 /*map responsiveness*/
