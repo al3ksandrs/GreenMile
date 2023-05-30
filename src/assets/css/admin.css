@@ -83,3 +83,29 @@ select{
     margin-right: auto;
     border-radius: 10px;
 }
+
+/*map responsiveness*/
+@media screen and (max-width: 1270px) {
+    #add-object-map{
+        width: 90em;
+    }
+}
+@media screen and (max-width: 993px) {
+    #formContainer{
+        flex-direction: column;
+    }
+
+    #add-object-map{
+        height: 30em;
+        width: 55em;
+    }
+
+}
+@media screen and (max-width: 425px) {
+    #add-object-map{
+        height: 53em;
+        width: 30em;
+        margin-left: 40px;
+        margin-right: 0px;
+    }
+}

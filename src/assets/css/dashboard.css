@@ -350,3 +350,26 @@ svg:not(:root) {
         width: 100%;
     }
 }
+
+
+/*map responsiveness*/
+@media screen and (max-width: 1270px) {
+    #map{
+        width: 90em;
+    }
+}
+@media screen and (max-width: 993px) {
+    #map{
+        height: 30em;
+        width: 55em;
+    }
+
+}
+@media screen and (max-width: 425px) {
+    #map{
+        height: 53em;
+        width: 30em;
+        margin-left: 40px;
+        margin-right: 0px;
+    }
+}
