@@ -12,7 +12,8 @@ class AmbitionRoutes {
         this.#removeRoadmapById()
         this.#submitRoadmap()
         this.#changeRoadmapItemById()
-        this.#getProgressValues()
+        this.#getGardenValues()
+        this.#getM2Values()
     }
 
     /**
@@ -35,7 +36,7 @@ class AmbitionRoutes {
     }
 
     /**
-     * retrieves values from newsletter if to use for the roadmap
+     * retrieves values from newsletter to use for the roadmap
      * @author kashif
      */
     #getNewsletters(){
@@ -45,22 +46,41 @@ class AmbitionRoutes {
                     query: "SELECT title, `date` FROM newsletter"
                 });
 
-                //just give all data back as json, could also be empty
+                //give all data back as json, could also be empty
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
             } catch(e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
         });
     }
-    #getProgressValues(){
-        this.#app.get("/timeline/progress", async (req,res)=>{
+
+    /**
+     * retrieves values from groen to check the progress of the gardens growth
+     * @author kashif
+     */
+    #getGardenValues(){
+        this.#app.get("/timeline/garden", async (req,res)=>{
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    //type1 is treegarden 2 is facade
+                    //type1 is treegarden type2 is facade
                     query: "SELECT gebied_id, type_id, datum FROM groen"
                 });
 
-                //just give all data back as json, could also be empty
+                //give all data back as json, could also be empty
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        });
+    }
+    #getM2Values(){
+        this.#app.get("/timeline/m2", async (req,res)=>{
+            try {
+                const data = await this.#databaseHelper.handleQuery({
+                    query: "SELECT m2,datum FROM groenem2"
+                });
+
+                //give all data back as json, could also be empty
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})

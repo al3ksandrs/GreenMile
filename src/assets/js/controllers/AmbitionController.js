@@ -84,11 +84,12 @@ export class AmbitionController extends Controller {
       <p class="year${index}">${jaar}</p>
       <h2 class="title${index}">${titel}</h2>
       <p class="info${index}">${informatie}</p>
-      <h6 class="timeline-available-news"><br>De nieuwsbrieven die deze maand zijn uitgegeven:</h6>
-      <div class="news${index}"></div>
       <h6 class="timeline-progress"><br>Het groen die in deze maand is toegevoegd:</h6>
       <div class="tree-garden${index}"></div>
       <div class="facade-garden${index}"></div>
+      <div class="total-m2${index}"></div>
+      <h6 class="timeline-available-news"><br>De nieuwsbrieven die deze maand zijn uitgegeven:</h6>
+      <div class="news${index}"></div>
     `;
 
             if (index === 0) {
@@ -129,9 +130,7 @@ export class AmbitionController extends Controller {
                 const timelineDate = new Date(timelineValue.date);
                 const timelineYear = timelineDate.getFullYear();
                 const timelineMonth = timelineDate.getMonth() + 1;
-
                 return timelineYear === newsYear && timelineMonth === newsMonth;
-
             });
 
             if (index !== -1) {
@@ -143,8 +142,22 @@ export class AmbitionController extends Controller {
 
     async #findProgress() {
         const timelineValues = await this.#ambitionRepository.getTimelineValues();
-        const progress1 = await this.#ambitionRepository.findProgress();
-        const monthlySums = {}; // Object to store the monthly sums
+        const progress1 = await this.#ambitionRepository.findGarden();
+        const m2Data = await this.#ambitionRepository.findM2();
+        // Object to store the monthly sums
+        const monthlySums = {};
+
+        // Initialize the monthly sums for all months
+        for (const timelineValue of timelineValues) {
+            const timelineDate = new Date(timelineValue.date);
+            const timelineYear = timelineDate.getFullYear();
+            const timelineMonth = timelineDate.getMonth() + 1;
+            monthlySums[`${timelineYear}-${timelineMonth}`] = {
+                type1Sum: 0,
+                type2Sum: 0,
+                m2Sum: 0
+            };
+        }
 
         for (const progress2 of progress1) {
             const valueGardenDate = new Date(progress2.datum);
@@ -158,27 +171,57 @@ export class AmbitionController extends Controller {
             });
 
             if (index !== -1) {
-                const treeGardenElement = document.querySelector(`.tree-garden${index}`);
-                const facadeGardenElement = document.querySelector(`.facade-garden${index}`);
                 const type = progress2.type_id;
 
-                if (!monthlySums.hasOwnProperty(gardenMonth)) {
-                    monthlySums[gardenMonth] = {
-                        type1Sum: 0,
-                        type2Sum: 0
-                    };
-                }
-
                 if (type === 1) {
-                    monthlySums[gardenMonth].type1Sum += 1;
+                    monthlySums[`${gardenYear}-${gardenMonth}`].type1Sum += 1;
                 } else if (type === 2) {
-                    monthlySums[gardenMonth].type2Sum += 1;
+                    monthlySums[`${gardenYear}-${gardenMonth}`].type2Sum += 1;
                 }
+            }
+        }
 
-                // Displays the tree garden added in this month
-                treeGardenElement.innerHTML = `<div class="tree-garden">${monthlySums[gardenMonth].type1Sum +1}</div>`;
-                // Displays the facade garden added in this month
-                facadeGardenElement.innerHTML = `<div class="facade-garden">${monthlySums[gardenMonth].type2Sum}</div>`;
+        // Update the m2Sum for each month based on the available m2Data
+        for (const m2Item of m2Data) {
+            const m2ItemDate = new Date(m2Item.datum);
+            const m2ItemYear = m2ItemDate.getFullYear();
+            const m2ItemMonth = m2ItemDate.getMonth() + 1;
+            const index = timelineValues.findIndex(timelineValue => {
+                const timelineDate = new Date(timelineValue.date);
+                const timelineYear = timelineDate.getFullYear();
+                const timelineMonth = timelineDate.getMonth() + 1;
+                return timelineYear === m2ItemYear && timelineMonth === m2ItemMonth;
+            });
+
+
+            if (index !== -1) {
+                const m2 = m2Item.m2;
+                if (m2 === 1)
+                    monthlySums[`${m2ItemYear}-${m2ItemMonth}`].m2Sum += 1;
+            }
+        }
+
+        // Display the tree garden, facade garden, and m2 garden for each month
+        for (const timelineValue of timelineValues) {
+            const timelineDate = new Date(timelineValue.date);
+            const timelineYear = timelineDate.getFullYear();
+            const timelineMonth = timelineDate.getMonth() + 1;
+            const index = timelineValues.findIndex(timelineValue => {
+                const timelineDate = new Date(timelineValue.date);
+                const timelineValueYear = timelineDate.getFullYear();
+                const timelineValueMonth = timelineDate.getMonth() + 1;
+                return timelineValueYear === timelineYear && timelineValueMonth === timelineMonth;
+            });
+
+            //adds the data
+            if (index !== -1) {
+                const treeGardenElement = document.querySelector(`.tree-garden${index}`);
+                const facadeGardenElement = document.querySelector(`.facade-garden${index}`);
+                const m2Element = document.querySelector(`.total-m2${index}`);
+
+                treeGardenElement.innerHTML = `<div class="tree-garden"><div class="green-text">${monthlySums[`${timelineYear}-${timelineMonth}`].type1Sum}&nbsp;</div>boomtuin(en)</div>`;
+                facadeGardenElement.innerHTML = `<div class="facade-garden"><div class="green-text">${monthlySums[`${timelineYear}-${timelineMonth}`].type2Sum}&nbsp;</div>geveltuin(en)</div>`;
+                m2Element.innerHTML = `<div class="total-m2"><div class="green-text">${monthlySums[`${timelineYear}-${timelineMonth}`].m2Sum}&nbsp;</div> m² groen</div>`;
             }
         }
     }

@@ -1,12 +1,12 @@
 .form-box {
-    width: 380px;
+    width: 500px;
     height: 480px;
     position: relative;
-    margin: 2% auto;
+    margin: 10% auto;
     background: white;
     padding: 10px;
     border-radius: 30px;
-    padding: 50px;
+
 }
 
 .button-box {
