@@ -48,6 +48,7 @@ export class LoginsiteController extends Controller{
             //let the session manager know we are logged in by setting the email, never set the password in localstorage
             App.sessionManager.set("username", email);
             App.loadController(App.CONTROLLER_DASHBOARD);
+            location.reload(); //refreshes the page when loggin in so the navbar can change.
 
             console.log("User: " + email + " logged in")
         } catch(error) {

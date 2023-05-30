@@ -126,15 +126,21 @@ export class App {
                 break;
 
             case App.CONTROLLER_LOGINSITE:
-                App.isLoggedIn(() => {
-                    this.handleLogout()
-                }, ()=>  {
-                    new LoginsiteController()
-                });
+                App.isLoggedIn(
+                    () => {
+                        this.handleLogout();
+                        location.reload(); // Refresh the page
+                    },
+                    () => {
+                        new LoginsiteController();
+                    }
+                );
                 break;
+
 
             case App.CONTROLLER_SUBMITROADMAP:
                 App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
+
                 break;
 
             default:
