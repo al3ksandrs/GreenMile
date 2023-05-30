@@ -103,17 +103,14 @@ export class App {
 
             case App.CONTROLLER_DASHBOARD:
                 App.isLoggedIn(() => new DashboardController(), () => new DashboardController());
-
                 break;
 
             case App.CONTROLLER_ACCOUNTS:
                 App.isLoggedIn(() => new AccountsController(), () => new  LoginsiteController());
-
                 break;
 
             case App.CONTROLLER_SUBMITNEWSLETTER:
                 App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
-
                 break;
 
             case App.CONTROLLER_NEWSLETTER:
@@ -122,6 +119,7 @@ export class App {
 
             case App.CONTROLLER_REGISTER:
                 App.isLoggedIn(() => new registerController(), () => new LoginsiteController())
+                break;
 
             case App.CONTROLLER_PARTNERS:
                 App.isLoggedIn(() => new PartnersController(), () => new PartnersController());
