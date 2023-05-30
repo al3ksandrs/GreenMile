@@ -307,8 +307,8 @@ class DashboardRoutes {
                         // Loop through the last 30 days, "i" is used in the SQL-Keyword DATE(DATE) to get the correct data
                         for (let i = 0; i < 31; i++) {
                             let data = await this.#databaseHelper.handleQuery({
-                                query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = 3;",
-                                values: [i, req.body.type_id]
+                                query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = ?;",
+                                values: [i, req.body.type_id, today.getMonth() + 1]
                             })
 
                             totalNumber += data[0].dayTotal
