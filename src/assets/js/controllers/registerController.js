@@ -41,6 +41,5 @@ export class registerController extends Controller {
         } catch (e) {
 
         }
-
     }
 }

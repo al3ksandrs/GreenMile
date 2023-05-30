@@ -30,34 +30,26 @@ export class LoginsiteController extends Controller{
         this.#loginsiteView = await super.loadHtmlIntoContent("html_views/loginsite.html")
 
         //from here we can safely get elements from the view via the right getter
-        this.#loginsiteView.querySelector(".submit-btn").addEventListener("click", event => this.#processLogin(event));
+        this.#loginsiteView.querySelector(".submit-btn").addEventListener("click", (event) => this.#processLogin(event));
 
     }
     /**
      * Async function that does a login request via repository
-     * @param event
      */
     async #processLogin(event) {
-        //prevent actual submit and page refresh
-        event.preventDefault();
-
+        event.preventDefault()
         //get the input field elements from the view and retrieve the value
         const email = this.#loginsiteView.querySelector("#email").value;
         const password = this.#loginsiteView.querySelector("#password").value;
 
         try{
             const user = await this.#loginSiteRepository.createLogin(email, password);
-            // const loginStatusElement = document.querySelector('.login_status');
 
             //let the session manager know we are logged in by setting the email, never set the password in localstorage
-            App.sessionManager.set("email", user.email);
-            App.loadController(App.CONTROLLER_WELCOME);
+            App.sessionManager.set("username", email);
+            App.loadController(App.CONTROLLER_DASHBOARD);
 
-
-            // loginStatusElement.classList.remove('login_status');
-            // loginStatusElement.classList.add('login_statusLogged');
-
-            console.log(user)
+            console.log("User: " + email + " logged in")
         } catch(error) {
             //if unauthorized error code, show error message to the user
             if(error.code === 401) {

@@ -24,24 +24,7 @@ export class NavbarController extends Controller {
         //await for when HTML is
         this.#navbarView = await super.loadHtmlIntoNavigation("html_views/navbar.html")
 
-        if (App.sessionManager.get("username")) {
-            document.getElementById("newsLetterLogin").innerHTML = `<a class="nav-link" data-controller="submitNewsletter" href="#">Nieuwsbrief invoeren</a>`;
-            document.getElementById("dataLogIn").innerHTML = `<a class="nav-link" data-controller="admin" href="#">Data invoeren</a>`;
-            document.getElementById("accountLogIn").innerHTML = `<a class="nav-link" data-controller="accounts" href="#">Accounts overview</a>`;
-            document.getElementById("registerLogIn").innerHTML = `<a class="nav-link" data-controller="accounts" href="#">Accounts aanmaken</a>`;
-            document.getElementById("roadmapLogIn").innerHTML = `<a class="nav-link" data-controller="submitRoadmap" href="#">Roadmap aanpassen</a>`;
-            document.getElementById("LogOutStatus").innerHTML = `<a class="nav-link" data-controller="logout" href="#">Logout</a>`;
-            document.getElementById("logInStatus").innerHTML = "";
-        } else {
-            document.getElementById("newsLetterLogin").style.display = "none";
-            document.getElementById("dataLogIn").style.display = "none";
-            document.getElementById("accountLogIn").style.display = "none";
-            document.getElementById("registerLogIn").style.display = "none";
-            document.getElementById("roadmapLogIn").style.display = "none";
-            document.getElementById("logInStatus").innerHTML = `<a class="nav-link" data-controller="loginsite" href="#">Login</a>`;
-            document.getElementById("logOutStatus").innerHTML = "";
-        }
-
+        this.#changeNavBarBasedOnLogin()
 
         //from here we can safely get elements from the view via the right getter
         const anchors = this.#navbarView.querySelectorAll("a.nav-link");
@@ -57,7 +40,7 @@ export class NavbarController extends Controller {
      * @private
      */
     #handleClickNavigationItem(event) {
-        event.preventDefault();
+        event.preventDefault()
 
         //Get the data-controller from the clicked element (this)
         const clickedAnchor = event.target;
@@ -67,13 +50,39 @@ export class NavbarController extends Controller {
             console.error("No data-controller attribute defined in anchor HTML tag, don't know which controller to load!")
             return false;
         }
-
         //TODO: You should add highlighting of correct anchor when page is active :)
+
+        this.#changeNavBarBasedOnLogin()
 
         //Pass the action to a new function for further processing
         App.loadController(controller);
 
         //Return false to prevent reloading the page
         return false;
+    }
+
+    #changeNavBarBasedOnLogin() {
+        App.isLoggedIn(() => {
+            console.log("Status: Logged in.")
+            this.#navbarView.querySelector("#loggedIn").innerText = "Uitloggen"
+
+            let navAnchors = this.#navbarView.querySelectorAll(".nav-item")
+            for (let i = 0; i < navAnchors.length; i++) {
+                if(i >= 6) {
+                    navAnchors[i].classList.remove("hidden")
+                }
+            }
+
+        }, () => {
+            console.log("Status: Not logged in.")
+            this.#navbarView.querySelector("#loggedIn").innerText = "Inloggen"
+
+            let navAnchors = this.#navbarView.querySelectorAll(".nav-item")
+            for (let i = 0; i < navAnchors.length; i++) {
+                if(i >= 6) {
+                    navAnchors[i].classList.add("hidden")
+                }
+            }
+        })
     }
 }

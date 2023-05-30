@@ -23,6 +23,7 @@ import {SubmitNewslettersController} from "./controllers/submitNewslettersContro
 import {NewsletterController} from "./controllers/NewsletterController.js";
 import {submitRoadmapController} from "./controllers/submitRoadmapController.js";
 import {PartnersController} from "./controllers/PartnersController.js";
+import {LoginController} from "./controllers/loginController.js";
 
 export class App {
     //we only need one instance of the sessionManager, thus static use here
@@ -31,11 +32,8 @@ export class App {
 
     //controller identifiers, add new controllers here
     static CONTROLLER_NAVBAR = "navbar";
-    // static CONTROLLER_LOGIN = "login";
     static CONTROLLER_LOGINSITE = "loginsite"
     static CONTROLLER_LOGOUT = "logout";
-    static CONTROLLER_WELCOME = "welcome";
-    static CONTROLLER_UPLOAD = "upload";
     static CONTROLLER_FAQ = "faq";
     static CONTROLLER_REGISTER = "register";
     static CONTROLLER_ADMIN = "admin"
@@ -53,7 +51,7 @@ export class App {
         App.loadController(App.CONTROLLER_NAVBAR);
 
         //Attempt to load the controller from the URL, if it fails, fall back to the welcome controller.
-        App.loadControllerFromUrl(App.CONTROLLER_WELCOME);
+        App.loadControllerFromUrl(App.CONTROLLER_DASHBOARD);
 
         App.loadController(App.CONTROLLER_FOOTER)
     }
@@ -91,67 +89,54 @@ export class App {
         App.setCurrentController(name, controllerData);
         
         switch (name) {
-            case App.CONTROLLER_REGISTER:
-                // App.setCurrentController()
-                new registerController();
-                // App.isLoggedIn(() => new registerController(), () => new registerController());
-            break;
-
-            case App.CONTROLLER_LOGIN:
-                App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
-                break;
-
-            case App.CONTROLLER_WELCOME:
-                App.isLoggedIn(() => new DashboardController(), () => new DashboardController());
-                break;
-
-            case App.CONTROLLER_UPLOAD:
-                App.isLoggedIn(() => new UploadController(), () => new LoginController());
-                break;
-
             case App.CONTROLLER_ADMIN:
-                new adminController();
+                App.isLoggedIn(() => new adminController(), () => new LoginsiteController());
                 break;
 
             case App.CONTROLLER_FAQ:
-                new faqController();
-                break;
-
-            case App.CONTROLLER_REGISTER:
-                new registerController();
+                App.isLoggedIn(() => new faqController(), () => new faqController());
                 break;
 
             case App.CONTROLLER_AMBITION:
-                new AmbitionController();
+                App.isLoggedIn(() => new AmbitionController(), () => new AmbitionController());
                 break;
 
             case App.CONTROLLER_DASHBOARD:
-                new DashboardController();
+                App.isLoggedIn(() => new DashboardController(), () => new DashboardController());
+
                 break;
 
             case App.CONTROLLER_ACCOUNTS:
-                new AccountsController();
+                App.isLoggedIn(() => new AccountsController(), () => new  LoginsiteController());
+
                 break;
 
             case App.CONTROLLER_SUBMITNEWSLETTER:
-                new SubmitNewslettersController();
+                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
+
                 break;
 
             case App.CONTROLLER_NEWSLETTER:
-                new NewsletterController();
+                App.isLoggedIn(() => new NewsletterController(), () => new NewsletterController());
                 break;
 
+            case App.CONTROLLER_REGISTER:
+                App.isLoggedIn(() => new registerController(), () => new LoginsiteController())
+
             case App.CONTROLLER_PARTNERS:
-                new PartnersController();
+                App.isLoggedIn(() => new PartnersController(), () => new PartnersController());
                 break;
 
             case App.CONTROLLER_LOGINSITE:
-                App.setCurrentController(name);
-                App.isLoggedIn(() => new LoginsiteController(), ()=> new LoginsiteController());
+                App.isLoggedIn(() => {
+                    this.handleLogout()
+                }, ()=>  {
+                    new LoginsiteController()
+                });
                 break;
 
             case App.CONTROLLER_SUBMITROADMAP:
-                new submitRoadmapController();
+                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
                 break;
 
             default:
@@ -179,7 +164,7 @@ export class App {
 
     /**
      * Looks at current URL in the browser to get current controller name
-     * @returns {string}
+     * @returns {{data: {[p: string]: string}, name: string}}
      */
     static getCurrentController() {
         const fullPath = location.hash.slice(1);
@@ -246,13 +231,13 @@ export class App {
         App.sessionManager.remove("username");
 
         //go to login screen
-        App.loadController(App.CONTROLLER_LOGIN);
+        App.loadController(App.CONTROLLER_DASHBOARD);
     }
 }
 
 window.addEventListener("hashchange", function() {
     App.dontSetCurrentController = true;
-    App.loadControllerFromUrl(App.CONTROLLER_WELCOME);
+    App.loadControllerFromUrl(App.CONTROLLER_DASHBOARD);
     App.dontSetCurrentController = false;
 });
 

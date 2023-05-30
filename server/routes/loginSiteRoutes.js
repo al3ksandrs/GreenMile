@@ -39,7 +39,7 @@ class loginSiteRoutes {
                 //if we find one record we know the user exists in users table
                 if (data.length === 1) {
                     //return just the username for now, never send password back!
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({"username": data[0].email});
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({"username": data[0].email, "password": data[0].password});
                 } else {
                     //wrong username
                     res.status(this.#errorCodes.AUTHORIZATION_ERROR_CODE).json({reason: "Gebruikersnaam of wachtwoord is verkeerd. Of bestaat niet!"});
