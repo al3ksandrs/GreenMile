@@ -468,7 +468,7 @@ class DashboardRoutes {
         this.#app.get("/map/getGroen", async (req, res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT result.opmerking, result.datum, result.coordinaatX, result.coordinaatY, type.naam FROM (SELECT * FROM gebied inner join groen ON gebied.Gebiedsnummer = groen.gebied_id) as result INNER JOIN type ON result.type_id = type.id"
+                    query: "SELECT result.id, result.opmerking, result.datum, result.coordinaatX, result.coordinaatY, type.naam FROM (SELECT * FROM gebied inner join groen ON gebied.Gebiedsnummer = groen.gebied_id) as result INNER JOIN type ON result.type_id = type.id"
                 })
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data: data});

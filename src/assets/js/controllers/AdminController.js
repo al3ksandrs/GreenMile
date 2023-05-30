@@ -109,7 +109,7 @@ export class adminController extends Controller {
         const greenObjectID = await this.#adminRepository.getGreenObject();
 
         for(let i = 0; greenObjectID.data.length > i; i++){
-            removeGreenObjectList.innerHTML += `<option value="`+ greenObjectID.data[i].id +`" data="`+ greenObjectID.data[i].id +`"><b>ID:</b> ` + greenObjectID.data[i].id + ` Coordinaat X: ` + greenObjectID.data[i].coordinaatX + `  CoordinaatY: ` + greenObjectID.data[i].coordinaatY +`  Gebied: ` + greenObjectID.data[i].gebied_id +`  Type: ` + greenObjectID.data[i].type_id +`  Datum: ` + greenObjectID.data[i].datum +`</option>`
+            removeGreenObjectList.innerHTML += `<option value="`+ greenObjectID.data[i].id +`" data="`+ greenObjectID.data[i].id +`"><b>ID:</b> ` + greenObjectID.data[i].id + ` Coordinaat X: ` + greenObjectID.data[i].coordinaatX + `  CoordinaatY: ` + greenObjectID.data[i].coordinaatY +`  Gebied: ` + greenObjectID.data[i].gebied_id +`  Type: ` + greenObjectID.data[i].type_id +`  Datum: ` + greenObjectID.data[i].datum.substring(0, 10) +`</option>`
         }
     }
 
@@ -213,7 +213,7 @@ export class adminController extends Controller {
             var groenMapObject = L.marker([groen.coordinaatX, groen.coordinaatY], {
                 title: groen.naam,
                 icon: greenIcon,
-            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking + "<br><b>Datum geplaatst: </b>" + String(groen.datum).substring(0, 10));
+            }).addTo(map).bindPopup("<b>ID: </b>" + groen.id + "<br><b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking + "<br><b>Datum geplaatst: </b>" + String(groen.datum).substring(0, 10));
         }
 
     }
