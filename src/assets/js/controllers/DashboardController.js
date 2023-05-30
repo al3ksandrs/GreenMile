@@ -134,6 +134,32 @@ export class DashboardController extends Controller {
             this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
             this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
             this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
+
+
+            if (apiValues.AQI > 3){
+                this.#dashboardView.querySelector("#progress-circle-aqi").style.stroke = "#FF4444"
+                this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FF4444"
+                this.#dashboardView.querySelector("#LKIvalue").style.color = "#FF4444"
+            }
+            if (apiValues.AQI > 3 && apiValues.AQI <7){
+                this.#dashboardView.querySelector("#progress-circle-aqi").style.stroke = "#FFD100"
+                this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FFF39C"
+                this.#dashboardView.querySelector("#LKIvalue").style.color = "#FFD100"
+            }
+
+
+            if (apiValues.PM25 >5 && apiValues.PM25 <10){
+                this.#dashboardView.querySelector("#progress-circle-pm25").style.stroke = "#FFD100"
+                this.#dashboardView.querySelector("#progress-circle-background-pm25").style.boxShadow = "1px 1px 0px 12px #FFF39C"
+                this.#dashboardView.querySelector("#tempValue").style.color = "#FFD100"
+            }
+            if (apiValues.PM25 > 10){
+                this.#dashboardView.querySelector("#progress-circle-pm25").style.stroke = "#FF4444"
+                this.#dashboardView.querySelector("#progress-circle-background-pm25").style.boxShadow = "1px 1px 0px 12px #FF4444"
+                this.#dashboardView.querySelector("#tempValue").style.color = "#FF4444"
+            }
+
+
         } catch (e) {
             console.log("Luchtmeetnet API  or database is currently unavailable")
             console.log(e)
