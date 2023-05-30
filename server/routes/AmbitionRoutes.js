@@ -12,13 +12,18 @@ class AmbitionRoutes {
         this.#removeRoadmapById()
         this.#submitRoadmap()
         this.#changeRoadmapItemById()
+        this.#getProgressValues()
     }
 
+    /**
+     * Endpoint to retrieve values for the roadmap
+     * @author kashif
+     */
     #getAmbitionDatabaseValues() {
         this.#app.get("/timeline", async (req,res) => {
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT id, jaar, maand, informatie, titel, date FROM roadmap"
+                    query: "SELECT id, jaar, maand, informatie, titel, `date` FROM roadmap"
                 });
 
                 //just give all data back as json, could also be empty
@@ -29,11 +34,15 @@ class AmbitionRoutes {
         });
     }
 
+    /**
+     * retrieves values from newsletter if to use for the roadmap
+     * @author kashif
+     */
     #getNewsletters(){
-        this.#app.get("/newsletter", async (req,res)=>{
+        this.#app.get("/timeline/newsletter", async (req,res)=>{
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT title, content, date, month, year FROM newsletter"
+                    query: "SELECT title, `date` FROM newsletter"
                 });
 
                 //just give all data back as json, could also be empty
@@ -43,6 +52,22 @@ class AmbitionRoutes {
             }
         });
     }
+    #getProgressValues(){
+        this.#app.get("/timeline/progress", async (req,res)=>{
+            try {
+                const data = await this.#databaseHelper.handleQuery({
+                    //type1 is treegarden 2 is facade
+                    query: "SELECT gebied_id, type_id, datum FROM groen"
+                });
+
+                //just give all data back as json, could also be empty
+                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+            } catch (e) {
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        });
+    }
+
 
     #removeRoadmapById() {
         this.#app.post("/roadmap/delete", async (req,res) => {

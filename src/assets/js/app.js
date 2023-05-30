@@ -147,7 +147,7 @@ export class App {
 
             case App.CONTROLLER_LOGINSITE:
                 App.setCurrentController(name);
-                App.isLoggedIn(() => new LoginsiteController(), ()=> LoginsiteController());
+                App.isLoggedIn(() => new LoginsiteController(), ()=> new LoginsiteController());
                 break;
 
             case App.CONTROLLER_SUBMITROADMAP:

@@ -4,13 +4,15 @@ export class AmbitionRepository{
     #networkManager;
     #ambitionDatabaseRoute;
     #newsletterRoute;
+    #progressRoute
     #deleteItemById;
     #submitRoadmapRoute;
     #changeRoadmapRoute;
 
     constructor() {
         this.#ambitionDatabaseRoute = "/timeline"
-        this.#newsletterRoute = "/newsletter"
+        this.#newsletterRoute = "/timeline/newsletter"
+        this.#progressRoute = "/timeline/progress"
         this.#deleteItemById = "/roadmap/delete/"
         this.#submitRoadmapRoute = "/roadmap/submit"
         this.#changeRoadmapRoute = "/roadmap/editById"
@@ -23,6 +25,9 @@ export class AmbitionRepository{
 
     findNewsletters (){
         return this.#networkManager.doRequest(this.#newsletterRoute, "GET")
+    }
+    findProgress (){
+        return this.#networkManager.doRequest(this.#progressRoute, "GET")
     }
 
     async removeItemById(id) {

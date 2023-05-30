@@ -97,7 +97,6 @@ export class submitRoadmapController extends Controller {
             this.#roadmapRepository.changeItem(id, newTitle.value, newContent.value)
             modal.classList.add("hidden")
             this.#submitRoadmapView.querySelector("#edit-succes").classList.remove("hidden")
-
         })
 
         this.#submitRoadmapView.querySelector("#close-modal").addEventListener("click", () => {
@@ -112,8 +111,13 @@ export class submitRoadmapController extends Controller {
     #submitNewRoadmapItem() {
         let title = this.#submitRoadmapView.querySelector("#roadmap-title")
         let content = this.#submitRoadmapView.querySelector("#roadmap-content")
-        this.#submitRoadmapView.querySelector("#submit-succes").classList.remove("hidden")
 
-        this.#roadmapRepository.submitItem(title.value, content.value)
+
+        if(title.value.length >= 10 && content.value.length >= 10) {
+            this.#roadmapRepository.submitItem(title.value, content.value)
+            this.#submitRoadmapView.querySelector("#submit-succes").classList.remove("hidden")
+        } else {
+            this.#submitRoadmapView.querySelector("#submit-failure").classList.remove("hidden")
+        }
     }
 }
