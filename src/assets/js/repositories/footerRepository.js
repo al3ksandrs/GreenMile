@@ -10,7 +10,9 @@ export class footerRepository {
         this.#networkManager = new NetworkManager();
     }
 
-    signUp(email) {
-        return this.#networkManager.doRequest(this.#signUpRoutes + email, "GET")
+    async signUp(email) {
+        return await this.#networkManager.doRequest(this.#signUpRoutes, "POST", {
+            "email": email
+        })
     }
 }

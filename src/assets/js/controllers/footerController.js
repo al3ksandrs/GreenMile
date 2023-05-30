@@ -23,7 +23,7 @@ export class footerController extends Controller {
 
         this.#footerView.querySelector("#signup-button").addEventListener("click", () => {
             if(this.#validateEmail(emailField.value)) {
-                this.#footerRepository.signUp(email)
+                this.#footerRepository.signUp(emailField)
                 emailField.value = "";
                 // errorText.classList.add("visually-hidden")
             } else {

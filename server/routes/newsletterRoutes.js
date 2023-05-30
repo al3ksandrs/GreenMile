@@ -18,11 +18,11 @@ class newsletterRoutes {
      * @author beerstj
      */
     #signUp() {
-        this.#app.get("/mailingList/signup/:email", async (req,res) => {
+        this.#app.get("/mailingList/signup", async (req,res) => {
             try {
                 const results = await this.#databaseHelper.handleQuery({
                     query: "INSERT INTO mailing_list (email) VALUES (?)",
-                    values: [req.params.email]
+                    values: [req.body.email]
                 })
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
@@ -37,13 +37,13 @@ class newsletterRoutes {
      * @author beerstj.
      */
     #submitNewsletter() {
-        this.#app.get("/mailinglist/submit/title/:title/content/:content", async (req,res) => {
+        this.#app.post("/mailinglist/submit", async (req,res) => {
             try {
                 const timeElapsed = Date.now();
                 const today = new Date(timeElapsed);
                 const results = await this.#databaseHelper.handleQuery( {
                     query: "INSERT INTO newsletter (title,content, date) VALUES (?,?,?)",
-                    values: [req.params.title, req.params.content, today.toISOString().substring(0,10)]
+                    values: [req.body.title, req.body.content, today.toISOString().substring(0,10)]
                 })
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
@@ -58,7 +58,7 @@ class newsletterRoutes {
      * @author beerstj
      */
     #sendNewsletter() {
-        this.#app.post("/mailingList/send/email/:email/title/:title/content/:content", async (req,res) => {
+        this.#app.post("/mailingList/send", async (req,res) => {
             let data2;
             await fetch("https://api.hbo-ict.cloud/mail", {
                 method: "post",

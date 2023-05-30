@@ -1,6 +1,5 @@
 import {Controller} from "./controller.js";
 import {AdminRepository} from "../repositories/adminRepository.js";
-import {App} from "../app.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
 export class adminController extends Controller {
@@ -21,7 +20,6 @@ export class adminController extends Controller {
         this.#createAdminView.querySelector("#submitGreenInputForm").addEventListener("click", (event) => this.#handleAddGreen(event));
         this.#createAdminView.querySelector("#submitAddGreenTypeForm").addEventListener("click", (event) => this.#handleAddGreenType(event));
         this.#createAdminView.querySelector("#submitRemoveGreenTypeForm").addEventListener("click", (event) => this.#removeGreenType(event));
-        this.#createAdminView.querySelector("#submitremoveGreenAreaForm").addEventListener("click", (event) => this.#removeGreenArea(event));
         this.#createAdminView.querySelector("#submitremoveGreenObjectForm").addEventListener("click", (event) => this.#removeGreenObject(event));
 
 
@@ -33,27 +31,21 @@ export class adminController extends Controller {
     }
 
     // remove green object @author Aleksandrs
-    #removeGreenObject(){
+    #removeGreenObject() {
         const removeGreenObjectList = this.#createAdminView.querySelector("#removeGreenObjectList");
-        const selectedRemoveGreenObject = removeGreenObjectList.selectedIndex;
+        const selectedRemoveGreenObject = removeGreenObjectList.options[removeGreenObjectList.selectedIndex];
+        const selectedGreenObjectID = selectedRemoveGreenObject.getAttribute("data");
 
-        this.#adminRepository.removeGreenObject(selectedRemoveGreenObject);
+        this.#adminRepository.removeGreenObject(selectedGreenObjectID);
     }
 
     // remove green type @author Aleksandrs
     #removeGreenType(){
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
-        const selectedRemoveType = removeTypeList.selectedIndex;
+        const selectedRemoveType = removeTypeList.options[removeTypeList.selectedIndex];
+        const selectedTypeID = selectedRemoveType.getAttribute("data");
 
-        this.#adminRepository.removeGreenType(selectedRemoveType);
-    }
-
-    // remove green area @author Aleksandrs
-    #removeGreenArea(){
-        const removeGreenList = this.#createAdminView.querySelector("#removeGreenAreaList");
-        const selectedRemoveArea = removeGreenList.selectedIndex;
-
-        this.#adminRepository.removeGreenArea(selectedRemoveArea);
+        this.#adminRepository.removeGreenType(selectedTypeID);
     }
 
     // add green object form @author Aleksandrs
@@ -65,29 +57,38 @@ export class adminController extends Controller {
         const type_id = this.#createAdminView.querySelector("#typeList");
         const selectedType = type_id.selectedIndex;
 
-        this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType);
+        // get date in format of yyyy-mm-dd so we can save it in the database
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        var day = String(currentDate.getDate()).padStart(2, '0');
+
+        var formattedDate = year + '-' + month + '-' + day;
+
+        console.log(formattedDate)
+
+        this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType, formattedDate);
     }
 
     // add green type @author Aleksandrs
     #handleAddGreenType() {
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
 
-        console.log(type);
-
-        this.#adminRepository.addGreenType(type);
+        if( type == null || type == "" ){
+            alert("Type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+        } else {
+            this.#adminRepository.addGreenType(type);
+        }
     }
 
     // refresh areas for lists @author Aleksandrs
     async #handleAreaRefresh(){
-
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
         const removeAreaList = this.#createAdminView.querySelector("#removeGreenAreaList");
         const areaID = await this.#adminRepository.getArea();
 
         for(let i = 0; areaID.data.length > i; i++){
-            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
-            removeAreaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`
-        }
+            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`}
     }
 
     // refresh green types for lists @author Aleksandrs
@@ -203,15 +204,16 @@ export class adminController extends Controller {
 
         legend.addTo(map);
 
-        // add green objects from database to the map @author Aleksandrs
+        // add green objects on the map with their information in a popup @author Aleksandrs
         const groenData = await this.#dashboardRepository.getGroen();
 
         for (let i = 0; i < groenData.data.length; i++) {
-            let groen = groenData.data[i]
+            let groen = groenData.data[i];
+
             var groenMapObject = L.marker([groen.coordinaatX, groen.coordinaatY], {
                 title: groen.naam,
                 icon: greenIcon,
-            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking);
+            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking + "<br><b>Datum geplaatst: </b>" + String(groen.datum).substring(0, 10));
         }
 
     }

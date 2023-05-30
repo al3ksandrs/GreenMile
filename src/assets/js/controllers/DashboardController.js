@@ -425,7 +425,7 @@ export class DashboardController extends Controller {
             iconSize: [30, 40], // size of the icon
         });
 
-        //map legend
+        // map legend so its easier to see what things on the map mean @author Aleksandrs
         var legend = L.control({position: "bottomleft"});
 
         legend.onAdd = function (map) {
@@ -441,16 +441,16 @@ export class DashboardController extends Controller {
 
         legend.addTo(map);
 
+        // add green objects on the map with their information in a popup @author Aleksandrs
         const groenData = await this.#dashboardRepository.getGroen();
 
-
         for (let i = 0; i < groenData.data.length; i++) {
-            let groen = groenData.data[i]
+            let groen = groenData.data[i];
+
             var groenMapObject = L.marker([groen.coordinaatX, groen.coordinaatY], {
                 title: groen.naam,
                 icon: greenIcon,
-            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking);
+            }).addTo(map).bindPopup("<b>Type: </b>" + groen.naam + "<br><b>Gebied: </b>" + groen.opmerking + "<br><b>Datum geplaatst: </b>" + String(groen.datum).substring(0, 10));
         }
-
     }
 }

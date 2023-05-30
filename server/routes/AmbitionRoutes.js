@@ -45,13 +45,13 @@ class AmbitionRoutes {
     }
 
     #removeRoadmapById() {
-        this.#app.get("/roadmap/delete/:id", async (req,res) => {
+        this.#app.post("/roadmap/delete", async (req,res) => {
             try {
                 let results = await this.#databaseHelper.handleQuery({
                     query: "DELETE FROM Roadmap WHERE id= ?",
-                    values: [req.params.id]
+                    values: [req.body.id]
                 });
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({status:"succes"})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
@@ -59,16 +59,16 @@ class AmbitionRoutes {
     }
 
     #submitRoadmap() {
-        this.#app.get("/roadmap/submit/title/:title/content/:content", async (req, res) => {
+        this.#app.post("/roadmap/submit", async (req, res) => {
             let months = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
             let date = new Date(Date.now())
             try {
                 let results = await this.#databaseHelper.handleQuery({
                     query: "INSERT INTO Roadmap (jaar, maand, titel, informatie, date)" +
                         "VALUES (?,?,?,?,?)",
-                    values: [date.toISOString().substring(0,4), months[date.getMonth()], req.params.title, req.params.content, date]
+                    values: [date.toISOString().substring(0,4), months[date.getMonth()], req.body.title, req.body.content, date]
                 })
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(results)
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({status:"succes"})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }
@@ -76,14 +76,14 @@ class AmbitionRoutes {
     }
 
     #changeRoadmapItemById() {
-        this.#app.get("/roadmap/id/:id/title/:title/content/:content", async (req, res) => {
+        this.#app.post("/roadmap/editById", async (req, res) => {
             try {
                 let data = await this.#databaseHelper.handleQuery({
                     query: "UPDATE roadmap SET titel = ?, informatie = ? WHERE id = ?;",
-                    values: [req.params.title, req.params.content, req.params.id]
+                    values: [req.body.title, req.body.content, req.body.id]
                 })
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data)
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({status:"succes"})
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
             }

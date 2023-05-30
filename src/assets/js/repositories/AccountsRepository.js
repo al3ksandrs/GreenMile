@@ -8,7 +8,7 @@ export class AccountsRepository {
 
     constructor() {
         this.#allAccountsRoute = "/accountsOverview";
-        this.#removeAccountRoute =  "/delete/"
+        this.#removeAccountRoute =  "/account/delete"
 
         this.#networkManager = new NetworkManager();
     }
@@ -18,6 +18,8 @@ export class AccountsRepository {
     }
 
     removeAccount(accountId) {
-        return this.#networkManager.doRequest(this.#removeAccountRoute + accountId, "GET")
+        return this.#networkManager.doRequest(this.#removeAccountRoute, "POST", {
+            "accountId": accountId
+        })
     }
 }

@@ -19,7 +19,6 @@ class adminRoutes {
         this.#refreshGreenObjectList();
         this.#addGreen();
         this.#removeGreenType();
-        this.#removeGreenArea();
         this.#removeGreenObject();
     }
 
@@ -36,25 +35,6 @@ class adminRoutes {
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
 
-            } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
-            }
-
-        });
-    }
-
-    #removeGreenArea(){
-        this.#app.post("/removeGreenAreaRoute", async(req, res) => {
-
-            const area = req.body.area;
-
-            try {
-                let data = await this.#databaseHelper.handleQuery( {
-                    query: "DELETE FROM gebied WHERE Gebiedsnummer = ?",
-                    values: [area]
-                });
-
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
 
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
@@ -62,6 +42,8 @@ class adminRoutes {
 
         });
     }
+
+
 
     #removeGreenObject(){
         this.#app.post("/removeGreenObjectRoute", async(req, res) => {
@@ -83,47 +65,55 @@ class adminRoutes {
         });
     }
 
-    #addGreen() {
-        this.#app.post("/adminAddGreen", async(req, res) => {
 
+    #addGreen() {
+        this.#app.post("/adminAddGreen", async (req, res) => {
             const coordinaatX = req.body.coordinaatX;
             const coordinaatY = req.body.coordinaatY;
             const gebied_id = req.body.gebied_id;
             const type_id = req.body.type_id;
+            const datum = req.body.datum;
 
             try {
-                let data = await this.#databaseHelper.handleQuery( {
-                    query: "INSERT INTO groen(coordinaatX, coordinaatY, gebied_id, type_id) VALUES (?,?,?,?)",
-                    values: [coordinaatX, coordinaatY, gebied_id, type_id]
+                // insert data
+                await this.#databaseHelper.handleQuery({
+                    query: "INSERT INTO groen(coordinaatX, coordinaatY, gebied_id, type_id, datum) VALUES (?,?,?,?,?)",
+                    values: [coordinaatX, coordinaatY, gebied_id, type_id, datum]
                 });
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+                // reset the auto-increment value in two SQL statements (or else it might skip numbers in the id when u delete something and break the auto-increment)
+                await this.#databaseHelper.handleQuery({
+                    query: "ALTER TABLE groen AUTO_INCREMENT = (SELECT MAX(id) + 1 FROM groen)"
+                });
 
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({ success: true });
             } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({ reason: e });
             }
-
         });
     }
 
 
     #addGreenType() {
-        this.#app.post("/admin", async(req, res) => {
-
+        this.#app.post("/admin", async (req, res) => {
             const type = req.body.type;
 
             try {
-                let data = await this.#databaseHelper.handleQuery( {
+                // Insert the data
+                await this.#databaseHelper.handleQuery({
                     query: "INSERT INTO type(naam) VALUES (?)",
                     values: [type]
                 });
 
-                res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
+                // reset the auto-increment value in two SQL statements (or else it might skip numbers in the id when u delete something and break the auto-increment)
+                await this.#databaseHelper.handleQuery({
+                    query: "ALTER TABLE type AUTO_INCREMENT = (SELECT MAX(id) + 1 FROM type)"
+                });
 
+                res.status(this.#errorCodes.HTTP_OK_CODE).json({ success: true });
             } catch (e) {
-                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
+                res.status(this.#errorCodes.BAD_REQUEST_CODE).json({ reason: e });
             }
-
         });
     }
 
@@ -133,6 +123,10 @@ class adminRoutes {
             try {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "SELECT Gebiedsnummer, opmerking FROM gebied",
+                });
+
+                await this.#databaseHelper.handleQuery({
+                    query: "ALTER TABLE groen AUTO_INCREMENT = 1",
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});
@@ -149,6 +143,10 @@ class adminRoutes {
             try {
                 let data = await this.#databaseHelper.handleQuery( {
                     query: "SELECT id, naam FROM type",
+                });
+
+                await this.#databaseHelper.handleQuery({
+                   query: "ALTER TABLE type AUTO_INCREMENT = 1",
                 });
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({data:data});

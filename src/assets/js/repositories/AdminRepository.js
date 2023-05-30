@@ -7,7 +7,6 @@ export class AdminRepository {
     #typeListRoute;
     #addGreenRoute;
     #removeGreenTypeRoute;
-    #removeGreenAreaRoute;
     #greenObjectRoute;
     #removeGreenObjectRoute;
 
@@ -18,7 +17,6 @@ export class AdminRepository {
         this.#typeListRoute = "/typeList"
         this.#addGreenRoute = "/adminAddGreen"
         this.#removeGreenTypeRoute = "/removeGreenTypeRoute"
-        this.#removeGreenAreaRoute = "/removeGreenAreaRoute"
         this.#removeGreenObjectRoute = "/removeGreenObjectRoute"
         this.#greenObjectRoute = "/greenObjectList"
     }
@@ -29,21 +27,15 @@ export class AdminRepository {
         });
     }
 
-    async removeGreenArea(area){
-        return await this.#networkmanager.doRequest(this.#removeGreenAreaRoute, "POST", {
-            "area": area
-        });
-    }
-
     async removeGreenObject(greenObject){
         return await this.#networkmanager.doRequest(this.#removeGreenObjectRoute, "POST", {
             "greenObject": greenObject
         });
     }
 
-    async addGreen(coordinaatX, coordinaatY, gebied_id, type_id) {
+    async addGreen(coordinaatX, coordinaatY, gebied_id, type_id, datum) {
         return await this.#networkmanager.doRequest(this.#addGreenRoute, "POST", {
-            "coordinaatX": coordinaatX, "coordinaatY": coordinaatY, "gebied_id" : gebied_id, "type_id" : type_id
+            "coordinaatX": coordinaatX, "coordinaatY": coordinaatY, "gebied_id" : gebied_id, "type_id" : type_id, "datum" : datum
         });
     }
 
