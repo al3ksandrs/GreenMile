@@ -47,11 +47,16 @@ export class LoginsiteController extends Controller{
 
         try{
             const user = await this.#loginSiteRepository.createLogin(email, password);
-
+            // const loginStatusElement = document.querySelector('.login_status');
 
             //let the session manager know we are logged in by setting the email, never set the password in localstorage
             App.sessionManager.set("email", user.email);
             App.loadController(App.CONTROLLER_WELCOME);
+
+
+            // loginStatusElement.classList.remove('login_status');
+            // loginStatusElement.classList.add('login_statusLogged');
+
             console.log(user)
         } catch(error) {
             //if unauthorized error code, show error message to the user
@@ -63,7 +68,3 @@ export class LoginsiteController extends Controller{
         }
     }
 }
-
-
-
-

@@ -11,9 +11,13 @@ footer {
     width: 100%;
 }
 
-.login_status {
-    display: none;
-}
+/*.login_status {*/
+/*    display: none;*/
+/*}*/
+
+/*.login_statusLogged {*/
+/*    display: block;*/
+/*}*/
 
 .navbar {
     background-color: #2F72B9;

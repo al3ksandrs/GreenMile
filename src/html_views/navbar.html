@@ -1,44 +1,47 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light position: fixed">
     <div class="container">
         <a class="navbar-brand mb-0 h1" href="#">The Green Mile</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-controller="ambition" href="#">De Ambitie</a>
+                    <a class="nav-link" id="ambition" data-controller="ambition" href="#">De Ambitie</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-controller="faq" href="#">FAQ</a>
+                    <a class="nav-link" id="faq" data-controller="faq" href="#">FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-controller="dashboard" href="#">Dashboard</a>
+                    <a class="nav-link" id="dashboard" data-controller="dashboard" href="#">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link login_status" data-controller="admin" href="#">Data invoeren</a>
+                    <a class="nav-link" id="newsletter" data-controller="newsletter" href="#">Nieuwsbrieven</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link login_status" data-controller="accounts" href="#">Accounts overview</a>
+                    <a class="nav-link" id="partner" data-controller="partners" href="#">Partners</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link login_status" data-controller="accounts" href="#">Accounts aanmaken</a>
+                <li id="newsLetterLogin" class="nav-item">
+<!--                    <a class="nav-link" id="newsLetterLogIn" data-controller="submitNewsletter" href="#">Nieuwsbrief invoeren</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-controller="loginsite" href="#">Inloggen</a>
+                <li id="dataLogIn" class="nav-item">
+<!--                    <a class="nav-link login_status" id="dataLogIn" data-controller="admin" href="#">Data invoeren</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link login_status" data-controller="submitNewsletter" href="#">Nieuwsbrief invoeren</a>
+                <li id="accountLogIn" class="nav-item">
+<!--                    <a class="nav-link login_status" id="accountLogIn" data-controller="accounts" href="#">Accounts overview</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-controller="newsletter" href="#">Nieuwsbrieven</a>
+                <li id="registerLogIn" class="nav-item">
+<!--                    <a class="nav-link login_status" id="registerLogIn" data-controller="accounts" href="#">Accounts aanmaken</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-controller="partners" href="#">Partners</a>
+                <li id="roadmapLogIn" class="nav-item">
+<!--                    <a class="nav-link login_status" id="roadmapLogIn" data-controller="submitRoadmap" href="#">Roadmap aanpassen</a>-->
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link login_status" data-controller="submitRoadmap" href="#">Roadmap aanpassen</a>
+
+                <li id="logInStatus" class="nav-item">
+<!--                    <a class="nav-link" id="logInStatus" data-controller="loginsite" href="#">Inloggen</a>-->
                 </li>
+                <li id="logOutStatus" class="nav-item"></li>
             </ul>
         </div>
     </div>
