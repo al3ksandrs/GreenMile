@@ -4,7 +4,7 @@
  */
 
 
-class UsersRoutes {
+class loginSiteRoutes {
     #errorCodes = require("../framework/utils/httpErrorCodes")
     #databaseHelper = require("../framework/utils/databaseHelper")
     #cryptoHelper = require("../framework/utils/cryptoHelper");
@@ -32,7 +32,7 @@ class UsersRoutes {
 
             try {
                 const data = await this.#databaseHelper.handleQuery({
-                    query: "SELECT email, wachtwoord FROM gebruiker WHERE email = ? AND wachtwoord = ?",
+                    query: "SELECT email, password FROM gebruiker WHERE email = ? AND password = ?",
                     values: [email, password]
                 });
 
@@ -51,4 +51,4 @@ class UsersRoutes {
     }
 }
 
-module.exports = UsersRoutes
+module.exports = loginSiteRoutes
