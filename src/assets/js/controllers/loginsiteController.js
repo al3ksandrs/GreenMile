@@ -1,49 +1,69 @@
 /**
- * @author Anwaris2
- * This is the log in controller used for the site.
+ *  Controller responsible for all events in login view
+ *  @author Pim Meijer & Sakhi Anwari
  */
-import {Controller} from "./controller.js";
-import {LoginSiteRepository} from "../repositories/loginSiteRepository.js";
+
 import {App} from "../app.js";
+import {LoginSiteRepository} from "../repositories/loginSiteRepository.js";
+import {Controller} from "./controller.js";
 
 
-// import {Login}
-
-export class LoginsiteController extends Controller {
-    #loginsiteView;
-    #loginSiteRepository;
+export class LoginsiteController extends Controller{
+    //# is a private field in Javascript
+    #loginSiteRepository
+    #loginsiteView
+    #app
+    #setupview
 
     constructor() {
         super();
         this.#loginSiteRepository = new LoginSiteRepository();
-        this.#setupview();
+        this.#setupView();
     }
 
+    /**
+     * Loads contents of desired HTML file into the index.html .content div
+     * @returns {Promise<void>}
+     */
+    async #setupView() {
+        //await for when HTML is loaded, never skip this method call in a controller
+        this.#loginsiteView = await super.loadHtmlIntoContent("html_views/loginsite.html")
 
-    async #setupview() {
-        this.#loginsiteView = await super.loadHtmlIntoContent("html_views/loginsite.html");
-        this.#loginsiteView.querySelector("#loginButton").addEventListener("click", (event) => this.#processLogin(event));
+        //from here we can safely get elements from the view via the right getter
+        this.#loginsiteView.querySelector(".submit-btn").addEventListener("click", event => this.#processLogin(event));
+
     }
-
-
+    /**
+     * Async function that does a login request via repository
+     * @param event
+     */
     async #processLogin(event) {
+        //prevent actual submit and page refresh
         event.preventDefault();
 
-        const email = this.#loginsiteView.querySelector("#username").value;
+        //get the input field elements from the view and retrieve the value
+        const email = this.#loginsiteView.querySelector("#email").value;
         const password = this.#loginsiteView.querySelector("#password").value;
 
-        const errorBox = this.#loginsiteView.querySelector(".error")
-        if (username.length === 0 || password.length === 0) {
-            errorBox.innerHTML = "Gebruikersnaam en wachtwoord moeten ingevuld zijn!";
-        } else {
-            errorBox.innerHTML = "";
+        try{
+            const user = await this.#loginSiteRepository.createLogin(email, password);
+
+
+            //let the session manager know we are logged in by setting the email, never set the password in localstorage
+            App.sessionManager.set("email", user.email);
+            App.loadController(App.CONTROLLER_WELCOME);
+            console.log(user)
+        } catch(error) {
+            //if unauthorized error code, show error message to the user
+            if(error.code === 401) {
+                this.#loginsiteView.querySelector(".error").innerHTML = error.reason
+            } else {
+                console.error(error);
+            }
         }
-
-        
-        let response = await this.#loginSiteRepository.createLogin(email, password)
-        console.log(response)
-
-
-
     }
 }
+
+
+
+

@@ -1,17 +1,19 @@
-import { NetworkManager } from "../framework/utils/networkManager.js";
+/**
+ * repository for entity regiser also interacts with Networkmanager
+ */
+import {NetworkManager} from "../framework/utils/networkManager.js";
 
 export class registerRepository {
-    #networkmanager;
-    #registerRoute;
+    #networkManager;
+    #route;
 
     constructor() {
-        this.#networkmanager = new NetworkManager();
-        this.#registerRoute = "/register";
+        this.#route = "/register";
+        this.#networkManager = new NetworkManager();
     }
 
-    async addRegistration(type){
-        return await this.#networkmanager.doRequest(this.#registerRoute, "POST", {
-            "type": type});
+    createAccount(rank, email, password, date) {
+        return this.#networkManager.doRequest(this.#route,
+            "POST", {rang: rank, email: email, password: password, registratieDatum: date})
     }
-
 }

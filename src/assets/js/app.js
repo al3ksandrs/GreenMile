@@ -7,16 +7,15 @@
  * @author Lennard Fonteijn & Pim Meijer
  */
 
-import { SessionManager } from "./framework/utils/sessionManager.js"
-// import { LoginController } from "./controllers/loginController.js"
-import { LoginsiteController } from "./controllers/loginsiteController.js"
-import { NavbarController }  from "./controllers/navbarController.js"
-import { UploadController }  from "./controllers/uploadController.js"
-import { WelcomeController }  from "./controllers/welcomeController.js"
-import { faqController } from "./controllers/FaqController.js";
-import { registerController } from "./controllers/registerController.js";
-import { adminController} from "./controllers/AdminController.js";
-import { AmbitionController } from "./controllers/AmbitionController.js";
+import {SessionManager } from "./framework/utils/sessionManager.js"
+import {LoginsiteController } from "./controllers/loginsiteController.js"
+import {registerController } from "./controllers/registerController.js"
+import {NavbarController }  from "./controllers/navbarController.js"
+import {UploadController }  from "./controllers/uploadController.js"
+import {WelcomeController }  from "./controllers/welcomeController.js"
+import {faqController } from "./controllers/FaqController.js";
+import {adminController} from "./controllers/AdminController.js";
+import {AmbitionController } from "./controllers/AmbitionController.js";
 import {DashboardController} from "./controllers/DashboardController.js";
 import {AccountsController} from "./controllers/AccountsController.js";
 import {footerController} from "./controllers/footerController.js";
@@ -92,9 +91,15 @@ export class App {
         App.setCurrentController(name, controllerData);
         
         switch (name) {
-            // case App.CONTROLLER_LOGIN:
-            //     App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
-            //     break;
+            case App.CONTROLLER_REGISTER:
+                // App.setCurrentController()
+                new registerController();
+                // App.isLoggedIn(() => new registerController(), () => new registerController());
+            break;
+
+            case App.CONTROLLER_LOGIN:
+                App.isLoggedIn(() => new WelcomeController(), () => new LoginController());
+                break;
 
             case App.CONTROLLER_WELCOME:
                 App.isLoggedIn(() => new DashboardController(), () => new DashboardController());

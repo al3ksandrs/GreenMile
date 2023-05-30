@@ -1,6 +1,6 @@
 /**
  * Router file voor het bijhouden van registraties aan de database
- * @author Anouar Tarahbi
+ * @author Sakhi Anwari
  */
 
 class registerRoute {
@@ -11,32 +11,26 @@ class registerRoute {
 
     constructor(app) {
         this.#app = app;
-
         this.#register();
     }
 
     #register() {
-
         this.#app.post("/register", async (req, res) => {
-            const username = req.body.username;
-            const password = req.body.password;
             try {
-                const data = await this.#databaseHelper.handleQuery({
-                    query: "INSERT INTO users(username, password) VALUES (?, ?)",
-                    values: [username, password]
+                let data = await this.#databaseHelper.handleQuery({
+                    query: "INSERT INTO gebruiker (rang, email, password, registratieDatum) VALUES (?, ?, ?, ?)",
+                    values: [req.body.rang, req.body.email, req.body.password, req.body.registratieDatum]
                 });
-            
 
-                if(data.insertId) {
+                if (data.insertId) {
                     res.status(this.#httpErrorCodes.HTTP_OK_CODE).json({id: data.insertId});
-                } 
+                }
 
-        } catch(e) {
-            res.status(this.#httpErrorCodes.BAD_REQUEST_CODE).json({reason: e})
-        }
-    });
-}
-
+            } catch (e) {
+                res.status(this.#httpErrorCodes.BAD_REQUEST_CODE).json({reason: e})
+            }
+        });
+    }
 }
 
 module.exports = registerRoute;

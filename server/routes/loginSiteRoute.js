@@ -18,7 +18,7 @@ class UsersRoutes {
 
         //call method per route for the users entity
         this.#login()
-    }
+     }
 
     /**
      * Checks if passed username and password are found in db, if so let the front-end know
@@ -36,13 +36,13 @@ class UsersRoutes {
                     values: [email, password]
                 });
 
-                //if we founnd one record we know the user exists in users table
+                //if we find one record we know the user exists in users table
                 if (data.length === 1) {
                     //return just the username for now, never send password back!
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({"username": data[0].email});
                 } else {
                     //wrong username
-                    res.status(this.#errorCodes.AUTHORIZATION_ERROR_CODE).json({reason: "Wrong username or password"});
+                    res.status(this.#errorCodes.AUTHORIZATION_ERROR_CODE).json({reason: "Gebruikersnaam of wachtwoord is verkeerd. Of bestaat niet!"});
                 }
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});

@@ -12,12 +12,19 @@
         <div class="form-box">
             <h1>Registeren</h1>
             <form id='register' class='input-group-register'>
-                <input id="usernameRegister" type='text' class='input-field' name="username"
-                    placeholder='Gebruikersnaam' required="required">
-                <input id="emailRegister" type='email' class='input-field' name="email" placeholder='E-mail'
+                <input id="emailRegister" type='email' class='input-field' name="email"
+                       placeholder='E-mail'
                     required="required">
                 <input id="passwordRegister" type='password' class='input-field' name="Wachtwoord"
                     placeholder='Wachtwoord' required="required">
+                <input id="registerDate" type='date' class='input-field' name="Registratie datum"
+                       required="required">
+                <select class="target" id="rank">
+                    <option value="selected" selected="selected">Kies rol</option>
+                    <option value="0" >Student</option>
+                    <option value="1" >Admin</option>
+                </select>
+                <div class="error"></div>
                 <button id="buttonRegister" type='submit' class='submit-btn'>Register</button>
             </form>
         </div>
