@@ -83,6 +83,12 @@
     font-size: 20px;
 }
 
+.pass {
+    color: #058c42;
+    font-size: 20px;
+}
+
+
 #login {
     left: 50px;
 }

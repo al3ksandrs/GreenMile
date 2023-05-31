@@ -68,7 +68,7 @@ export class AccountsController extends Controller {
         let rank;
         switch (account.rang) {
             case 0:
-                rank = "Invoerder"
+                rank = "Student"
                 break;
             case 1:
                 rank = "Administrator"

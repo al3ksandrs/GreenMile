@@ -1,5 +1,5 @@
 /**
- * Router file voor het bijhouden van registraties aan de database
+ * Router file for registering an account and puttinng it in the database
  * @author Sakhi Anwari
  */
 

@@ -29,6 +29,8 @@ export class registerController extends Controller {
         const password = this.#createRegisterView.querySelector("#passwordRegister").value;
         const registerDate = this.#createRegisterView.querySelector("#registerDate").value;
         const errorBox = this.#createRegisterView.querySelector(".error");
+        const passBox = this.#createRegisterView.querySelector(".pass");
+
 
         if (email.length === 0 || password.length === 0) {
             errorBox.innerHTML = "Velden mogen niet leeg zijn!"
@@ -38,6 +40,8 @@ export class registerController extends Controller {
         try {
             const data = await this.#registerRepository.createAccount(rank, email, password, registerDate);
             console.log(data);
+            passBox.innerHTML = "Account succesvol aangemaakt!"
+            // window.alert("Account succesvol aangemaakt!");
         } catch (e) {
 
         }
