@@ -68,7 +68,7 @@ export class NavbarController extends Controller {
 
             let navAnchors = this.#navbarView.querySelectorAll(".nav-item")
             for (let i = 0; i < navAnchors.length; i++) {
-                if(i >= 6) {
+                if(i >= 5) {
                     navAnchors[i].classList.remove("hidden")
                 }
             }
@@ -79,7 +79,7 @@ export class NavbarController extends Controller {
 
             let navAnchors = this.#navbarView.querySelectorAll(".nav-item")
             for (let i = 0; i < navAnchors.length; i++) {
-                if(i >= 6) {
+                if(i >= 5) {
                     navAnchors[i].classList.add("hidden")
                 }
             }

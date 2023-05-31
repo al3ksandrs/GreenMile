@@ -34,6 +34,8 @@ export class DashboardController extends Controller {
     #PM25weeks
     #PM25months
 
+    #pointBackGroundColor
+
     constructor() {
         super();
         this.#setupView();
@@ -62,6 +64,8 @@ export class DashboardController extends Controller {
 
         await this.#loadDashboardValues()
 
+        this.#pointBackGroundColor = ["#058C42"]
+
         //Initializes the main chart.
         this.#dashboardChart = new Chart(this.#chartCanvas, {
             type: 'line',
@@ -70,6 +74,8 @@ export class DashboardController extends Controller {
                 datasets: [{
                     label: 'null',
                     data: [null, null, null, null],
+                    pointBorderColor: this.#pointBackGroundColor,
+                    pointBackgroundColor: this.#pointBackGroundColor
                 },]
             },
             options: {
@@ -136,24 +142,24 @@ export class DashboardController extends Controller {
             this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
 
 
-            if (apiValues.AQI > 3){
+            if (apiValues.AQI > 3) {
                 this.#dashboardView.querySelector("#progress-circle-aqi").style.stroke = "#FF4444"
                 this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FF4444"
                 this.#dashboardView.querySelector("#LKIvalue").style.color = "#FF4444"
             }
-            if (apiValues.AQI > 3 && apiValues.AQI <7){
+            if (apiValues.AQI > 3 && apiValues.AQI < 7) {
                 this.#dashboardView.querySelector("#progress-circle-aqi").style.stroke = "#FFD100"
                 this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FFF39C"
                 this.#dashboardView.querySelector("#LKIvalue").style.color = "#FFD100"
             }
 
 
-            if (apiValues.PM25 >5 && apiValues.PM25 <10){
+            if (apiValues.PM25 > 5 && apiValues.PM25 < 10) {
                 this.#dashboardView.querySelector("#progress-circle-pm25").style.stroke = "#FFD100"
                 this.#dashboardView.querySelector("#progress-circle-background-pm25").style.boxShadow = "1px 1px 0px 12px #FFF39C"
                 this.#dashboardView.querySelector("#tempValue").style.color = "#FFD100"
             }
-            if (apiValues.PM25 > 10){
+            if (apiValues.PM25 > 10) {
                 this.#dashboardView.querySelector("#progress-circle-pm25").style.stroke = "#FF4444"
                 this.#dashboardView.querySelector("#progress-circle-background-pm25").style.boxShadow = "1px 1px 0px 12px #FF4444"
                 this.#dashboardView.querySelector("#tempValue").style.color = "#FF4444"
@@ -284,12 +290,27 @@ export class DashboardController extends Controller {
         }
 
         if (!this.#currentlyComparing) {
+            this.#dashboardChart.data.labels = object.labels // labels under the graph
             this.#dashboardChart.data.datasets[0].data = object.data; // data in the chart
             this.#dashboardChart.data.datasets[0].label = object.label; // label (title) of the graph
             this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
             this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
 
-            this.#dashboardChart.data.labels = object.labels // labels under the graph
+            // if (this.#dashboardView.querySelector(".shadow").id === "PM25Circle") {
+            //     for (let i = 0; i < this.#dashboardChart.data.datasets[0].data.length; i++) {
+            //         if(this.#dashboardChart.data.datasets[0].data[i] >= 5 && this.#dashboardChart.data.datasets[0].data[i]  <= 10) {
+            //             console.log("GEEl: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
+            //             this.#pointBackGroundColor.push("#FFD100")
+            //         }else if (this.#dashboardChart.data.datasets[0].data[i] >= 10) {
+            //             console.log("ROOD: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
+            //             this.#pointBackGroundColor.push("#FF4444")
+            //         } else {
+            //             console.log("GROEN: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
+            //             this.#pointBackGroundColor.push("#058C42")
+            //         }
+            //     }
+            // }
+
         } else {
             // if the comparisonChart is not yet in the datasets array, it will add it.
             if (!this.#dashboardChart.data.datasets.includes(comparisonChart)) {
@@ -480,3 +501,4 @@ export class DashboardController extends Controller {
         }
     }
 }
+

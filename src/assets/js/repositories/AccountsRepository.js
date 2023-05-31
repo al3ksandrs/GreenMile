@@ -13,8 +13,8 @@ export class AccountsRepository {
         this.#networkManager = new NetworkManager();
     }
 
-    loadAllAccounts() {
-        return this.#networkManager.doRequest(this.#allAccountsRoute, "GET");
+    async loadAllAccounts() {
+        return await this.#networkManager.doRequest(this.#allAccountsRoute, "GET");
     }
 
     removeAccount(accountId) {

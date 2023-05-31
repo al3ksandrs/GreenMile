@@ -134,7 +134,7 @@ class DashboardRoutes {
                     label: "Fijnstof (PM25) gemiddelde van de afgelopen " + text,
                     data: array,
                     labels: this.#getLabels(timespan),
-                    color: "#4ADEDE"
+                    color: "#FFD100"
                 })
             })
         })
@@ -282,11 +282,11 @@ class DashboardRoutes {
             let color;
             // Switch to change the greentype, used in the labels
             switch (req.body.type_id) {
-                case "1": // String because req.params.type_id is a string
+                case 1: // String because req.params.type_id is a string
                     this.#greenType = "Boomtuinen"
                     color = "#de4ab9"
                     break;
-                case "2":
+                case 2:
                     this.#greenType = "Geveltuinen"
                     color = "#058C42"
                     break;
