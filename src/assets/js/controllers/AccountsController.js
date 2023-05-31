@@ -80,10 +80,11 @@ export class AccountsController extends Controller {
         accountsContainer.innerHTML += `
         <div class="border border-dark col-11 m-2" id="card`+account.id+`">
             <div class="p fw-bold">Email Adres: ` + account.email + `</div>
-            <div class="p fw-bold">Adres: ` + account.huisnummer + account.huisnummerToevoeging + ` Postcode:  ` + account.postcode + `</div>
-            <div class="p fw-bold">Registratiedatum: </div>
+            <div class="p fw-bold">Registratiedatum: `+account.registratieDatum.substring(0,10)+` </div>
             <div class="p fw-bold">Rang: ` + rank + `</div>
             <button class="btn-sm btn-secondary btn btn-remove" value="` +account.id+`">Verwijder dit account</button>
         </div>`;
+
+        console.log(account.registratieDatum.substring(0,10))
     }
 }

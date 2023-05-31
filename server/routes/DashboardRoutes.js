@@ -130,6 +130,10 @@ class DashboardRoutes {
                     array.push(result[i].value)
                 }
 
+                if(req.body.timespan === "days") {
+                    array.reverse();
+                }
+
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({
                     label: "Fijnstof (PM25) gemiddelde van de afgelopen " + text,
                     data: array,
