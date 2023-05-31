@@ -129,7 +129,7 @@ export class App {
                 App.isLoggedIn(
                     () => {
                         this.handleLogout();
-                        location.reload(); // Refresh the page
+                        location.reload(); // Refresh the page so all the navbar items show
                     },
                     () => {
                         new LoginsiteController();
