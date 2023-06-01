@@ -5,8 +5,6 @@
  *  -@beerstj
  */
 
-//['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
-
 import {Controller} from "./controller.js";
 import {DashboardRepository} from "../repositories/DashboardRepository.js";
 
@@ -20,21 +18,15 @@ export class DashboardController extends Controller {
     #LKI = 3;
     PM25 = 4;
 
-    #graphTextBox;
+    #chartTitleBox;
     #infoTextBox;
     #infoContentBox;
 
     #dashboardChart
-    #chartCanvas
+    #chartHTMLelement
 
     #currentlyComparing;
     #currentGraphView
-
-    #PM25days
-    #PM25weeks
-    #PM25months
-
-    #pointBackGroundColor
 
     constructor() {
         super();
@@ -42,40 +34,39 @@ export class DashboardController extends Controller {
     }
 
     async #setupView() {
+        // loads in the correct html files and creates the repository
         this.#dashboardView = await super.loadHtmlIntoContent("html_views/dashboard.html")
         this.#dashboardRepository = new DashboardRepository();
 
-        this.#graphTextBox = this.#dashboardView.querySelector(".graph-type-text");
+        // Assigns some normal variables to the html elements.
+        this.#chartTitleBox = this.#dashboardView.querySelector(".graph-type-text");
         this.#infoTextBox = this.#dashboardView.querySelector(".info-type-text");
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
-        this.#chartCanvas = this.#dashboardView.querySelector("#myChart")
+        this.#chartHTMLelement = this.#dashboardView.querySelector("#myChart")
 
-        const titleText = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M ²", "/ LKI", "/ Fijnstof"];
-        const informationText = [
+        const titles = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M²", "/ LKI", "/ Fijnstof"];
+        const information = [
             `<div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`,
             `<div class="p">Boomtuinen zijn groene ruimten rond bomen in steden. Ze verbeteren de luchtkwaliteit, verminderen hitte-eilanden en stimuleren de biodiversiteit. Boomtuinen brengen mensen samen en betrekken hen bij het verbeteren van hun omgeving. Ze zijn ook een belangrijk onderdeel van stadsvergroening en duurzaamheidsbeleid in steden als Amsterdam</div>`,
             ` <div class="p">Een smalle strook groen langs wegen of gebouwen, groenstroken verbeteren de lucht- en geluidskwaliteit, bieden ontspanningsruimten en fungeren als buffers. Groenstroken zijn belangrijk voor stedenbouw en de vergroening van steden.</div>`,
             `<div class="p">LKI staat voor "Luchtkwaliteitsindex" en een lage LKI-waarde is goed omdat dit betekent datde luchtkwaliteit relatief goed is en een hoge waarde kan leiden tot gezondheidsproblemen. Het is belangrijkom de LKI-waarde in jouw regio te controleren en maatregelen te nemen om de blootstelling aan vervuilendestoffen te verminderen.</div>`,
             `<div class="p">Hier is de actuele informatie van de hoeveelheid fijnstof in Stadhouderskade te zien voor vandaag. Of u van plan bent om te gaan wandelen, te sporten of gewoon wil weten wat voor hoeveelheid het is. Als de grafiek niet helemaal gevuld is, komt dit doordat de luchtmeetnet API er een tijdje uit heeft geleden.</div>`];
 
-        this.#graphTextBox.innerText = titleText[0];
-        this.#infoTextBox.innerText = titleText[0];
-        this.#infoContentBox.innerHTML = informationText[0];
+        // Changes the text boxes to the default type (facadeGardens)
+        this.#chartTitleBox.innerText = titles[this.#FACADEGARDENINDEX];
+        this.#infoTextBox.innerText = titles[this.#FACADEGARDENINDEX];
+        this.#infoContentBox.innerHTML = information[this.#FACADEGARDENINDEX];
 
         await this.#loadDashboardValues()
 
-        this.#pointBackGroundColor = ["#058C42"]
-
-        //Initializes the main chart.
-        this.#dashboardChart = new Chart(this.#chartCanvas, {
+        //Initializes the main chart, with dummy data
+        this.#dashboardChart = new Chart(this.#chartHTMLelement, {
             type: 'line',
             data: {
                 labels: ["null", "null", "null", "null"],
                 datasets: [{
                     label: 'null',
                     data: [null, null, null, null],
-                    pointBorderColor: this.#pointBackGroundColor,
-                    pointBackgroundColor: this.#pointBackGroundColor
                 },]
             },
             options: {
@@ -84,41 +75,43 @@ export class DashboardController extends Controller {
             }
         });
 
+        // Data is loaded into the chart, the default chart is facadeGardens so it loads this one the first time
         this.#dashboardRepository.getSelectedTimespanTreeGardenData("days", 2)
-            .then(result => {
-                this.#updateChart(result)
-            })
+            .then(result => {this.#updateChart(result)})
 
         this.#currentlyComparing = false;
         this.#dashboardView.querySelector("#compare-box").addEventListener("click", () => {
             this.#compareSwitch();
         })
 
+        // Adds the event listeners to the information modal button to open it
         this.#dashboardView.querySelector("#modal-show").addEventListener("click", () => {
             this.#showInformationModal()
         })
 
+        // Adds the event listeners to the information modal button to hide it
         this.#dashboardView.querySelector("#hide-modal").addEventListener("click", () => {
             this.#hideInformationModal()
         })
 
+        // Creates an array of all of the ID's of the circle diagrams.
         const circleDiagrams = ["#facadeGardenCircle", "#treeGardenCircle", "#greeneryCircle", "#aqiCircle", "#PM25Circle"];
-        if (!this.#currentlyComparing) {
-            circleDiagrams.forEach((circleDiagram, index) => {
-                this.#dashboardView.querySelector(circleDiagram).addEventListener("click", () => {
-                    this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
-                    this.#dashboardView.querySelector(circleDiagram).classList.add("shadow")
-                    this.#graphTextBox.innerText = titleText[index];
-                    this.#infoTextBox.innerText = titleText[index];
-                    this.#infoContentBox.innerHTML = informationText[index];
-                    this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
-                });
+
+        // For each of these elements, change add the shadow class to the newly selected greenType, changes the
+        // text boxes and updates the chart with the dataset of the selected greenType
+        circleDiagrams.forEach((circleDiagram, index) => {
+            this.#dashboardView.querySelector(circleDiagram).addEventListener("click", () => {
+                this.#dashboardView.querySelector(".shadow").classList.remove("shadow");
+                this.#dashboardView.querySelector(circleDiagram).classList.add("shadow")
+                this.#chartTitleBox.innerText = titles[index];
+                this.#infoTextBox.innerText = titles[index];
+                this.#infoContentBox.innerHTML = information[index];
+                this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
             });
-        }
+        });
 
-        this.#graphViewEventListeners()
-
-        await this.#preloadPM25Values()
+        // Adds the event listeners to change the chart based on the selected type en
+        this.#addChartViewEventlisteners()
 
         await this.#map();
     }
@@ -134,14 +127,11 @@ export class DashboardController extends Controller {
             const apiValues = await this.#dashboardRepository.getDashboardAPIValues();
             const databaseValues = await this.#dashboardRepository.getDashboardValues();
 
+            // Animnates the value from the luchtmeetnet api on the dashboard
             this.#animateCircleAndValues(this.#LKI, apiValues.AQI)
             this.#animateCircleAndValues(this.PM25, apiValues.PM25)
 
-            this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
-            this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
-            this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
-
-
+            // Changes the color of the values on the dashboard, based on the current value
             if (apiValues.AQI > 3) {
                 this.#dashboardView.querySelector("#progress-circle-aqi").style.stroke = "#FF4444"
                 this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FF4444"
@@ -152,8 +142,6 @@ export class DashboardController extends Controller {
                 this.#dashboardView.querySelector("#progress-circle-background-aqi").style.boxShadow = "1px 1px 0px 12px #FFF39C"
                 this.#dashboardView.querySelector("#LKIvalue").style.color = "#FFD100"
             }
-
-
             if (apiValues.PM25 > 5 && apiValues.PM25 < 10) {
                 this.#dashboardView.querySelector("#progress-circle-pm25").style.stroke = "#FFD100"
                 this.#dashboardView.querySelector("#progress-circle-background-pm25").style.boxShadow = "1px 1px 0px 12px #FFF39C"
@@ -165,8 +153,13 @@ export class DashboardController extends Controller {
                 this.#dashboardView.querySelector("#tempValue").style.color = "#FF4444"
             }
 
+            // animates the values that are from the database on the dashboard
+            this.#animateCircleAndValues(this.#TREEGARDENINDEX, databaseValues.data[0].treeGarden)
+            this.#animateCircleAndValues(this.#FACADEGARDENINDEX, databaseValues.data[0].facadeGarden)
+            this.#animateCircleAndValues(this.#GREENERYINDEX, databaseValues.data[0].greenery)
 
         } catch (e) {
+            // If the dashboard or luchtmeetnet APi is unaivable an message is sent to the console
             console.log("Luchtmeetnet API  or database is currently unavailable")
             console.log(e)
         }
@@ -177,7 +170,7 @@ export class DashboardController extends Controller {
      * @author beerstj
      * */
     #startCompare() {
-        // Changes the color of the compare button to indidcate that the comparisons started
+        // Changes the color of the compare button to indicate to the that the comparisons started
         console.log("Start Compare")
         this.#dashboardView.querySelector("#chart-view-container").classList.add("hidden")
         this.#dashboardView.querySelector("#comparison-impossible").classList.remove("hidden")
@@ -193,15 +186,18 @@ export class DashboardController extends Controller {
      */
     #stopCompare() {
         console.log("Stop Comparing")
+        // Changes the styling of all the needed buttons and messages to the user that the compare has started
         this.#dashboardView.querySelector("#chart-view-container").classList.remove("hidden")
         this.#dashboardView.querySelector("#comparison-impossible").classList.add("hidden")
         this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
         this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
         this.#dashboardView.querySelector("#compare-title").style.color = "white";
+        // Removes all but the first dataset in the charts dataset array
         this.#dashboardChart.data.datasets.splice(1, this.#dashboardChart.data.datasets.length)
+        // Clears the datasets and resets the colors
         this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
         this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
-        this.#dashboardChart.update()
+        this.#dashboardChart.update() // Refreshs the chart
     }
 
 
@@ -210,43 +206,25 @@ export class DashboardController extends Controller {
      * @author beerstj
      */
     #addSelectedChart(selectedType) {
-        // After this, there is a switch to check the selectedType, inside this switch all of the data is
-        // requested through the repository and the database. When the data is collected, the chart is updated
+        // After this, there is a switch to check the selectedType, inside this switch all the data is
+        // requested through the repository and the database. When the data is collected, we use the updateChart function
+        // to add or display the new dataset
         switch (selectedType) {
             case "facadeGardenCircle":
                 this.#dashboardRepository.getSelectedTimespanTreeGardenData(this.#currentGraphView, 2)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
+                    .then(result => {this.#updateChart(result)})
                 break;
             case "treeGardenCircle":
                 this.#dashboardRepository.getSelectedTimespanTreeGardenData(this.#currentGraphView, 1)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
+                    .then(result => {this.#updateChart(result)})
                 break;
             case "greeneryCircle":
                 this.#dashboardRepository.getSelectedTimespanGreenery(this.#currentGraphView)
-                    .then(result => {
-                        this.#updateChart(result)
-                    })
+                    .then(result => {this.#updateChart(result)})
                 break;
             case "PM25Circle":
-                // Because the data for our PM25 chart is preloaded, we also have a switch for the current view
-                // selected of the chart.
-                switch (this.#currentGraphView) {
-                    case "days":
-                        this.#updateChart(this.#PM25days);
-                        break;
-                    case "weeks":
-                        this.#updateChart(this.#PM25weeks);
-                        break;
-                    case "months":
-                        this.#updateChart(this.#PM25months);
-                }
-                break;
-            default:
-                console.log("Graph not yet supported")
+                this.#dashboardRepository.getSelectedPM25Data(this.#currentGraphView)
+                    .then(result => {this.#updateChart(result)})
                 break;
         }
 
@@ -254,70 +232,99 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Because the website and luchtmeet API connection can be quite slow, we preload the data. So we can just load it into the charts
-     * @returns {Promise<void>}
-     * @author beerstj
-     */
-    async #preloadPM25Values() {
-        await this.#dashboardRepository.getSelectedPM25Data("days").then(daysResult => {
-            this.#PM25days = daysResult;
-            console.log("PM25 Data preloaded (Days)");
-        })
-
-        await this.#dashboardRepository.getSelectedPM25Data("weeks").then(weekResult => {
-            this.#PM25weeks = weekResult;
-            console.log("PM25 Data preloaded (Weeks)");
-        })
-
-        await this.#dashboardRepository.getSelectedPM25Data("months").then(monthResult => {
-            this.#PM25months = monthResult;
-            console.log("PM25 Data preloaded (Months)");
-        })
-    }
-
-    /**
-     * Updates and adds the given chart to the canvas. If the user is comparing currently, the chart is pushed
+     * Updates and adds the given chart to the canvas. If the user is currently comparing, the dataset is pushed
      * to the datasets array, which will display it in the chart.
-     * @param object - object you want to add
+     * @param dataset - object you want to add
      * @author beerstj
      */
-    #updateChart(object) {
-        let comparisonChart = {
-            data: object.data,
-            label: object.label,
-            borderColor: object.color,
-            backgroundColor: object.color
-        }
-
+    #updateChart(dataset) {
+        // If the user is not currently comparing, the dataset is just displayed on the chart
         if (!this.#currentlyComparing) {
-            this.#dashboardChart.data.labels = object.labels // labels under the graph
-            this.#dashboardChart.data.datasets[0].data = object.data; // data in the chart
-            this.#dashboardChart.data.datasets[0].label = object.label; // label (title) of the graph
-            this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
-            this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
-
-            // if (this.#dashboardView.querySelector(".shadow").id === "PM25Circle") {
-            //     for (let i = 0; i < this.#dashboardChart.data.datasets[0].data.length; i++) {
-            //         if(this.#dashboardChart.data.datasets[0].data[i] >= 5 && this.#dashboardChart.data.datasets[0].data[i]  <= 10) {
-            //             console.log("GEEl: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
-            //             this.#pointBackGroundColor.push("#FFD100")
-            //         }else if (this.#dashboardChart.data.datasets[0].data[i] >= 10) {
-            //             console.log("ROOD: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
-            //             this.#pointBackGroundColor.push("#FF4444")
-            //         } else {
-            //             console.log("GROEN: " + i + " VALUE:  " + this.#dashboardChart.data.datasets[0].data[i])
-            //             this.#pointBackGroundColor.push("#058C42")
-            //         }
-            //     }
-            // }
-
+            this.#dashboardChart.data.labels = dataset.labels // labels under the graph
+            this.#dashboardChart.data.datasets[0].data = dataset.data; // data in the chart
+            this.#dashboardChart.data.datasets[0].label = dataset.label; // label (title) of the graph
         } else {
+            // An objects is created to store all of data in the correct format to push tot the dataset
+            // If the user is comparing every dataset has a different color so we have to create it.
+            let comparisonChart = {
+                data: dataset.data,
+                label: dataset.label,
+                borderColor: dataset.color,
+                backgroundColor: dataset.color
+            }
             // if the comparisonChart is not yet in the datasets array, it will add it.
             if (!this.#dashboardChart.data.datasets.includes(comparisonChart)) {
                 this.#dashboardChart.data.datasets.push(comparisonChart)
             }
         }
+
+        // Updates the chart based on the new dataset.
         this.#dashboardChart.update()
+    }
+
+    /**
+     * Adds eventlisteners to the different views of the chart (days, weeks, months). And changes the style of the currently
+     * selected chartView
+     * @author beerstj
+     */
+    #addChartViewEventlisteners() {
+        // Creates an array of all the view boxes
+        let viewElements = [this.#dashboardView.querySelector("#days"), this.#dashboardView.querySelector("#weeks"), this.#dashboardView.querySelector("#months")]
+        this.#currentGraphView = "days";
+
+        // For every element in the array, an event listener is added. This will change the view boxes and update the chart based on the new timespan.
+        viewElements.forEach((viewElement) => {
+            viewElement.addEventListener("click", () => {
+                this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active");
+                viewElement.classList.add("graph-view-active");
+                this.#currentGraphView = viewElement.id;
+                this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
+            });
+        });
+    }
+
+
+    /**
+     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
+     * @author beerstj
+     */
+    #compareSwitch() {
+        switch (this.#currentlyComparing) {
+            case true:
+                this.#currentlyComparing = false;
+                this.#stopCompare();
+                break;
+            case false:
+                this.#currentlyComparing = true;
+                this.#startCompare();
+                break;
+        }
+    }
+
+    /**
+     * Checks the selected data type from which you want to see more information.
+     * @author beerstj
+     */
+    #showInformationModal() {
+        console.log("Show Modal: " + this.#dashboardView.querySelector(".shadow").id)
+        this.#dashboardView.querySelector("#modal").classList.remove("hidden")
+
+        // gets the currently selected green type and gets the data for this through the repository.
+        this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
+            .then(result => {
+                this.#dashboardView.querySelector("#definitionType").innerText = result.data[0].definitionType.substring(0, 600)
+                this.#dashboardView.querySelector("#whyChange").innerText = result.data[0].whyChange.substring(0, 600)
+                this.#dashboardView.querySelector("#howChange").innerText = result.data[0].howChange.substring(0, 600)
+            })
+    }
+
+    /**
+     * Hides the information modal
+     * @author beerstj
+     */
+    #hideInformationModal() {
+        console.log("Hide modal: " + this.#dashboardView.querySelector(".shadow").id)
+        this.#dashboardView.querySelector("#modal").classList.add("hidden")
     }
 
     /**
@@ -348,67 +355,6 @@ export class DashboardController extends Controller {
 
         // Without this, circle gets filled 100% after the animation
         document.querySelectorAll(".progress-circle svg circle")[target].style.strokeDashoffset = offsetValue;
-    }
-
-    /**
-     * Adds eventlisteners to the different views of the chart (days, weeks, months). And changes the style of the currently
-     * selected chartView
-     * @author beerstj
-     */
-    #graphViewEventListeners() {
-        let viewElements = [this.#dashboardView.querySelector("#days"), this.#dashboardView.querySelector("#weeks"), this.#dashboardView.querySelector("#months")]
-        this.#currentGraphView = "days";
-
-        viewElements.forEach((viewElement) => {
-            viewElement.addEventListener("click", () => {
-                this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active");
-                viewElement.classList.add("graph-view-active");
-                this.#currentGraphView = viewElement.id;
-                this.#addSelectedChart(this.#dashboardView.querySelector(".shadow").id);
-            });
-        });
-    }
-
-    /**
-     * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean
-     * @author beerstj
-     */
-    #compareSwitch() {
-        switch (this.#currentlyComparing) {
-            case true:
-                this.#currentlyComparing = false;
-                this.#stopCompare();
-                break;
-            case false:
-                this.#currentlyComparing = true;
-                this.#startCompare();
-                break;
-        }
-    }
-
-    /**
-     * Checks the selected data type from which you want to see more information.
-     * @author beerstj
-     */
-    #showInformationModal() {
-        console.log("Show Modal: " + this.#dashboardView.querySelector(".shadow").id)
-        this.#dashboardView.querySelector("#modal").classList.remove("hidden")
-
-        this.#dashboardRepository.getModalInformation(this.#dashboardView.querySelector(".shadow").id)
-            .then(function (result) {
-                this.#dashboardView.querySelector("#definitionType").innerText = result.data[0].definitionType.substring(0, 600)
-                this.#dashboardView.querySelector("#whyChange").innerText = result.data[0].whyChange.substring(0, 600)
-                this.#dashboardView.querySelector("#howChange").innerText = result.data[0].howChange.substring(0, 600)
-            }.bind(this))
-    }
-
-    /**
-     * Hides the information modal
-     * @author beerstj
-     */
-    #hideInformationModal() {
-        console.log("Hide modal: " + this.#dashboardView.querySelector(".shadow").id)
-        this.#dashboardView.querySelector("#modal").classList.add("hidden")
     }
 
     ///////////////////////////////////////// MAP ////////////////////////////////////////////

@@ -13,7 +13,7 @@ export class footerController extends Controller {
     constructor() {
         super();
         this.#footerRepository = new footerRepository();
-        this.#setupView();
+        // this.#setupView();
     }
 
     async #setupView() {

@@ -75,8 +75,7 @@ class DashboardRoutes {
                 let PM25;
 
                 await fetch("https://api.luchtmeetnet.nl/open_api/lki?station_number=NL49017&" +
-                    "start=" + yesterday +
-                    "&end=" + today, this.#requestOptions)
+                    "start=" + yesterday + "&end=" + today, this.#requestOptions)
                     .then(function (response) {
                         return response.json();
                     }).then(function (data) {
@@ -84,8 +83,7 @@ class DashboardRoutes {
                     })
 
                 await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
-                    "start=" + yesterday +
-                    "&end=" + today +
+                    "start=" + yesterday + "&end=" + today +
                     "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", this.#requestOptions)
                     .then(function (response) {
                         return response.json();
@@ -108,6 +106,8 @@ class DashboardRoutes {
         this.#app.post("/dashboard/database/PM25/timespan", async (req, res) => {
             let timespan = req.body.timespan;
             let text = ""
+
+            // Switch to get the selected timespan and put it in a string format
             switch(timespan) {
                 case "days":
                     text = "30 dagen"
@@ -120,20 +120,19 @@ class DashboardRoutes {
             }
 
             let array = []
+            // Gets the values from the database with the selected timespan
             let values = this.#databaseHelper.handleQuery({
                 query: "SELECT value FROM PM25 WHERE timespan = ?",
                 values: [timespan]
             })
 
             values.then(result => {
+                // Create an array with the values (because values is promise
                 for (let i = 0; i < result.length; i++) {
                     array.push(result[i].value)
                 }
 
-                if(req.body.timespan === "days") {
-                    array.reverse();
-                }
-
+                // Responds to the request, with the labels, label, data and color.
                 res.status(this.#errorCodes.HTTP_OK_CODE).json({
                     label: "Fijnstof (PM25) gemiddelde van de afgelopen " + text,
                     data: array,
@@ -154,22 +153,22 @@ class DashboardRoutes {
             let date1 = new Date(Date.now())
             let date2 = new Date();
 
+            // First, all of the data of the selected timespan is deleted so we can write new values to the database
             let deleteData = this.#databaseHelper.handleQuery({
                 query: "DELETE FROM PM25 WHERE timespan = ?",
                 values: [req.params.timespan]
             })
 
             this.#avgArray = []
-
             switch (req.params.timespan) {
                 case "days":
-
                     for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
                         date2.setDate(date1.getDate() - 1)
-                        await this.#calculateAverageFromFetch(i, date1, date2)
+                        await this.#calculateAverageFromFetch(i, date1, date2) // This function adds the value of this day to this.#avgArray
                         date1.setDate(date1.getDate() - 1)
                     }
 
+                    // For every item in this.#avgArray, insert them into database
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
@@ -354,7 +353,7 @@ class DashboardRoutes {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
                     }
                     break;
-                // If req.params.timespan === "days" the totals of the last past months to the start of the year
+                // If req.params.timespan === "months" the totals of the last past months to the start of the year
                 case "months":
                     try {
                         // Loop through the past months to the start of the year, "i" is used in the SQL-Keyword MONTH(DATE) to get the correct data
