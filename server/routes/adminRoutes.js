@@ -22,6 +22,10 @@ class adminRoutes {
         this.#removeGreenObject();
     }
 
+    /**
+     * Remove green type route
+     * @author Alekandrs
+     */
     #removeGreenType(){
         this.#app.post("/removeGreenTypeRoute", async(req, res) => {
 
@@ -35,7 +39,6 @@ class adminRoutes {
 
                 res.status(this.#errorCodes.HTTP_OK_CODE).json(data);
 
-
             } catch (e) {
                 res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e});
             }
@@ -43,8 +46,10 @@ class adminRoutes {
         });
     }
 
-
-
+    /**
+     * Remove green object route
+     * @author Alekandrs
+     */
     #removeGreenObject(){
         this.#app.post("/removeGreenObjectRoute", async(req, res) => {
 
@@ -65,7 +70,10 @@ class adminRoutes {
         });
     }
 
-
+    /**
+     * Add green object route
+     * @author Alekandrs
+     */
     #addGreen() {
         this.#app.post("/adminAddGreen", async (req, res) => {
             const coordinaatX = req.body.coordinaatX;
@@ -93,7 +101,10 @@ class adminRoutes {
         });
     }
 
-
+    /**
+     * Add green type route
+     * @author Alekandrs
+     */
     #addGreenType() {
         this.#app.post("/admin", async (req, res) => {
             const type = req.body.type;
@@ -117,6 +128,10 @@ class adminRoutes {
         });
     }
 
+    /**
+     * Get all objects from gebied for the lists
+     * @author Alekandrs
+     */
     #refreshAreaList(){
         this.#app.get("/areaList", async(req, res) => {
 
@@ -125,6 +140,7 @@ class adminRoutes {
                     query: "SELECT Gebiedsnummer, opmerking FROM gebied",
                 });
 
+                // reset the auto-increment value in two SQL statements (or else it might skip numbers in the id when u delete something and break the auto-increment)
                 await this.#databaseHelper.handleQuery({
                     query: "ALTER TABLE groen AUTO_INCREMENT = 1",
                 });
@@ -137,6 +153,10 @@ class adminRoutes {
         });
     }
 
+    /**
+     * Get all objects from type for the lists
+     * @author Alekandrs
+     */
     #refreshTypeList(){
         this.#app.get("/typeList", async(req, res) => {
 
@@ -145,6 +165,7 @@ class adminRoutes {
                     query: "SELECT id, naam FROM type",
                 });
 
+                // reset the auto-increment value in two SQL statements (or else it might skip numbers in the id when u delete something and break the auto-increment)
                 await this.#databaseHelper.handleQuery({
                    query: "ALTER TABLE type AUTO_INCREMENT = 1",
                 });
@@ -157,6 +178,10 @@ class adminRoutes {
         });
     }
 
+    /**
+     * Get all objects from groen for the lists
+     * @author Alekandrs
+     */
     #refreshGreenObjectList(){
         this.#app.get("/greenObjectList", async(req, res) => {
 

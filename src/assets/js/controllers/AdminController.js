@@ -30,12 +30,16 @@ export class adminController extends Controller {
 
     }
 
-    // remove green object @author Aleksandrs
+    /**
+     * Add a new green object
+     * @author Alekandrs
+     */
     #removeGreenObject() {
         const removeGreenObjectList = this.#createAdminView.querySelector("#removeGreenObjectList");
         const selectedRemoveGreenObject = removeGreenObjectList.options[removeGreenObjectList.selectedIndex];
         const selectedGreenObjectID = selectedRemoveGreenObject.getAttribute("data");
 
+        // check if field is empty
         if (selectedGreenObjectID == null || selectedGreenObjectID == 0) {
             alert("Groen object veld kan niet leeg zijn! Vul alstublieft een waarde in.")
         } else {
@@ -43,12 +47,16 @@ export class adminController extends Controller {
         }
     }
 
-    // remove green type @author Aleksandrs
+    /**
+     * Remove a green type
+     * @author Alekandrs
+     */
     #removeGreenType() {
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const selectedRemoveType = removeTypeList.options[removeTypeList.selectedIndex];
         const selectedTypeID = selectedRemoveType.getAttribute("data");
 
+        // check if field is empty
         if (selectedTypeID == null || selectedTypeID == 0) {
             alert("Groen type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
         } else {
@@ -56,7 +64,10 @@ export class adminController extends Controller {
         }
     }
 
-    // add green object form @author Aleksandrs
+    /**
+     * Add a new green object
+     * @author Alekandrs
+     */
     #handleAddGreen() {
         const coordinaatX = this.#createAdminView.querySelector("#coordinateX").value;
         const coordinaatY = this.#createAdminView.querySelector("#coordinateY").value;
@@ -71,8 +82,10 @@ export class adminController extends Controller {
         var month = String(currentDate.getMonth() + 1).padStart(2, '0');
         var day = String(currentDate.getDate()).padStart(2, '0');
 
+        // format the date so the database can actually save it
         var formattedDate = year + '-' + month + '-' + day;
 
+        // check if fields are empty
         if (coordinaatX == null || coordinaatX == "" || coordinaatY == null || coordinaatY == "" || selectedGebied == null || selectedGebied == 0 || selectedType == null || selectedType == 0) {
             alert("Velden kunnen niet leeg zijn! Vul alstublieft een waarde in.")
         } else {
@@ -99,10 +112,14 @@ export class adminController extends Controller {
 
     }
 
-    // add green type @author Aleksandrs
+    /**
+     * Add a new green type
+     * @author Alekandrs
+     */
     #handleAddGreenType() {
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
 
+        // check if type input form is empty
         if (type == null || type == "") {
             alert("Type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
         } else {
@@ -110,38 +127,54 @@ export class adminController extends Controller {
         }
     }
 
-    // refresh areas for lists @author Aleksandrs
+    /**
+     * Refresh areas for lists
+     * @author Alekandrs
+     */
     async #handleAreaRefresh() {
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
         const areaID = await this.#adminRepository.getArea();
 
+        // add objects from "gebied" in database and for each object add it in the areaList
         for (let i = 0; areaID.data.length > i; i++) {
             areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="` + areaID.data[i].Gebiedsnummer + `">` + areaID.data[i].opmerking + `</option>`
         }
     }
 
-    // refresh green types for lists @author Aleksandrs
+    /**
+     * Refresh green types for lists
+     * @author Alekandrs
+     */
     async #handleTypeRefresh() {
         const typeList = this.#createAdminView.querySelector("#typeList");
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const typeID = await this.#adminRepository.getType();
 
+        // add objects from "type" in database and for each object add it in the lists
         for (let i = 0; typeID.data.length > i; i++) {
             typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="` + typeID.data[i].id + `">` + typeID.data[i].naam + `</option>`
             removeTypeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="` + typeID.data[i].id + `">` + typeID.data[i].naam + `</option>`
         }
     }
 
-    // refresh green objects for lists @author Aleksandrs
+    /**
+     * Refresh green objects for lists
+     * @author Alekandrs
+     */
     async #handleGreenObjectRefresh() {
         const removeGreenObjectList = this.#createAdminView.querySelector("#removeGreenObjectList");
         const greenObjectID = await this.#adminRepository.getGreenObject();
 
+        // add objects from "groen" in database and for each object add it in the html lists
         for (let i = 0; greenObjectID.data.length > i; i++) {
             removeGreenObjectList.innerHTML += `<option value="` + greenObjectID.data[i].id + `" data="` + greenObjectID.data[i].id + `"><b>ID:</b> ` + greenObjectID.data[i].id + ` Coordinaat X: ` + greenObjectID.data[i].coordinaatX + `  CoordinaatY: ` + greenObjectID.data[i].coordinaatY + `  Gebied: ` + greenObjectID.data[i].gebied_id + `  Type: ` + greenObjectID.data[i].type_id + `  Datum: ` + greenObjectID.data[i].datum.substring(0, 10) + `</option>`
         }
     }
 
+    /**
+     * Add the map under the input forms and remove forms so you can see the green objects and get coordinates automatically
+     * @author Alekandrs
+     */
     async #loadmap() {
 
         // map setup @author Aleksandrs
@@ -219,7 +252,6 @@ export class adminController extends Controller {
 
         // map legend so its easier to see what things on the map mean @author Aleksandrs
         var legend = L.control({position: "bottomleft"});
-
         legend.onAdd = function (map) {
             var div = L.DomUtil.create("div", "legend");
             div.innerHTML += "<h4>Legenda</h4>";
@@ -230,7 +262,6 @@ export class adminController extends Controller {
             div.innerHTML += '<i class="icon" style="background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Map_pin_icon_green.svg/94px-Map_pin_icon_green.svg.png);background-repeat: no-repeat; background-size: 18px 18px;"></i><span>Groen locatie</span><br>';
             return div;
         };
-
         legend.addTo(map);
 
         // add green objects on the map with their information in a popup @author Aleksandrs

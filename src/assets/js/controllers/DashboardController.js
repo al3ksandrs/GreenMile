@@ -3,6 +3,7 @@
  * gets the data through the repository and api's and displays them on de dashboard page.
  * @authors
  *  -@beerstj
+ *  -(map) @Aleksandrs & @Sakhi
  */
 
 import {Controller} from "./controller.js";
@@ -359,6 +360,10 @@ export class DashboardController extends Controller {
 
     ///////////////////////////////////////// MAP ////////////////////////////////////////////
 
+    /**
+     * Add the map under the dashboard so you can see the green objects and get coordinates automatically
+     * @author Alekandrs
+     */
     async #map() {
 
         // map setup @author Aleksandrs
