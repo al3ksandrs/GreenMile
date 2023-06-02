@@ -21,9 +21,9 @@ export class RoadmapController extends Controller {
     async #setupView() {
         this.#ambitionView = await super.loadHtmlIntoContent("html_views/roadmap.html");
         this.#roadmap();
-        this.#loadTimelineValues();
-        this.#findNewsletters();
-        this.#findProgress()
+        await this.#loadTimelineValues();
+        await this.#findNewsletters();
+        await this.#findProgress()
 
 
     }
@@ -117,6 +117,7 @@ export class RoadmapController extends Controller {
      * This function retrieves the dates of the published newsletters and the selected roadmap date and shows the
      * titles of the newsletters published in the same month if there are any
      * @returns {Promise<void>}
+     * @author kashif
      */
     async #findNewsletters() {
         const newsletters = await this.#ambitionRepository.findNewsletters();
@@ -140,6 +141,12 @@ export class RoadmapController extends Controller {
         }
     }
 
+    /**
+     * This function retrieves the amount of progress of three data, facade garden, tree garden and the m2 greenery
+     * and displays it in the related div so that the progress is shown in a simple way
+     * @returns {Promise<void>}
+     * @author kashif
+     */
     async #findProgress() {
         const timelineValues = await this.#ambitionRepository.getTimelineValues();
         const progress1 = await this.#ambitionRepository.findGarden();
@@ -227,6 +234,11 @@ export class RoadmapController extends Controller {
     }
 
 
+    /**
+     * makes sure everything in the roadmap except for the data self is loaded, makes sure animations work and makes
+     * it look as it does
+     * @author kashif
+     */
 
     #roadmap() {
         let timelines = document.querySelectorAll('.cd-horizontal-timeline');

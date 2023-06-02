@@ -30,11 +30,11 @@ class DashboardRoutes {
         // map routes
         this.#getGroen();
 
+        // sets the requestOptions to be the same all the time, and we can use in the whole class.
         this.#requestOptions = {
             method: "GET",
             redirect: "follow"
         }
-
     }
 
     /**
@@ -101,6 +101,11 @@ class DashboardRoutes {
     /**
      * Gets the PM25 data from the database, for the selected timespan. Used on the dashbaoard
      * @returns {Promise<void>}
+     * Responds an object containing every item we use in the chart
+     *      label: title of the chart
+     *      data: data in the chart
+     *      labels: labels under the chart
+     *      color: color of the line (only used when comparing)
      */
     async #requestPM25FromDatabase() {
         this.#app.post("/dashboard/database/PM25/timespan", async (req, res) => {
@@ -146,14 +151,15 @@ class DashboardRoutes {
     /**
      * Method to write data from PM25 data to the database, for selected timespan.
      * @param timespan: timespan you want the data for.
-     * @returns {Promise<void>}
+     * @returns {Promise<void>} state of request
      */
     async #writePM25ToDatabase() {
         this.#app.post("/dashboard/API/write/timespan", async (req, res) => {
+            // Create two dates so we don't have to do it with each timespan.
             let date1 = new Date(Date.now())
             let date2 = new Date();
 
-            // First, all of the data of the selected timespan is deleted so we can write new values to the database
+            // First, all  the data of the selected timespan is deleted so we can write new values to the database
             let deleteData = this.#databaseHelper.handleQuery({
                 query: "DELETE FROM PM25 WHERE timespan = ?",
                 values: [req.body.timespan]
@@ -162,6 +168,8 @@ class DashboardRoutes {
             this.#avgArray = []
             switch (req.body.timespan) {
                 case "days":
+                    // Loops through the last 31 days, calculates the average of every day and adds all of these to the array
+                    // (this.#avgArray
                     for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
                         date2.setDate(date1.getDate() - 1)
                         await this.#calculateAverageFromFetch(i, date1, date2) // This function adds the value of this day to this.#avgArray
@@ -188,6 +196,7 @@ class DashboardRoutes {
                         date1.setDate(date2.getDate())
                     }
 
+                    // Loops through the entire array and inserts all of the values to the databsae
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
@@ -195,21 +204,22 @@ class DashboardRoutes {
                         })
                     }
 
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        success: "Yes"
-                    })
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({status: "succes"})
                     break;
 
                 case "months":
-                    let hardcode = [23.52, 31.33, 24.10, 20.79] // Hardcode because the request would take like 7 years
+                    // if the users want to select the months. We only have to calulate the data from the start of the month
+                    // to the current day of the month, because we have the other hard coded
+                    let hardcode = [7.97, 13.74, 7.75, 9.78, 9.92] // Hardcode because the request would take like 7 years
                     let total = 0;
 
-                    let weeks = Math.floor(date1.getDate() / 7)
+                    let weeks = Math.floor(date1.getDate() / 7) // gets the amount of whole weeks to start of month
 
+                    // creates two date objects to make it easier to loop through the current week.
                     let startOfMonth = new Date(date1.getFullYear(), date1.getMonth(), 1)
                     let weekAfterStartOfMonth = new Date()
 
-                    // Loops through the whole weeks until the start of the year. then calculates the avrage from
+                    // Loops through the whole weeks until the start of the year. then calculates the average from
                     // every one of these weeks.
                     for (let i = 0; i < weeks; i++) {
                         weekAfterStartOfMonth.setDate(startOfMonth.getDate() + 7)
@@ -217,16 +227,18 @@ class DashboardRoutes {
                         startOfMonth.setDate(weekAfterStartOfMonth.getDate())
                     }
 
-                    // Gets the leftover data
+                    // Gets the leftover dates
                     await this.#calculateAverageFromFetch(new Date(Date.now()).getMonth(), weekAfterStartOfMonth, startOfMonth)
 
+                    // calculates the total of everyday to the start of this month
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         total += this.#avgArray[i]
                     }
 
+                    // Pushes the calulated total divided by the length of the array (so we get the average value)
                     hardcode.push(total / this.#avgArray.length)
 
-                    // INserts al of the data of the array
+                    // Inserts al of the data of the array
                     for (let i = 0; i < hardcode.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
@@ -234,10 +246,7 @@ class DashboardRoutes {
                         })
                     }
 
-                    res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        succes: "Yes",
-
-                    })
+                    res.status(this.#errorCodes.HTTP_OK_CODE).json({status: "succes",})
             }
         })
     }
@@ -250,24 +259,26 @@ class DashboardRoutes {
      * @returns {Promise<void>}
      */
     async #calculateAverageFromFetch(i, date1, date2) {
+        // Fetches all of the data from the luchtmeetnet that is between the two date arguments
         await fetch("https://api.luchtmeetnet.nl/open_api/measurements?" +
             "start=" + date2.toISOString() + "&end=" + date1.toISOString() +
             "&station_number=NL49017&formula=PM25&page=1&order_by=timestamp_measured&order_direction=desc", this.#requestOptions)
             .then(function (response) {
-                return response.json();
+                return response.json(); // makes sure the response is in json
             })
             .then(function (data) {
                 if (typeof data !== 'undefined') { // If no data exists for curDay, push 0 to array
                     let total = 0
+                    // Loops through all of the hours in the data array
                     for (let curHour = 0; curHour < data.data.length; curHour++) { // loops through every hour of the day
                         if (typeof data.data[i] !== 'undefined') {
-                            total += data.data[i].value
+                            total += data.data[i].value // Adds the current value to the 'total' variable so get the data.
                         } // Checks if curHour is undefined.
                     }
                     // console.log("Progress: " + i + " Current Average: "+ total / data.data.length) // Use this if this breaks (it will)
                     if (total === 0) { // Checks if the total = 0 (Means no data to calculate average) pushes 'null' if its zero
                         this.#avgArray.push(null)
-                    } else this.#avgArray.push(total / data.data.length)
+                    } else this.#avgArray.push(total / data.data.length) // pushes the average of the caluclated total the array
                 } else return null
             }.bind(this))
     }
@@ -278,7 +289,12 @@ class DashboardRoutes {
      *  - type_id: 1 = treeGarden (Dashboard -> Boomtuinen)
      *  - type_id: 2 = facadeGarden (Dashboard -> Geveltuinen
      *  @param timespan: timespan of the data you want
-     * @returns {Promise<void>}
+     * @returns {Promise<void>} -
+     * Responds an object containing every item we use in the chart
+     *      label: title of the chart
+     *      data: data in the chart
+     *      labels: labels under the chart
+     *      color: color of the line (only used when comparing)
      */
     async #getFacadeAndTreeGardenData() {
         this.#app.post("/dashboard/timespan/type", async (req, res) => {
@@ -297,6 +313,7 @@ class DashboardRoutes {
                     break;
             }
 
+            // creates some variables so it will be easier to correctly get the data from the database
             let totalArray = []
             let totalNumber = 0;
             let today = new Date(Date.now())
@@ -383,27 +400,36 @@ class DashboardRoutes {
     /**
      * Function to retrieve all of the added greenery data in selected timespan.
      * @param timespan: timespan you want for the data
+     * Responds an object containing every item we use in the chart
+     *      label: title of the chart
+     *      data: data in the chart
+     *      labels: labels under the chart
+     *      color: color of the line (only used when comparing)
      */
     #getGreeneryM2Data() {
         this.#app.post("/dashboard/greenery/timespan", async (req, res) => {
+            // Creas some variabels to make it easier to get the data from our database
             let totalNumber = 0;
             let totalArray = [];
             let today = new Date(Date.now())
             let weekNumber = Math.ceil((Math.floor((new Date() - (new Date((new Date()).getFullYear(), 0, 1))) / 86400000)) / 7);
             const timespan = req.body.timespan
 
+            // Switch to switch between the requested timespan
             switch (timespan) {
                 // Gets data for past 30 days by looking through all of them
                 case "days":
                     try {
+                        // for the last 31 days, loop through the dates
                         for (let i = 0; i < 31; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE DAY(datum) = ? AND MONTH(datum) = ?",
                                 values: [i, today.getMonth()]
                             })
-                            totalNumber += data[0].GroeneM2
-                            totalArray.push(totalNumber)
+                            totalNumber += data[0].GroeneM2 // add the data to an array
+                            totalArray.push(totalNumber) // push this number to array
                         }
+                        // Responds to the request in json format
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 de de afgelopen 30 dagen",
                             data: totalArray,
@@ -418,6 +444,7 @@ class DashboardRoutes {
                 // Gets data for past 15 weeks by looking through all of them
                 case "weeks":
                     try {
+                        // For last 15 weeks, use sql WEEK(DATE) commant to get the data of this week
                         for (let i = weekNumber - 16; i < weekNumber; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT SUM(groeneM2) AS weekTotal FROM GroeneM2 WHERE WEEK(datum) = ?",
@@ -427,14 +454,13 @@ class DashboardRoutes {
                             totalNumber += data[0].weekTotal
                             totalArray.push(totalNumber)
                         }
+                        // responds the data in JSON format
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 de de afgelopen 15 weken",
                             data: totalArray,
                             labels: this.#getLabels(timespan),
                             color: "#4ADEDE"
-
                         })
-
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
                     }
@@ -442,6 +468,8 @@ class DashboardRoutes {
                 // Gets data for past months by looking through all of them
                 case "months":
                     try {
+                        // Loops through every month from today to the start of the year. calulates the new total
+                        // and pushes this to the database.
                         for (let i = 0; i < today.getMonth() + 1; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(groenem2) AS GroeneM2 FROM GroeneM2 WHERE MONTH(datum) = ?",
@@ -450,14 +478,13 @@ class DashboardRoutes {
                             totalNumber += data[0].GroeneM2
                             totalArray.push(totalNumber)
                         }
+                        // Respods in json format the data used for the chart.
                         res.status(this.#errorCodes.HTTP_OK_CODE).json({
                             label: "Totalen van geplante Groene M2 aan het begin van elke maand sinds het begin van het jaar",
                             data: totalArray,
                             labels: this.#getLabels(timespan),
                             color: "#4ADEDE"
-
                         })
-
                     } catch (e) {
                         res.status(this.#errorCodes.BAD_REQUEST_CODE).json({reason: e})
                     }
