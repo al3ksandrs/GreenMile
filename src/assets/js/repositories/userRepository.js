@@ -1,6 +1,6 @@
 import {NetworkManager} from "../framework/utils/networkManager.js";
 
-export class AccountsRepository {
+export class UserRepository {
     #networkManager;
 
     #allAccountsRoute;

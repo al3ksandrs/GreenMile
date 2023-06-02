@@ -6,7 +6,7 @@
  */
 
 import {Controller} from "./controller.js";
-import {AmbitionRepository} from "../repositories/AmbitionRepository.js";
+import {RoadmapRepository} from "../repositories/roadmapRepository.js";
 
 export class submitRoadmapController extends Controller {
     #submitRoadmapView
@@ -27,7 +27,7 @@ export class submitRoadmapController extends Controller {
      */
     async #setupView() {
         this.#submitRoadmapView = await super.loadHtmlIntoContent("html_views/submitRoadmapItem.html")
-        this.#roadmapRepository = new AmbitionRepository();
+        this.#roadmapRepository = new RoadmapRepository();
 
         this.#submitRoadmapView.querySelector("#roadmap-submit").addEventListener("click", () => {
             this.#submitNewRoadmapItem()

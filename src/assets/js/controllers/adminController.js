@@ -1,6 +1,6 @@
 import {Controller} from "./controller.js";
 import {AdminRepository} from "../repositories/adminRepository.js";
-import {DashboardRepository} from "../repositories/DashboardRepository.js";
+import {DashboardRepository} from "../repositories/dashboardRepository.js";
 
 export class adminController extends Controller {
     #createAdminView;

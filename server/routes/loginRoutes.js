@@ -4,7 +4,7 @@
  */
 
 
-class loginSiteRoutes {
+class loginRoutes {
     #errorCodes = require("../framework/utils/httpErrorCodes")
     #databaseHelper = require("../framework/utils/databaseHelper")
     #cryptoHelper = require("../framework/utils/cryptoHelper");
@@ -51,4 +51,4 @@ class loginSiteRoutes {
     }
 }
 
-module.exports = loginSiteRoutes
+module.exports = loginRoutes

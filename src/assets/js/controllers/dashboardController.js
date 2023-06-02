@@ -7,7 +7,7 @@
  */
 
 import {Controller} from "./controller.js";
-import {DashboardRepository} from "../repositories/DashboardRepository.js";
+import {DashboardRepository} from "../repositories/dashboardRepository.js";
 
 export class DashboardController extends Controller {
     #dashboardView;
@@ -270,11 +270,11 @@ export class DashboardController extends Controller {
      */
     #addChartViewEventlisteners() {
         // Creates an array of all the view boxes
-        let viewElements = [this.#dashboardView.querySelector("#days"), this.#dashboardView.querySelector("#weeks"), this.#dashboardView.querySelector("#months")]
+        let viewElements = ["#days", "#weeks", "#months"]
         this.#currentGraphView = "days";
 
         // For every element in the array, an event listener is added. This will change the view boxes and update the chart based on the new timespan.
-        viewElements.forEach((viewElement) => {
+        this.#dashboardView.querySelectorAll(viewElements).forEach((viewElement) => {
             viewElement.addEventListener("click", () => {
                 this.#dashboardView.querySelector(".graph-view-active").classList.remove("graph-view-active");
                 viewElement.classList.add("graph-view-active");

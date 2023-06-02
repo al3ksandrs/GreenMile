@@ -8,21 +8,17 @@
  */
 
 import {SessionManager } from "./framework/utils/sessionManager.js"
-import {LoginsiteController } from "./controllers/loginsiteController.js"
-import {registerController } from "./controllers/registerController.js"
-import {NavbarController }  from "./controllers/navbarController.js"
-import {UploadController }  from "./controllers/uploadController.js"
-import {WelcomeController }  from "./controllers/welcomeController.js"
-import {faqController } from "./controllers/FaqController.js";
-import {adminController} from "./controllers/AdminController.js";
-import {AmbitionController } from "./controllers/AmbitionController.js";
-import {DashboardController} from "./controllers/DashboardController.js";
-import {AccountsController} from "./controllers/AccountsController.js";
+import {registerController} from "./controllers/registerController.js"
+import {NavbarController}  from "./controllers/navbarController.js"
+import {faqController } from "./controllers/faqController.js";
+import {adminController} from "./controllers/adminController.js";
+import {RoadmapController } from "./controllers/roadmapController.js";
+import {DashboardController} from "./controllers/dashboardController.js";
+import {AccountsController} from "./controllers/accountsController.js";
 import {footerController} from "./controllers/footerController.js";
-import {SubmitNewslettersController} from "./controllers/submitNewslettersController.js";
-import {NewsletterController} from "./controllers/NewsletterController.js";
+import {NewsletterController} from "./controllers/newsletterController.js";
 import {submitRoadmapController} from "./controllers/submitRoadmapController.js";
-import {PartnersController} from "./controllers/PartnersController.js";
+import {PartnerController} from "./controllers/partnerController.js";
 import {LoginController} from "./controllers/loginController.js";
 
 export class App {
@@ -90,7 +86,7 @@ export class App {
         
         switch (name) {
             case App.CONTROLLER_ADMIN:
-                App.isLoggedIn(() => new adminController(), () => new LoginsiteController());
+                App.isLoggedIn(() => new adminController(), () => new LoginController());
                 break;
 
             case App.CONTROLLER_FAQ:
@@ -98,7 +94,7 @@ export class App {
                 break;
 
             case App.CONTROLLER_AMBITION:
-                App.isLoggedIn(() => new AmbitionController(), () => new AmbitionController());
+                App.isLoggedIn(() => new RoadmapController(), () => new RoadmapController());
                 break;
 
             case App.CONTROLLER_DASHBOARD:
@@ -106,11 +102,11 @@ export class App {
                 break;
 
             case App.CONTROLLER_ACCOUNTS:
-                App.isLoggedIn(() => new AccountsController(), () => new  LoginsiteController());
+                App.isLoggedIn(() => new AccountsController(), () => new  LoginController());
                 break;
 
             case App.CONTROLLER_SUBMITNEWSLETTER:
-                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
+                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginController());
                 break;
 
             case App.CONTROLLER_NEWSLETTER:
@@ -118,11 +114,11 @@ export class App {
                 break;
 
             case App.CONTROLLER_REGISTER:
-                App.isLoggedIn(() => new registerController(), () => new LoginsiteController())
+                App.isLoggedIn(() => new registerController(), () => new LoginController())
                 break;
 
             case App.CONTROLLER_PARTNERS:
-                App.isLoggedIn(() => new PartnersController(), () => new PartnersController());
+                App.isLoggedIn(() => new PartnerController(), () => new PartnerController());
                 break;
 
             case App.CONTROLLER_LOGINSITE:
@@ -132,14 +128,14 @@ export class App {
                         location.reload(); // Refresh the page so all the navbar items show
                     },
                     () => {
-                        new LoginsiteController();
+                        new LoginController();
                     }
                 );
                 break;
 
 
             case App.CONTROLLER_SUBMITROADMAP:
-                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginsiteController());
+                App.isLoggedIn(() => new submitRoadmapController(), () => new LoginController());
 
                 break;
 

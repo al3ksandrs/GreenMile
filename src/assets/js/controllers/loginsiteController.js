@@ -4,11 +4,11 @@
  */
 
 import {App} from "../app.js";
-import {LoginSiteRepository} from "../repositories/loginSiteRepository.js";
+import {LoginRepository} from "../repositories/loginRepository.js";
 import {Controller} from "./controller.js";
 
 
-export class LoginsiteController extends Controller{
+export class LoginController extends Controller{
     //# is a private field in Javascript
     #loginSiteRepository
     #loginsiteView
@@ -17,7 +17,7 @@ export class LoginsiteController extends Controller{
 
     constructor() {
         super();
-        this.#loginSiteRepository = new LoginSiteRepository();
+        this.#loginSiteRepository = new LoginRepository();
         this.#setupView();
     }
 

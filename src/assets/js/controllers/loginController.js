@@ -1,22 +1,24 @@
 /**
- * Controller responsible for all events in login view
- * @author Pim Meijer
+ *  Controller responsible for all events in login view
+ *  @author Pim Meijer & Sakhi Anwari
  */
 
-import { UsersRepository } from "../repositories/usersRepository.js";
-import { App } from "../app.js";
-import { Controller } from "./controller.js";
+import {App} from "../app.js";
+import {LoginRepository} from "../repositories/loginRepository.js";
+import {Controller} from "./controller.js";
+
 
 export class LoginController extends Controller{
     //# is a private field in Javascript
-    #usersRepository
-    #loginView
+    #loginSiteRepository
+    #loginsiteView
+    #app
+    #setupview
 
     constructor() {
         super();
-        this.#usersRepository = new UsersRepository();
-
-        this.#setupView()
+        this.#loginSiteRepository = new LoginRepository();
+        this.#setupView();
     }
 
     /**
@@ -25,34 +27,34 @@ export class LoginController extends Controller{
      */
     async #setupView() {
         //await for when HTML is loaded, never skip this method call in a controller
-        this.#loginView = await super.loadHtmlIntoContent("html_views/login.html")
+        this.#loginsiteView = await super.loadHtmlIntoContent("html_views/loginsite.html")
 
         //from here we can safely get elements from the view via the right getter
-        this.#loginView.querySelector(".btn").addEventListener("click", event => this.#handleLogin(event));
+        this.#loginsiteView.querySelector(".submit-btn").addEventListener("click", (event) => this.#processLogin(event));
 
     }
     /**
      * Async function that does a login request via repository
-     * @param event
      */
-    async #handleLogin(event) {
-        //prevent actual submit and page refresh
-        event.preventDefault();
-
+    async #processLogin(event) {
+        event.preventDefault()
         //get the input field elements from the view and retrieve the value
-        const username = this.#loginView.querySelector("#exampleInputUsername").value;
-        const password = this.#loginView.querySelector("#exampleInputPassword").value;
+        const email = this.#loginsiteView.querySelector("#email").value;
+        const password = this.#loginsiteView.querySelector("#password").value;
 
         try{
-            const user = await this.#usersRepository.login(username, password);
+            const user = await this.#loginSiteRepository.createLogin(email, password);
 
-            //let the session manager know we are logged in by setting the username, never set the password in localstorage
-            App.sessionManager.set("username", user.username);
-            App.loadController(App.CONTROLLER_WELCOME);
+            //let the session manager know we are logged in by setting the email, never set the password in localstorage
+            App.sessionManager.set("username", email);
+            App.loadController(App.CONTROLLER_DASHBOARD);
+            location.reload(); // Refresh the page so all the navbar items show
+
+            console.log("User: " + email + " logged in")
         } catch(error) {
             //if unauthorized error code, show error message to the user
             if(error.code === 401) {
-                this.#loginView.querySelector(".error").innerHTML = error.reason
+                this.#loginsiteView.querySelector(".error").innerHTML = error.reason
             } else {
                 console.error(error);
             }

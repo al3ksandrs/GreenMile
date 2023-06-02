@@ -149,18 +149,18 @@ class DashboardRoutes {
      * @returns {Promise<void>}
      */
     async #writePM25ToDatabase() {
-        this.#app.get("/dashboard/API/write/timespan/:timespan", async (req, res) => {
+        this.#app.post("/dashboard/API/write/timespan", async (req, res) => {
             let date1 = new Date(Date.now())
             let date2 = new Date();
 
             // First, all of the data of the selected timespan is deleted so we can write new values to the database
             let deleteData = this.#databaseHelper.handleQuery({
                 query: "DELETE FROM PM25 WHERE timespan = ?",
-                values: [req.params.timespan]
+                values: [req.body.timespan]
             })
 
             this.#avgArray = []
-            switch (req.params.timespan) {
+            switch (req.body.timespan) {
                 case "days":
                     for (let i = 0; i < 31; i++) { // Loops through everyday of the timespan selected
                         date2.setDate(date1.getDate() - 1)
@@ -172,7 +172,7 @@ class DashboardRoutes {
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
-                            values: [this.#avgArray[i], req.params.timespan, i]
+                            values: [this.#avgArray[i], req.body.timespan, i]
                         })
                     }
 
@@ -191,7 +191,7 @@ class DashboardRoutes {
                     for (let i = 0; i < this.#avgArray.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
-                            values: [this.#avgArray[i], req.params.timespan, i]
+                            values: [this.#avgArray[i], req.body.timespan, i]
                         })
                     }
 
@@ -230,13 +230,13 @@ class DashboardRoutes {
                     for (let i = 0; i < hardcode.length; i++) {
                         let insertData = this.#databaseHelper.handleQuery({
                             query: "INSERT INTO PM25 (value, timespan, number) VALUES (?,?,?)",
-                            values: [hardcode[i], req.params.timespan, i]
+                            values: [hardcode[i], req.body.timespan, i]
                         })
                     }
 
                     res.status(this.#errorCodes.HTTP_OK_CODE).json({
-                        data: "PM25 data pre-loaded",
-                        timespan: req.params.timespan
+                        succes: "Yes",
+
                     })
             }
         })
@@ -311,7 +311,7 @@ class DashboardRoutes {
                         for (let i = 0; i < 31; i++) {
                             let data = await this.#databaseHelper.handleQuery({
                                 query: "SELECT COUNT(datum) as dayTotal FROM Groen WHERE DAY(datum) = ? AND type_id = ? AND MONTH(DATUM) = ?;",
-                                values: [i, req.body.type_id, today.getMonth() + 1]
+                                values: [i, req.body.type_id, today.getMonth()]
                             })
 
                             totalNumber += data[0].dayTotal

@@ -5,21 +5,21 @@
  */
 
 import {Controller} from "./controller.js";
-import {AmbitionRepository} from "../repositories/AmbitionRepository.js";
+import {RoadmapRepository} from "../repositories/roadmapRepository.js";
 
 
-export class AmbitionController extends Controller {
+export class RoadmapController extends Controller {
     #ambitionView;
     #ambitionRepository;
 
     constructor() {
         super();
         this.#setupView();
-        this.#ambitionRepository = new AmbitionRepository();
+        this.#ambitionRepository = new RoadmapRepository();
     }
 
     async #setupView() {
-        this.#ambitionView = await super.loadHtmlIntoContent("html_views/ambition.html");
+        this.#ambitionView = await super.loadHtmlIntoContent("html_views/roadmap.html");
         this.#roadmap();
         this.#loadTimelineValues();
         this.#findNewsletters();

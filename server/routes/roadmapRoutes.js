@@ -1,4 +1,4 @@
-class AmbitionRoutes {
+class RoadmapRoutes {
     #errorCodes = require("../framework/utils/httpErrorCodes")
     #databaseHelper = require("../framework/utils/databaseHelper")
     #app
@@ -137,4 +137,4 @@ class AmbitionRoutes {
     }
 }
 
-module.exports = AmbitionRoutes
+module.exports = RoadmapRoutes

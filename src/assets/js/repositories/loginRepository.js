@@ -7,7 +7,7 @@
 
 import { NetworkManager } from "../framework/utils/networkManager.js";
 
-export class LoginSiteRepository {
+export class LoginRepository {
     //# is a private field in Javascript
     #route
     #networkManager

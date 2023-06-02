@@ -1,6 +1,6 @@
 import {Controller} from "./controller.js";
 
-export class PartnersController extends Controller {
+export class PartnerController extends Controller {
     #createPartnersView;
 
     constructor() {

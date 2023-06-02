@@ -4,7 +4,6 @@ class AccountsRoutes {
 
     #app;
 
-
     constructor(app) {
         this.#app = app;
 

@@ -1,6 +1,6 @@
 import {NetworkManager} from "../framework/utils/networkManager.js";
 
-export class AmbitionRepository{
+export class RoadmapRepository {
     #networkManager;
     #ambitionDatabaseRoute;
     #newsletterRoute;

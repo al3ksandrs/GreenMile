@@ -5,7 +5,7 @@
  */
 
 import {Controller} from "./controller.js";
-import {AccountsRepository} from "../repositories/AccountsRepository.js";
+import {UserRepository} from "../repositories/userRepository.js";
 
 export class AccountsController extends Controller {
     #AccountsView;
@@ -13,7 +13,7 @@ export class AccountsController extends Controller {
 
     constructor() {
         super();
-        this.#accountsRepository = new AccountsRepository();
+        this.#accountsRepository = new UserRepository();
         this.#setupView();
     }
     async #setupView() {
