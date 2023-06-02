@@ -61,6 +61,11 @@ export class NavbarController extends Controller {
         return false;
     }
 
+    /**
+     * @author
+     * Changes the navbar based on wether the user is logged in or not. If logged in text "Log in" changes to "Uitloggen". App.isLoggedIn Refers to app.js for checking if a session is found or not.
+     * When the session is found the CSS code display:hidden is removed and all navbar items show up.
+     */
     #changeNavBarBasedOnLogin() {
         App.isLoggedIn(() => {
             console.log("Status: Logged in.")

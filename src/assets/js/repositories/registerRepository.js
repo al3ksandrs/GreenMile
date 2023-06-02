@@ -12,6 +12,14 @@ export class registerRepository {
         this.#networkManager = new NetworkManager();
     }
 
+    /**
+     *
+     * @param rank
+     * @param email
+     * @param password
+     * @param date
+     * @return {*}
+     */
     createAccount(rank, email, password, date) {
         return this.#networkManager.doRequest(this.#route,
             "POST", {rang: rank, email: email, password: password, registratieDatum: date})

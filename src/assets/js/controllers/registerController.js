@@ -17,11 +17,20 @@ export class registerController extends Controller {
         this.#setupView()
     }
 
+    /**
+     *
+     * @return {Promise<void>}
+     */
     async #setupView() {
         this.#createRegisterView = await super.loadHtmlIntoContent("html_views/register.html")
         this.#createRegisterView.querySelector(".submit-btn").addEventListener("click", (event) => this.#processRegister(event));
     }
 
+    /**
+     *
+     * @param event
+     * @return {Promise<void>}
+     */
     async #processRegister(event) {
         event.preventDefault();
         const rank = this.#createRegisterView.querySelector("#rank").value;
