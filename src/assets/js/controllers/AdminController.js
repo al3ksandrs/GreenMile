@@ -36,16 +36,24 @@ export class adminController extends Controller {
         const selectedRemoveGreenObject = removeGreenObjectList.options[removeGreenObjectList.selectedIndex];
         const selectedGreenObjectID = selectedRemoveGreenObject.getAttribute("data");
 
-        this.#adminRepository.removeGreenObject(selectedGreenObjectID);
+        if (selectedGreenObjectID == null || selectedGreenObjectID == 0) {
+            alert("Groen object veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+        } else {
+            this.#adminRepository.removeGreenObject(selectedGreenObjectID);
+        }
     }
 
     // remove green type @author Aleksandrs
-    #removeGreenType(){
+    #removeGreenType() {
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const selectedRemoveType = removeTypeList.options[removeTypeList.selectedIndex];
         const selectedTypeID = selectedRemoveType.getAttribute("data");
 
-        this.#adminRepository.removeGreenType(selectedTypeID);
+        if (selectedTypeID == null || selectedTypeID == 0) {
+            alert("Groen type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+        } else {
+            this.#adminRepository.removeGreenType(selectedTypeID);
+        }
     }
 
     // add green object form @author Aleksandrs
@@ -65,16 +73,37 @@ export class adminController extends Controller {
 
         var formattedDate = year + '-' + month + '-' + day;
 
+        if (coordinaatX == null || coordinaatX == "" || coordinaatY == null || coordinaatY == "" || selectedGebied == null || selectedGebied == 0 || selectedType == null || selectedType == 0) {
+            alert("Velden kunnen niet leeg zijn! Vul alstublieft een waarde in.")
+        } else {
+            if (coordinaatX == null || coordinaatX == "") {
+                alert("Coordinaat X veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+            } else {
+                if (coordinaatY == null || coordinaatY == "") {
+                    alert("Coordinaat X veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+                } else {
+                    if (selectedGebied == null || selectedGebied == 0) {
+                        alert("Gebied veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+                    } else {
+                        if (selectedType == null || selectedType == 0) {
+                            alert("Type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
+                        } else {
+                            this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType, formattedDate);
+                        }
+                    }
+                }
+            }
+        }
+
         console.log(formattedDate)
 
-        this.#adminRepository.addGreen(coordinaatX, coordinaatY, selectedGebied, selectedType, formattedDate);
     }
 
     // add green type @author Aleksandrs
     #handleAddGreenType() {
         const type = this.#createAdminView.querySelector("#greenTypeName").value;
 
-        if( type == null || type == "" ){
+        if (type == null || type == "") {
             alert("Type veld kan niet leeg zijn! Vul alstublieft een waarde in.")
         } else {
             this.#adminRepository.addGreenType(type);
@@ -82,34 +111,34 @@ export class adminController extends Controller {
     }
 
     // refresh areas for lists @author Aleksandrs
-    async #handleAreaRefresh(){
+    async #handleAreaRefresh() {
         const areaList = this.#createAdminView.querySelector("#greenAreaList");
-        const removeAreaList = this.#createAdminView.querySelector("#removeGreenAreaList");
         const areaID = await this.#adminRepository.getArea();
 
-        for(let i = 0; areaID.data.length > i; i++){
-            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="`+ areaID.data[i].Gebiedsnummer +`">` + areaID.data[i].opmerking + `</option>`}
+        for (let i = 0; areaID.data.length > i; i++) {
+            areaList.innerHTML += `<option value="` + areaID.data[i].opmerking + `" data="` + areaID.data[i].Gebiedsnummer + `">` + areaID.data[i].opmerking + `</option>`
+        }
     }
 
     // refresh green types for lists @author Aleksandrs
-    async #handleTypeRefresh(){
+    async #handleTypeRefresh() {
         const typeList = this.#createAdminView.querySelector("#typeList");
         const removeTypeList = this.#createAdminView.querySelector("#removeTypeList");
         const typeID = await this.#adminRepository.getType();
 
-        for(let i = 0; typeID.data.length > i; i++){
-            typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
-            removeTypeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="`+ typeID.data[i].id +`">` + typeID.data[i].naam + `</option>`
+        for (let i = 0; typeID.data.length > i; i++) {
+            typeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="` + typeID.data[i].id + `">` + typeID.data[i].naam + `</option>`
+            removeTypeList.innerHTML += `<option value="` + typeID.data[i].naam + `" data="` + typeID.data[i].id + `">` + typeID.data[i].naam + `</option>`
         }
     }
 
     // refresh green objects for lists @author Aleksandrs
-    async #handleGreenObjectRefresh(){
+    async #handleGreenObjectRefresh() {
         const removeGreenObjectList = this.#createAdminView.querySelector("#removeGreenObjectList");
         const greenObjectID = await this.#adminRepository.getGreenObject();
 
-        for(let i = 0; greenObjectID.data.length > i; i++){
-            removeGreenObjectList.innerHTML += `<option value="`+ greenObjectID.data[i].id +`" data="`+ greenObjectID.data[i].id +`"><b>ID:</b> ` + greenObjectID.data[i].id + ` Coordinaat X: ` + greenObjectID.data[i].coordinaatX + `  CoordinaatY: ` + greenObjectID.data[i].coordinaatY +`  Gebied: ` + greenObjectID.data[i].gebied_id +`  Type: ` + greenObjectID.data[i].type_id +`  Datum: ` + greenObjectID.data[i].datum.substring(0, 10) +`</option>`
+        for (let i = 0; greenObjectID.data.length > i; i++) {
+            removeGreenObjectList.innerHTML += `<option value="` + greenObjectID.data[i].id + `" data="` + greenObjectID.data[i].id + `"><b>ID:</b> ` + greenObjectID.data[i].id + ` Coordinaat X: ` + greenObjectID.data[i].coordinaatX + `  CoordinaatY: ` + greenObjectID.data[i].coordinaatY + `  Gebied: ` + greenObjectID.data[i].gebied_id + `  Type: ` + greenObjectID.data[i].type_id + `  Datum: ` + greenObjectID.data[i].datum.substring(0, 10) + `</option>`
         }
     }
 
