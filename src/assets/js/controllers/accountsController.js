@@ -5,7 +5,7 @@
  */
 
 import {Controller} from "./controller.js";
-import {UserRepository} from "../repositories/userRepository.js";
+import {AccountsRepository} from "../repositories/accountsRepository.js";
 
 export class AccountsController extends Controller {
     #AccountsView;
@@ -13,7 +13,7 @@ export class AccountsController extends Controller {
 
     constructor() {
         super();
-        this.#accountsRepository = new UserRepository();
+        this.#accountsRepository = new AccountsRepository();
         this.#setupView();
     }
     async #setupView() {
@@ -25,7 +25,7 @@ export class AccountsController extends Controller {
      * First this function requests all accounts through the repository, after, using the createAcountCard function
      * is creates a html block with the account
      * @returns {Promise<void>}
-     * @author beerstj
+     * @author chanicy
      */
     async #loadAllAccounts() {
         try {
@@ -49,7 +49,7 @@ export class AccountsController extends Controller {
      * Removes a user account based on the ID provided
      * @param accountId - ID of the account you want to delete
      * @returns {Promise<void>}
-     * @author beerstj
+     * @author chanicy
      */
     async #removeAccounts(accountId) {
         this.#accountsRepository.removeAccount(accountId);
@@ -59,7 +59,7 @@ export class AccountsController extends Controller {
     /**
      * This method creates a HTML-Card for every user in the database
      * @param account - Account for which to make the card
-     * @author beerstj
+     * @author chanicy
      */
     #createAccountCard(account) {
         let accountsContainer = document.querySelector("#allAccounts");
