@@ -30,7 +30,7 @@ export class NetworkManager {
                 options.body = json;
             }
 
-            // console.log(`Doing ${method} request to ${url}\n Sent JSON: ${json}`);
+            console.log(`Doing ${method} request to ${url}\n Sent JSON: ${json}`);
 
             response = await fetch(url, options);
 

@@ -13,21 +13,23 @@ export class DashboardController extends Controller {
     #dashboardView;
     #dashboardRepository;
 
+    // Indexes of the circle diagrams on the dashboard, used to animate the values
     #FACADEGARDENINDEX = 0;
     #TREEGARDENINDEX = 1;
     #GREENERYINDEX = 2;
     #LKI = 3;
     PM25 = 4;
 
+    // Container of the "title" and contents of the currently selected item on the dashboard.
     #chartTitleBox;
     #infoTextBox;
     #infoContentBox;
 
-    #dashboardChart
-    #chartHTMLelement
-
-    #currentlyComparing;
-    #currentGraphView
+    // Chart variables
+    #dashboardChart // Object of the chart itself
+    #chartHTMLelement // Element on which the chart is rendered
+    #currentlyComparing; // if the user is currently making a comparison
+    #currentGraphView // current "view" of the chart ("days", "weeks" or "months")
 
     constructor() {
         super();
@@ -45,6 +47,7 @@ export class DashboardController extends Controller {
         this.#infoContentBox = this.#dashboardView.querySelector(".information-box-content")
         this.#chartHTMLelement = this.#dashboardView.querySelector("#myChart")
 
+        // two constants to hold the title of the currently selected item and the content for this.
         const titles = ["/ Geveltuinen", "/ Boomtuinen", "/ Groene M²", "/ LKI", "/ Fijnstof"];
         const information = [
             `<div class="p">Geveltuinen aan de Stadhouderskade in Amsterdam zijn groene ruimten aan de voorgevels van gebouwen. Ze verbeteren de luchtkwaliteit, verminderen geluidsoverlast en bevorderen de biodiversiteit. Geveltuinen zijn een geweldige manier om de leefbaarheid van de stad te verbeteren door de gemeenschap te betrekken.</div>`,
@@ -58,6 +61,7 @@ export class DashboardController extends Controller {
         this.#infoTextBox.innerText = titles[this.#FACADEGARDENINDEX];
         this.#infoContentBox.innerHTML = information[this.#FACADEGARDENINDEX];
 
+        // loads and animates the values in the circle diagrams.
         await this.#loadDashboardValues()
 
         //Initializes the main chart, with dummy data
@@ -80,10 +84,10 @@ export class DashboardController extends Controller {
         this.#dashboardRepository.getSelectedTimespanTreeGardenData("days", 2)
             .then(result => {this.#updateChart(result)})
 
-        this.#currentlyComparing = false;
         this.#dashboardView.querySelector("#compare-box").addEventListener("click", () => {
             this.#compareSwitch();
         })
+        this.#currentlyComparing = false;
 
         // Adds the event listeners to the information modal button to open it
         this.#dashboardView.querySelector("#modal-show").addEventListener("click", () => {
@@ -167,42 +171,6 @@ export class DashboardController extends Controller {
     }
 
     /**
-     * Method to start a comparison between multiple graphs.
-     * @author beerstj
-     * */
-    #startCompare() {
-        // Changes the color of the compare button to indicate to the that the comparisons started
-        console.log("Start Compare")
-        this.#dashboardView.querySelector("#chart-view-container").classList.add("hidden")
-        this.#dashboardView.querySelector("#comparison-impossible").classList.remove("hidden")
-        this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
-        this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
-        this.#dashboardView.querySelector("#compare-title").style.color = "#058C42";
-    }
-
-    /**
-     * Stops the comparisons, changes the compare box to indicate the comparison has stopped,
-     * Removes all the datasets from the chart and updates it aswell
-     * @author beerstj
-     */
-    #stopCompare() {
-        console.log("Stop Comparing")
-        // Changes the styling of all the needed buttons and messages to the user that the compare has started
-        this.#dashboardView.querySelector("#chart-view-container").classList.remove("hidden")
-        this.#dashboardView.querySelector("#comparison-impossible").classList.add("hidden")
-        this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
-        this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
-        this.#dashboardView.querySelector("#compare-title").style.color = "white";
-        // Removes all but the first dataset in the charts dataset array
-        this.#dashboardChart.data.datasets.splice(1, this.#dashboardChart.data.datasets.length)
-        // Clears the datasets and resets the colors
-        this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
-        this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
-        this.#dashboardChart.update() // Refreshs the chart
-    }
-
-
-    /**
      * Gets the currently selected chart, loads the correct data for the database and updates the chart accordingly
      * @author beerstj
      */
@@ -245,7 +213,7 @@ export class DashboardController extends Controller {
             this.#dashboardChart.data.datasets[0].data = dataset.data; // data in the chart
             this.#dashboardChart.data.datasets[0].label = dataset.label; // label (title) of the graph
         } else {
-            // An objects is created to store all of data in the correct format to push tot the dataset
+            // An objects is created to store all data in the correct format to push tot the dataset
             // If the user is comparing every dataset has a different color so we have to create it.
             let comparisonChart = {
                 data: dataset.data,
@@ -284,6 +252,40 @@ export class DashboardController extends Controller {
         });
     }
 
+    /**
+     * Method to start a comparison between multiple graphs.
+     * @author beerstj
+     * */
+    #startCompare() {
+        // Changes the color of the compare button to indicate to the that the comparisons started
+        console.log("Start Compare")
+        this.#dashboardView.querySelector("#chart-view-container").classList.add("hidden")
+        this.#dashboardView.querySelector("#comparison-impossible").classList.remove("hidden")
+        this.#dashboardView.querySelector("#compare-box").classList.add("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color = "#058C42";
+    }
+
+    /**
+     * Stops the comparisons, changes the compare box to indicate the comparison has stopped,
+     * Removes all the datasets from the chart and updates it aswell
+     * @author beerstj
+     */
+    #stopCompare() {
+        console.log("Stop Comparing")
+        // Changes the styling of all the needed buttons and messages to the user that the compare has started
+        this.#dashboardView.querySelector("#chart-view-container").classList.remove("hidden")
+        this.#dashboardView.querySelector("#comparison-impossible").classList.add("hidden")
+        this.#dashboardView.querySelector("#compare-box").classList.remove("invert-compare-button")
+        this.#dashboardView.querySelector("#compare-box").classList.add("compare-button")
+        this.#dashboardView.querySelector("#compare-title").style.color = "white";
+        // Removes all but the first dataset in the charts dataset array
+        this.#dashboardChart.data.datasets.splice(1, this.#dashboardChart.data.datasets.length)
+        // Clears the datasets and resets the colors
+        this.#dashboardChart.data.datasets[0].borderColor = "#058C42"
+        this.#dashboardChart.data.datasets[0].backgroundColor = "#058C42"
+        this.#dashboardChart.update() // Refreshs the chart
+    }
 
     /**
      * Method to start or end a comparison. Switches between these based on the currentlyComparing boolean

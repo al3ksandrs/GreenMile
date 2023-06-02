@@ -12,24 +12,23 @@ describe("submitRoadmapItem", () => {
         cy.visit("http://localhost:8080/#submitRoadmap");
     });
 
-    //Test: Validate create user form
+    //Test: validate the existence of submit form
     it("Valid submitRoadmap form", () => {
         //Find the field for the content of the roadmap content, check if it exists.
         cy.get("#roadmap-title").should("exist");
 
         //Find the field for the content of the roadmap item, check if it exists.
         cy.get("#roadmap-content").should("exist");
-
     });
 
-    //Test: Successful created a user
+    //Test: Successfully submitted a roadmap item
     it("Successful submitted an item", () => {
         //Start a fake server
         cy.server();
 
         const mockedResponse = {"username": "test"};
 
-        //Add a stub with the URL /users as a POST
+        //Add a stub with the URL /roadmap/submit as a POST
         //Respond with a JSON-object when requested
         //Give the stub the alias: @roadmapItem
         cy.intercept('POST', endpoint, {
@@ -44,7 +43,6 @@ describe("submitRoadmapItem", () => {
         cy.get("#roadmap-content").type("roadmap item content 1", {force: true});
 
         //Find the button to create a user and click it
-        console.log(cy.get("#roadmap-submit"));
         cy.get("#roadmap-submit").click();
 
         //Wait for the @roadmapItem to be called by the click-event.
@@ -63,7 +61,7 @@ describe("submitRoadmapItem", () => {
 
     });
 
-    //Test: Failed creating a user
+    //Test: Failed to submit an item
     it("Failed submit roadmap item", () => {
         //Start a fake server
         cy.server();
