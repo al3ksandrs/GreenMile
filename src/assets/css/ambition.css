@@ -16,8 +16,6 @@
     margin: 50px
 }
 
-.timeline-progress{
-}
 .tree-garden,.facade-garden,.total-m2{
     display: flex;
     align-items: center;
@@ -30,7 +28,7 @@
     font-family: bold, 'Open Sans', sans-serif;
 }
 
-
+/*the timeline & contents*/
 .timeline-box{
     width: 1250px;
     min-height: 300px;
@@ -62,13 +60,6 @@
 .cd-horizontal-timeline {
     opacity: 0;
     margin: 2em auto;
-    -webkit-transition: opacity 0.2s;
-    -moz-transition: opacity 0.2s;
-    transition: opacity 0.2s;
-}
-
-.cd-horizontal-timeline::before {
-    display: none;
 }
 
 .cd-horizontal-timeline.loaded {
@@ -79,7 +70,6 @@
 .timeline {
     position: relative;
     height: 100px;
-    width: 90%;
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -92,26 +82,15 @@
     overflow: hidden;
 }
 
-.events-wrapper::before {
-    left: 0;
-    background-image: -webkit-linear-gradient(left, #f8f8f8, rgba(248, 248, 248, 0));
-    background-image: linear-gradient(to right, #f8f8f8, rgba(248, 248, 248, 0));
-}
 
-.events-wrapper::after {
-    right: 0;
-    background-image: -webkit-linear-gradient(right, #f8f8f8, rgba(248, 248, 248, 0));
-    background-image: linear-gradient(to left, #f8f8f8, rgba(248, 248, 248, 0));
-}
 
 .events {
     /* this is the grey line/timeline */
     position: absolute;
     z-index: 1;
     left: 0;
-    top: 49px;
+    top: 50px;
     height: 2px;
-    width: 90%;
     /* width will be set using JavaScript */
     background: #dfdfdf;
     -webkit-transition: -webkit-transform 0.4s;
@@ -151,12 +130,6 @@
     font-size: 1.3rem;
     padding-bottom: 15px;
     color: #383838;
-    /* fix bug on Safari - text flickering while timeline translates */
-    -webkit-transform: translateZ(0);
-    -moz-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    -o-transform: translateZ(0);
-    transform: translateZ(0);
 }
 
 .events a::after {
@@ -164,12 +137,6 @@
     content: '';
     position: absolute;
     left: 50%;
-    right: auto;
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
-    -o-transform: translateX(-50%);
-    transform: translateX(-50%);
     bottom: -5px;
     height: 12px;
     width: 12px;
@@ -181,9 +148,6 @@
     transition: background-color 0.3s, border-color 0.3s;
 }
 
-.cd-horizontal-timeline .events a.selected {
-    pointer-events: none;
-}
 
 .cd-horizontal-timeline .events a.selected::after {
     background-color: #058C42;
@@ -195,11 +159,9 @@
 }
 
 .cd-timeline-navigation a {
-    /* these are the left/right arrows to navigate the timeline */
+    /* these are the left/right buttons to navigate the timeline */
     position: absolute;
-    z-index: 1;
     top: 50%;
-    bottom: auto;
     -webkit-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
@@ -209,55 +171,21 @@
     width: 34px;
     border-radius: 50%;
     border: 2px solid #dfdfdf;
-    /* replace text with an icon */
-    padding: 2px;
-    color: #dfdfdf;
-    text-decoration: none;
 
 }
 
-.cd-timeline-navigation a::after {
-    /* arrow icon */
-    content: '';
-    position: absolute;
-    height: 16px;
-    width: 16px;
-    left: 50%;
-    top: 50%;
-    bottom: auto;
-    right: auto;
-    -webkit-transform: translateX(-50%) translateY(-50%);
-    -moz-transform: translateX(-50%) translateY(-50%);
-    -ms-transform: translateX(-50%) translateY(-50%);
-    -o-transform: translateX(-50%) translateY(-50%);
-    transform: translateX(-50%) translateY(-50%);
 
-}
-
+/*puts the left navigation button to its place*/
 .cd-timeline-navigation a.prev {
     left: 0;
-    -webkit-transform: translateY(-50%) rotate(180deg);
-    -moz-transform: translateY(-50%) rotate(180deg);
-    -ms-transform: translateY(-50%) rotate(180deg);
-    -o-transform: translateY(-50%) rotate(180deg);
-    transform: translateY(-50%) rotate(180deg);
 }
 
+/*puts the right navigation button to its place*/
 .cd-timeline-navigation a.next {
     right: 0;
 }
 
-.cd-timeline-navigation a.inactive {
-    cursor: not-allowed;
-}
 
-.cd-timeline-navigation a.inactive::after {
-    background-position: 0 -16px;
-}
-
-.no-touch .cd-timeline-navigation a.inactive:hover {
-    border-color: #dfdfdf;
-}
 
 .cd-horizontal-timeline .events-content {
     position: relative;
@@ -303,6 +231,7 @@
     transform: translateX(0);
 }
 
+/*uses the @media components to animate*/
 .cd-horizontal-timeline .events-content li.enter-right, .cd-horizontal-timeline .events-content li.leave-right {
     -webkit-animation-name: cd-enter-right;
     -moz-animation-name: cd-enter-right;
@@ -363,6 +292,12 @@
     padding: 10px;
 }
 
+/*makes sure there is space between the elements*/
+.timeline-available-news {
+    margin: 50px;
+}
+
+/*Adds an animation to the content of the roadmap*/
 @-webkit-keyframes cd-enter-right {
     0% {
         opacity: 0;
@@ -443,8 +378,4 @@
         -o-transform: translateX(0%);
         transform: translateX(0%);
     }
-}
-
-.timeline-available-news {
-    margin: 50px;
 }
