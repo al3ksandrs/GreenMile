@@ -30,10 +30,14 @@ export class registerController extends Controller {
         const registerDate = this.#createRegisterView.querySelector("#registerDate").value;
         const errorBox = this.#createRegisterView.querySelector(".error");
         const passBox = this.#createRegisterView.querySelector(".pass");
+        //Checks if email contains an @.
+        const emailRegex =/\S+@\S+\.\S+/;
+
+        let checkEmail = emailRegex.test(email);
 
 
-        if (email.length === 0 || password.length === 0) {
-            errorBox.innerHTML = "Velden mogen niet leeg zijn!"
+        if (email.length === 0 || password.length === 0 || !checkEmail) {
+            errorBox.innerHTML = "Velden mogen niet leeg zijn! of email is incorrect!"
             return;
         }
 
@@ -41,7 +45,6 @@ export class registerController extends Controller {
             const data = await this.#registerRepository.createAccount(rank, email, password, registerDate);
             console.log(data);
             passBox.innerHTML = "Account succesvol aangemaakt!"
-            // window.alert("Account succesvol aangemaakt!");
         } catch (e) {
 
         }
