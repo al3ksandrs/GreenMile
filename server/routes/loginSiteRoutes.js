@@ -1,5 +1,5 @@
 /**
- *
+ * @author Sakhi Anwari
  * 1= administrator, 2=student and everything else is unknown.
  */
 
@@ -21,8 +21,8 @@ class loginSiteRoutes {
      }
 
     /**
-     * Checks if passed username and password are found in db, if so let the front-end know
-     * @private
+     * Checks if passed username and password are found in MYSQL database, if so let the front-end know and let the user login.
+     * * @private
      */
     #login() {
         this.#app.post("/loginSite/createLogin", async (req, res) => {

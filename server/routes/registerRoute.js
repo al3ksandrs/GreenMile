@@ -13,7 +13,10 @@ class registerRoute {
         this.#app = app;
         this.#register();
     }
-
+// Funciton for registering an User using the following parameters: rang, email, password, and registrationDate.
+    /**
+     *
+     */
     #register() {
         this.#app.post("/register", async (req, res) => {
             try {
